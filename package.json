@@ -1,30 +1,47 @@
 {
-  "name": "quizcraft",
+  "name": "tailadmin-react-pro",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
+  "author": {
+    "name": "TailAdmin",
+    "email": "hello@tailadmin.com",
+    "url": "https://tailadmin.com"
+  },
   "dependencies": {
-    "firebase": "^10.12.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-firebase-hooks": "^5.1.1"
+    "apexcharts": "^3.37.0",
+    "dropzone": "^6.0.0-beta.2",
+    "flatpickr": "^4.6.13",
+    "jsvectormap": "^1.5.1",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
+    "nouislider": "^15.7.1",
+    "react": "^18.2.0",
+    "react-apexcharts": "^1.4.0",
+    "react-dom": "^18.2.0",
+    "react-flatpickr": "^3.10.13",
+    "react-router-dom": "^6.8.1",
+    "react-table": "^7.8.0",
+    "sort-by": "^0.0.2",
+    "swiper": "^9.4.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.8.0",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^9.8.0",
-    "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
-    "eslint-plugin-react-refresh": "^0.4.9",
-    "globals": "^15.9.0",
-    "vite": "^5.4.0"
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@types/react-table": "^7.7.15",
+    "@vitejs/plugin-react": "^3.1.0",
+    "autoprefixer": "^10.4.13",
+    "file-loader": "^6.2.0",
+    "postcss": "^8.4.21",
+    "prettier": "^2.8.4",
+    "prettier-plugin-tailwindcss": "^0.2.2",
+    "tailwindcss": "^3.4.1",
+    "vite": "^4.1.0",
+    "webpack": "^5.79.0"
   }
 }

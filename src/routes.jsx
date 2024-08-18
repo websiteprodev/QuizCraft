@@ -3,7 +3,7 @@ import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import CreateQuiz from "@/pages/dashboard/CreateQuiz";
 import Quizzes from "@/pages/dashboard/Quizzes";
-
+import ProtectedRoute from "./components/ProtectedRoute";
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
@@ -40,7 +40,11 @@ export const routes = [
         icon: <RectangleStackIcon {...icon} />,
         name: "create quiz",
         path: "/create-quiz",
-        element: <CreateQuiz />,
+        element: (
+          <ProtectedRoute>
+            <CreateQuiz />
+          </ProtectedRoute>
+        ),
       },
       {
         icon: <RectangleStackIcon {...icon} />,

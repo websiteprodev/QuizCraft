@@ -89,6 +89,11 @@ export function DashboardNavbar() {
           </Typography>
         </div>
         <div className="flex items-center">
+          {user && (
+            <Typography variant="h6" color="blue-gray" className="mr-4">
+              Welcome, {user.email}
+            </Typography>
+          )}
           <div className="mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>

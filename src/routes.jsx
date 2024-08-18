@@ -1,4 +1,4 @@
-import { HomeIcon, UserCircleIcon, TableCellsIcon, InformationCircleIcon, ServerStackIcon, RectangleStackIcon } from "@heroicons/react/24/solid";
+import { HomeIcon, UserCircleIcon, TableCellsIcon, InformationCircleIcon, ServerStackIcon, RectangleStackIcon, PlusCircleIcon, PuzzlePieceIcon } from "@heroicons/react/24/solid";
 import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import CreateQuiz from "@/pages/dashboard/CreateQuiz";
@@ -37,7 +37,7 @@ export const routes = [
         element: <Notifications />,
       },
       {
-        icon: <RectangleStackIcon {...icon} />,
+        icon: <PlusCircleIcon {...icon} />,
         name: "create quiz",
         path: "/create-quiz",
         element: (
@@ -47,7 +47,7 @@ export const routes = [
         ),
       },
       {
-        icon: <RectangleStackIcon {...icon} />,
+        icon: <PuzzlePieceIcon {...icon} />,
         name: "quizzes",
         path: "/quizzes",
         element: <Quizzes />,

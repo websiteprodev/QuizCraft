@@ -1,17 +1,27 @@
-import {
-  Card,
-  Input,
-  Checkbox,
-  Button,
-  Typography,
-} from "@material-tailwind/react";
-import { Link } from "react-router-dom";
-
+import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Card, Input, Checkbox, Button, Typography } from "@material-tailwind/react";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../../configs/firebase"; 
 
 export function SignUp() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/auth/sign-in");
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
+  };
+
   return (
     <section className="m-8 flex">
-            <div className="w-2/5 h-full hidden lg:block">
+      <div className="w-2/5 h-full hidden lg:block">
         <img
           src="/img/pattern.png"
           className="h-full w-full object-cover rounded-3xl"
@@ -22,7 +32,7 @@ export function SignUp() {
           <Typography variant="h2" className="font-bold mb-4">Join Us Today</Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to register.</Typography>
         </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
+        <form onSubmit={handleSignUp} className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
           <div className="mb-1 flex flex-col gap-6">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
@@ -30,6 +40,22 @@ export function SignUp() {
             <Input
               size="lg"
               placeholder="name@mail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+            />
+            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+              Password
+            </Typography>
+            <Input
+              type="password"
+              size="lg"
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -54,7 +80,7 @@ export function SignUp() {
             }
             containerProps={{ className: "-ml-2.5" }}
           />
-          <Button className="mt-6" fullWidth>
+          <Button className="mt-6" fullWidth type="submit">
             Register Now
           </Button>
 
@@ -85,10 +111,10 @@ export function SignUp() {
             <Link to="/auth/sign-in" className="text-gray-900 ml-1">Sign in</Link>
           </Typography>
         </form>
-
       </div>
     </section>
   );
 }
 
 export default SignUp;
+

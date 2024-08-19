@@ -67,7 +67,7 @@ export function SignIn() {
               </Typography>
             )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
-              Your username
+              Username
             </Typography>
             <Input
               size="lg"

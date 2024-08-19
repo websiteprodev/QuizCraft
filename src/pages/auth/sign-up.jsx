@@ -7,10 +7,27 @@ import { auth } from "../../configs/firebase";
 export function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    
+    setEmailError("");
+    setPasswordError("");
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("Invalid email format.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters long.");
+      return;
+    }
+
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       navigate("/auth/sign-in");
@@ -47,6 +64,11 @@ export function SignUp() {
                 className: "before:content-none after:content-none",
               }}
             />
+            {emailError && (
+              <Typography variant="small" color="red" className="mt-1">
+                {emailError}
+              </Typography>
+            )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Password
             </Typography>
@@ -61,6 +83,11 @@ export function SignUp() {
                 className: "before:content-none after:content-none",
               }}
             />
+            {passwordError && (
+              <Typography variant="small" color="red" className="mt-1">
+                {passwordError}
+              </Typography>
+            )}
           </div>
           <Checkbox
             label={

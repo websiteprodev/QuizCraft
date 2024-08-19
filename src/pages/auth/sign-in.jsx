@@ -1,23 +1,28 @@
+
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
-import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../../configs/firebase"; 
+import { useNavigate } from "react-router-dom";
+import { auth } from "@/configs/firebase";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/dashboard/home");
     } catch (error) {
-      console.error("Error signing in:", error);
+      console.error("Error signing in:", error.message);
+      setError("Failed to sign in. Please check your credentials and try again.");
     }
   };
+
   return (
     <section className="m-8 flex">
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
@@ -55,11 +60,11 @@ export function SignIn() {
               }}
             />
           </div>
+          {error && <Typography color="red">{error}</Typography>}
           <Button className="mt-6" fullWidth type="submit">
             Sign In
           </Button>
         </form>
-
       </div>
       <div className="w-2/5 h-full hidden lg:block">
         <img

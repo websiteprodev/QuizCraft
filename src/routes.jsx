@@ -3,7 +3,9 @@ import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import CreateQuiz from "@/pages/dashboard/CreateQuiz";
 import Quizzes from "@/pages/dashboard/Quizzes";
+import Scoreboard from "@/pages/dashboard/Scoreboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
@@ -48,9 +50,13 @@ export const routes = [
       },
       {
         icon: <PuzzlePieceIcon {...icon} />,
-        name: "quizzes",
-        path: "/quizzes",
-        element: <Quizzes />,
+        name: "scoreboard",
+        path: "/scoreboard",
+        element: (
+          <ProtectedRoute>
+            <Scoreboard quizId={"some_quiz_id"} /> {/* Replace "some_quiz_id" with the actual quizId */}
+          </ProtectedRoute>
+        ),
       },
     ],
   },

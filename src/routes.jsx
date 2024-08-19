@@ -1,9 +1,13 @@
-import { HomeIcon, UserCircleIcon, TableCellsIcon, InformationCircleIcon, ServerStackIcon, RectangleStackIcon, PlusCircleIcon, PuzzlePieceIcon } from "@heroicons/react/24/solid";
+import { HomeIcon, UserCircleIcon, TableCellsIcon, InformationCircleIcon, PlusCircleIcon, PuzzlePieceIcon, MagnifyingGlassIcon, AcademicCapIcon, ServerStackIcon, RectangleStackIcon } from "@heroicons/react/24/solid";
 import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import CreateQuiz from "@/pages/dashboard/CreateQuiz";
 import Quizzes from "@/pages/dashboard/Quizzes";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BrowseQuizzes from "@/pages/dashboard/BrowseQuizzes";
+import TakeQuiz from "@/pages/dashboard/TakeQuiz";
+import SampleQuiz from "@/pages/dashboard/SampleQuiz";
+
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
@@ -14,7 +18,7 @@ export const routes = [
     pages: [
       {
         icon: <HomeIcon {...icon} />,
-        name: "home", // преди беше "dashboard"
+        name: "home",
         path: "/home",
         element: <Home />,
       },
@@ -51,6 +55,22 @@ export const routes = [
         name: "quizzes",
         path: "/quizzes",
         element: <Quizzes />,
+      },
+      {
+        icon: <MagnifyingGlassIcon {...icon} />,
+        name: "browse quizzes",
+        path: "/browse-quizzes",
+        element: <BrowseQuizzes />,
+      },
+      {
+        path: "/quiz/:id",
+        element: <TakeQuiz />,
+      },
+      {
+        icon: <AcademicCapIcon {...icon} />,
+        name: "sample quiz",
+        path: "/sample-quiz",
+        element: <SampleQuiz />,
       },
     ],
   },

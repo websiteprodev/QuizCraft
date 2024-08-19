@@ -73,7 +73,7 @@ export function DashboardNavbar() {
                 color="blue-gray"
                 className="font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100"
               >
-                {layout}
+                {layout === "dashboard" ? "Home" : layout}
               </Typography>
             </Link>
             <Typography
@@ -81,11 +81,11 @@ export function DashboardNavbar() {
               color="blue-gray"
               className="font-normal"
             >
-              {page}
+              {page || "Home"}
             </Typography>
           </Breadcrumbs>
           <Typography variant="h6" color="blue-gray">
-            {page}
+            {page === "home" ? "Home" : page || "Home"}
           </Typography>
         </div>
         <div className="flex items-center">

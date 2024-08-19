@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
@@ -22,9 +21,11 @@ export function SignIn() {
     } catch (error) {
       console.error("Error signing in:", error.message);
       setError("Failed to sign in. Please check your credentials and try again.");
-    } 
-  };
-      console.log("Full error object:", error); 
+
+      // Logging full error object
+      console.log("Full error object:", error);
+
+      // Handling different error cases
       switch (error.code) {
         case 'auth/invalid-credential':
           setErrorMessage("Invalid credentials. Please try again.");
@@ -32,10 +33,8 @@ export function SignIn() {
         default:
           setErrorMessage("An error occurred. Please try again.");
       }
-      console.error("Error signing in:", error);
     }
-  
-  
+  };
   
   return (
     <section className="m-8 flex">
@@ -93,7 +92,6 @@ export function SignIn() {
       </div>
     </section>
   );
-  
-
+}
 
 export default SignIn;

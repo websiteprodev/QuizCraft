@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { Card, Input, Button, Typography, Switch, Select, Option } from "@material-tailwind/react";
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase";
 
@@ -7,10 +7,11 @@ export function CreateQuiz() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [questions, setQuestions] = useState([
-    { text: "", answers: ["", "", "", ""], correctAnswer: "", points: 0 },
+    { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 },
   ]);
   const [timer, setTimer] = useState(0); // Timer in seconds
   const [totalPoints, setTotalPoints] = useState(0); // Total points
+  const [randomQuestions, setRandomQuestions] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
@@ -42,8 +43,14 @@ export function CreateQuiz() {
     setQuestions(newQuestions);
   };
 
+  const handleQuestionTypeChange = (index, value) => {
+    const newQuestions = [...questions];
+    newQuestions[index].type = value;
+    setQuestions(newQuestions);
+  };
+
   const addQuestion = () => {
-    setQuestions([...questions, { text: "", answers: ["", "", "", ""], correctAnswer: "", points: 0 }]);
+    setQuestions([...questions, { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 }]);
   };
 
   const handleSubmit = async (e) => {
@@ -74,15 +81,17 @@ export function CreateQuiz() {
         questions,
         timer,
         totalPoints,
+        randomQuestions, // Променено поле
         createdBy: user.uid,
         createdAt: new Date(),
       });
 
       setTitle("");
       setCategory("");
-      setQuestions([{ text: "", answers: ["", "", "", ""], correctAnswer: "", points: 0 }]);
+      setQuestions([{ text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 }]);
       setTimer(0);
       setTotalPoints(0);
+      setRandomQuestions(false); // Променено поле
       setSuccessMessage("You have successfully created a new quiz!");
     } catch (e) {
       console.error("Error adding quiz: ", e);
@@ -97,8 +106,9 @@ export function CreateQuiz() {
         </Typography>
       )}
       <Typography variant="h4" className="mb-4">Create a New Quiz</Typography>
-      <Card className="p-6">
+      <Card className="p-6 space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* General Information Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Quiz Title"
@@ -113,33 +123,58 @@ export function CreateQuiz() {
               className="mb-4"
             />
           </div>
-          <Input
-            label="Timer (in seconds)"
-            type="number"
-            value={timer}
-            onChange={(e) => setTimer(Number(e.target.value))}
-            className="mb-6"
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Timer (in seconds)"
+              type="number"
+              value={timer}
+              onChange={(e) => setTimer(Number(e.target.value))}
+              className="mb-6"
+            />
+            <Switch
+              id="random-questions"
+              label="Random Questions"
+              checked={randomQuestions}
+              onChange={(e) => setRandomQuestions(e.target.checked)}
+              className="mb-6 flex items-center"
+            />
+          </div>
+
+          {/* Questions Section */}
           {questions.map((question, qIndex) => (
-            <div key={qIndex} className="mb-6 p-4 border rounded-lg">
+            <div key={qIndex} className="mb-6 p-4 border rounded-lg space-y-4">
               <Typography variant="h6" className="mb-4">Question {qIndex + 1}</Typography>
-              <Input
-                label={`Question ${qIndex + 1}`}
-                value={question.text}
-                onChange={(e) => handleInputChange(qIndex, e.target.value)}
-                className="mb-4"
-              />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                {question.answers.map((answer, aIndex) => (
-                  <Input
-                    key={aIndex}
-                    label={`Answer ${aIndex + 1}`}
-                    value={answer}
-                    onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
-                    className="mb-2"
-                  />
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Select
+                  label="Question Type"
+                  value={question.type}
+                  onChange={(value) => handleQuestionTypeChange(qIndex, value)}
+                  className="mb-4"
+                >
+                  <Option value="multiple-choice">Multiple Choice</Option>
+                  <Option value="true-false">True/False</Option>
+                  <Option value="short-answer">Short Answer</Option>
+                </Select>
+                <Input
+                  label={`Question ${qIndex + 1}`}
+                  value={question.text}
+                  onChange={(e) => handleInputChange(qIndex, e.target.value)}
+                  className="mb-4"
+                />
               </div>
+              {question.type === "multiple-choice" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {question.answers.map((answer, aIndex) => (
+                    <Input
+                      key={aIndex}
+                      label={`Answer ${aIndex + 1}`}
+                      value={answer}
+                      onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
+                      className="mb-2"
+                    />
+                  ))}
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Correct Answer"
@@ -157,6 +192,8 @@ export function CreateQuiz() {
               </div>
             </div>
           ))}
+
+          {/* Buttons Section */}
           <div className="flex justify-between items-center">
             <Button type="button" onClick={addQuestion} className="mb-4">
               Add Another Question

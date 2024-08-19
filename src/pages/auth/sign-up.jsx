@@ -3,8 +3,9 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Card, Input, Checkbox, Button, Typography, Select, Option } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth, db } from "../../configs/firebase"; 
+import { auth, db, storage } from "../../configs/firebase"; 
 import {collection, doc, getDocs, query, setDoc, where} from "firebase/firestore";
+import {ref, uploadBytes, getDownloadURL} from "firebase/storage";
 
 
 export function SignUp() {
@@ -17,6 +18,7 @@ export function SignUp() {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [photoURL, setPhotoURL] = useState("");
+  const [profileImage, setProfileImage] = useState(null); // File input for image
   const [address, setAddress] = useState("");
   const [role, setRole] = React.useState("react"); // "organizer" or "student"
   const navigate = useNavigate();
@@ -75,12 +77,19 @@ export function SignUp() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      let imageURL="";
+      if(profileImage){
+        const imageRef = ref(storage, `profileImages/${username}`);
+        await uploadBytes(imageRef, profileImage);
+        imageURL = await getDownloadURL(imageRef);
+      }
+
       await setDoc(doc(db, "users", username), {
         email,
         firstName,
         lastName,
         phoneNumber,
-        photoURL,
+        photoURL: imageURL,
         address,
         role,
         uid: user.uid,
@@ -198,18 +207,16 @@ export function SignUp() {
               }}
             required/>
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
-            Photo URL
+            Photo 
             </Typography>
             <Input
-              size="lg"
-              placeholder="Last Name"
-              value={photoURL}
-              onChange={(e) => setPhotoURL(e.target.value)}
+              type="file"
+              onChange={(e) => setProfileImage(e.target.value[0])}
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            />
+            required/>
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
             Address
             </Typography>

@@ -43,7 +43,7 @@ export const statisticsCardsData = [
     color: "gray",
     icon: ChartBarIcon,
     title: "My quizzes",
-    value: "2",
+    value: "",
     footer: {
       color: "text-green-500",
       value: "40",

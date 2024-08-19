@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Typography, Card, CardHeader, CardBody, IconButton, Menu, MenuHandler, MenuList, MenuItem } from "@material-tailwind/react";
 import { EllipsisVerticalIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { StatisticsCard } from "@/widgets/cards";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/configs/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db, auth } from "@/configs/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import statisticsCardsData from "@/data/statistics-cards-data";
 import { ScaleIcon } from "@heroicons/react/24/solid";
+
 export function Home() {
   const [localStatsData, setLocalStatsData] = useState(statisticsCardsData);
   const [quizzes, setQuizzes] = useState([]);
+  const [quizzesCount, setQuizzesCount] = useState(0);
+  const [myQuizzesCount, setMyQuizzesCount] = useState(0);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -17,26 +21,43 @@ export function Home() {
         id: doc.id,
         ...doc.data(),
       }));
+
       setQuizzes(quizzesList);
+      setQuizzesCount(quizzesList.length); 
     };
 
     fetchQuizzes();
   }, []);
 
   useEffect(() => {
-    const fetchQuizzesCount = async () => {
-      const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
-      const updatedStats = localStatsData.map((card) => {
-        if (card.title === "Total Quizzes") {
-          return { ...card, value: quizzesSnapshot.size.toString() };
-        }
-        return card;
-      });
-      setLocalStatsData(updatedStats);
+    const fetchMyQuizzesCount = async (uid) => {
+      const quizzesRef = collection(db, "quizzes");
+      const q = query(quizzesRef, where("createdBy", "==", uid));
+      const querySnapshot = await getDocs(q);
+      setMyQuizzesCount(querySnapshot.size); 
     };
 
-    fetchQuizzesCount();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchMyQuizzesCount(user.uid);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const updatedStats = localStatsData.map((card) => {
+      if (card.title === "Total Quizzes") {
+        return { ...card, value: quizzesCount.toString() };
+      } else if (card.title === "My quizzes") {
+        return { ...card, value: myQuizzesCount.toString() };
+      }
+      return card;
+    });
+
+    setLocalStatsData(updatedStats);
+  }, [quizzesCount, myQuizzesCount]);
 
   return (
     <div className="mt-12">

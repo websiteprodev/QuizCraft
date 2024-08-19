@@ -1,11 +1,12 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "@/configs/firebase";
+import { auth, db } from "@/configs/firebase";
+import {collection, query, where, getDoc, doc} from "firebase/firestore";
 
 export function SignIn() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -16,8 +17,23 @@ export function SignIn() {
     setError("");
     setErrorMessage("");  
     try {
+      
+      const userDocRef = doc(db, "users", username);
+      const userDoc = await getDoc(userDocRef);
+
+      if(!userDoc.exists()){
+        alert("Username not found.");
+        return;
+      }
+
+  
+      const userData = userDoc.data();
+
+      const email = userData.email;
+
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/dashboard/home");
+
     } catch (error) {
       console.error("Error signing in:", error.message);
       setError("Failed to sign in. Please check your credentials and try again.");
@@ -41,7 +57,7 @@ export function SignIn() {
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">Sign In</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to sign in.</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your Username and Password to sign in.</Typography>
         </div>
         <form onSubmit={handleSignIn} className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
           <div className="mb-1 flex flex-col gap-6">
@@ -51,18 +67,18 @@ export function SignIn() {
               </Typography>
             )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
-              Your email
+              Your username
             </Typography>
             <Input
               size="lg"
-              placeholder="name@mail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            />
+            required/>
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Password
             </Typography>
@@ -76,7 +92,7 @@ export function SignIn() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            />
+            required/>
           </div>
           {error && <Typography color="red">{error}</Typography>}
           <Button className="mt-6" fullWidth type="submit">

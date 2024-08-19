@@ -8,16 +8,28 @@ export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setErrorMessage("");  
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/dashboard/home");
     } catch (error) {
+      console.log("Full error object:", error); 
+      switch (error.code) {
+        case 'auth/invalid-credential':
+          setErrorMessage("Invalid credentials. Please try again.");
+          break;
+        default:
+          setErrorMessage("An error occurred. Please try again.");
+      }
       console.error("Error signing in:", error);
     }
   };
+  
+  
   return (
     <section className="m-8 flex">
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
@@ -27,6 +39,11 @@ export function SignIn() {
         </div>
         <form onSubmit={handleSignIn} className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
           <div className="mb-1 flex flex-col gap-6">
+            {errorMessage && (
+              <Typography variant="small" color="red" className="mb-4">
+                {errorMessage}
+              </Typography>
+            )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
             </Typography>
@@ -59,7 +76,6 @@ export function SignIn() {
             Sign In
           </Button>
         </form>
-
       </div>
       <div className="w-2/5 h-full hidden lg:block">
         <img
@@ -69,6 +85,7 @@ export function SignIn() {
       </div>
     </section>
   );
+  
 }
 
 export default SignIn;

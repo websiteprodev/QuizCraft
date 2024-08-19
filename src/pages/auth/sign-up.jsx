@@ -18,7 +18,7 @@ export function SignUp() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [address, setAddress] = useState("");
-  const [role, setRole] = useState("student"); // "organizer" or "student"
+  const [role, setRole] = React.useState("react"); // "organizer" or "student"
   const navigate = useNavigate();
 
   const validateInputs = () =>{
@@ -230,7 +230,7 @@ export function SignUp() {
             <Select
               label="Role"
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => setRole(e)}
             >
               <Option value="student">Student</Option>
               <Option value="organizer">Organizer</Option>

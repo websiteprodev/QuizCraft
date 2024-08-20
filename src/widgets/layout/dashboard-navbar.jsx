@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import {
   Navbar,
@@ -25,7 +26,6 @@ import {
   setOpenConfigurator,
   setOpenSidenav,
 } from "@/context";
-import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/configs/firebase"; 
 
@@ -36,6 +36,7 @@ export function DashboardNavbar() {
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
 
   const [user, setUser] = useState(null);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -48,6 +49,15 @@ export function DashboardNavbar() {
   const handleSignOut = async () => {
     await signOut(auth);
   };
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', darkMode);
+  }, [darkMode]);
 
   return (
     <Navbar
@@ -71,7 +81,7 @@ export function DashboardNavbar() {
               <Typography
                 variant="small"
                 color="blue-gray"
-                className="font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100"
+                className="font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100 dark:text-[#e0e0e0]"
               >
                 {layout === "dashboard" ? "Home" : layout}
               </Typography>
@@ -79,50 +89,52 @@ export function DashboardNavbar() {
             <Typography
               variant="small"
               color="blue-gray"
-              className="font-normal"
+              className="font-normal dark:text-[#e0e0e0]"
             >
               {page || "Home"}
             </Typography>
           </Breadcrumbs>
-          <Typography variant="h6" color="blue-gray">
+          <Typography variant="h6" color="blue-gray" className="dark:text-[#e0e0e0]">
             {page === "home" ? "Home" : page || "Home"}
           </Typography>
         </div>
         <div className="flex items-center">
           {user && (
-            <Typography variant="h6" color="blue-gray" className="mr-4">
+            <Typography variant="h6" color="blue-gray" className="mr-4 dark:text-[#e0e0e0]">
               Welcome, {user.email}
             </Typography>
           )}
           <div className="mr-auto md:mr-4 md:w-56">
-            <Input label="Search" />
+            <Input label="Search" className="dark:text-gray-300 dark:bg-gray-800" />
           </div>
-          <IconButton
+
+          <Button
             variant="text"
             color="blue-gray"
-            className="grid xl:hidden"
-            onClick={() => setOpenSidenav(dispatch, !openSidenav)}
+            onClick={() => setDarkMode(!darkMode)}
+            className="hidden md:inline-flex items-center gap-1 px-4 normal-case dark:text-[#e0e0e0]"
           >
-            <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
-          </IconButton>
+            {darkMode ? "Light Mode" : "Dark Mode"}
+          </Button>
+
           {user ? (
             <>
               <Button
                 variant="text"
                 color="blue-gray"
-                className="hidden items-center gap-1 px-4 xl:flex normal-case"
+                className="hidden items-center gap-1 px-4 xl:flex normal-case dark:text-[#e0e0e0]"
                 onClick={handleSignOut}
               >
-                <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
+                <UserCircleIcon className="h-5 w-5 text-blue-gray-500 dark:text-[#e0e0e0]" />
                 Sign Out
               </Button>
               <IconButton
                 variant="text"
                 color="blue-gray"
-                className="grid xl:hidden"
+                className="grid xl:hidden dark:text-[#e0e0e0]"
                 onClick={handleSignOut}
               >
-                <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
+                <UserCircleIcon className="h-5 w-5 text-blue-gray-500 dark:text-[#e0e0e0]" />
               </IconButton>
             </>
           ) : (
@@ -130,28 +142,28 @@ export function DashboardNavbar() {
               <Button
                 variant="text"
                 color="blue-gray"
-                className="hidden items-center gap-1 px-4 xl:flex normal-case"
+                className="hidden items-center gap-1 px-4 xl:flex normal-case dark:text-[#e0e0e0]"
               >
-                <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
+                <UserCircleIcon className="h-5 w-5 text-blue-gray-500 dark:text-[#e0e0e0]" />
                 Sign In
               </Button>
               <IconButton
                 variant="text"
                 color="blue-gray"
-                className="grid xl:hidden"
+                className="grid xl:hidden dark:text-[#e0e0e0]"
               >
-                <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
+                <UserCircleIcon className="h-5 w-5 text-blue-gray-500 dark:text-[#e0e0e0]" />
               </IconButton>
             </Link>
           )}
           <Menu>
             <MenuHandler>
-              <IconButton variant="text" color="blue-gray">
-                <BellIcon className="h-5 w-5 text-blue-gray-500" />
+              <IconButton variant="text" color="blue-gray" className="dark:text-[#e0e0e0]">
+                <BellIcon className="h-5 w-5 text-blue-gray-500 dark:text-[#e0e0e0]" />
               </IconButton>
             </MenuHandler>
-            <MenuList className="w-max border-0">
-              <MenuItem className="flex items-center gap-3">
+            <MenuList className="w-max border-0 dark:bg-gray-800 dark:text-[#e0e0e0]">
+              <MenuItem className="flex items-center gap-3 dark:text-[#e0e0e0]">
                 <Avatar
                   src="https://demos.creative-tim.com/material-dashboard/assets/img/team-2.jpg"
                   alt="item-1"
@@ -162,20 +174,20 @@ export function DashboardNavbar() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="mb-1 font-normal"
+                    className="mb-1 font-normal dark:text-[#e0e0e0]"
                   >
                     <strong>New message</strong> from Laur
                   </Typography>
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="flex items-center gap-1 text-xs font-normal opacity-60"
+                    className="flex items-center gap-1 text-xs font-normal opacity-60 dark:text-gray-400"
                   >
                     <ClockIcon className="h-3.5 w-3.5" /> 13 minutes ago
                   </Typography>
                 </div>
               </MenuItem>
-              <MenuItem className="flex items-center gap-4">
+              <MenuItem className="flex items-center gap-4 dark:text-[#e0e0e0]">
                 <Avatar
                   src="https://demos.creative-tim.com/material-dashboard/assets/img/small-logos/logo-spotify.svg"
                   alt="item-1"
@@ -186,20 +198,20 @@ export function DashboardNavbar() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="mb-1 font-normal"
+                    className="mb-1 font-normal dark:text-[#e0e0e0]"
                   >
                     <strong>New album</strong> by Travis Scott
                   </Typography>
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="flex items-center gap-1 text-xs font-normal opacity-60"
+                    className="flex items-center gap-1 text-xs font-normal opacity-60 dark:text-gray-400"
                   >
                     <ClockIcon className="h-3.5 w-3.5" /> 1 day ago
                   </Typography>
                 </div>
               </MenuItem>
-              <MenuItem className="flex items-center gap-4">
+              <MenuItem className="flex items-center gap-4 dark:text-[#e0e0e0]">
                 <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-tr from-blue-gray-800 to-blue-gray-900">
                   <CreditCardIcon className="h-4 w-4 text-white" />
                 </div>
@@ -207,14 +219,14 @@ export function DashboardNavbar() {
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="mb-1 font-normal"
+                    className="mb-1 font-normal dark:text-[#e0e0e0]"
                   >
                     Payment successfully completed
                   </Typography>
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="flex items-center gap-1 text-xs font-normal opacity-60"
+                    className="flex items-center gap-1 text-xs font-normal opacity-60 dark:text-gray-400"
                   >
                     <ClockIcon className="h-3.5 w-3.5" /> 2 days ago
                   </Typography>
@@ -226,8 +238,9 @@ export function DashboardNavbar() {
             variant="text"
             color="blue-gray"
             onClick={() => setOpenConfigurator(dispatch, true)}
+            className="dark:text-[#e0e0e0]"
           >
-            <Cog6ToothIcon className="h-5 w-5 text-blue-gray-500" />
+            <Cog6ToothIcon className="h-5 w-5 text-blue-gray-500 dark:text-[#e0e0e0]" />
           </IconButton>
         </div>
       </div>

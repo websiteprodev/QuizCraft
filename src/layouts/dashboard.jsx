@@ -43,7 +43,7 @@ export function Home() {
               ))
           )}
         </Routes>
-        <div className="text-blue-gray-600">
+        <div className="text-blue-gray-600 dark:text-gray-300">
           <Footer />
         </div>
       </div>

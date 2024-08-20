@@ -207,7 +207,7 @@ export function Home() {
                       <Typography
                         variant="small"
                         color="gray" // Updated color
-                        className="font-medium"
+                        className="font-medium dark:text-blue-200"
                       >
                         {quiz.title}
                       </Typography>
@@ -216,7 +216,7 @@ export function Home() {
                       <Typography
                         variant="small"
                         color="gray" // Updated color
-                        className="font-medium"
+                       className="font-medium dark:text-blue-200"
                       >
                         {quiz.category}
                       </Typography>
@@ -225,7 +225,7 @@ export function Home() {
                       <Typography
                         variant="small"
                         color="gray" // Updated color
-                        className="font-medium"
+                       className="font-medium dark:text-blue-200"
                       >
                         {quiz.numberOfQuestions}
                       </Typography>
@@ -234,7 +234,7 @@ export function Home() {
                       <Typography
                         variant="small"
                         color="gray" // Updated color
-                        className="font-medium"
+                        className="font-medium dark:text-blue-200"
                       >
                         {new Date(quiz.createdAt.seconds * 1000).toLocaleDateString()}
                       </Typography>

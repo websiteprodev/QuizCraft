@@ -101,12 +101,12 @@ export function CreateQuiz() {
   return (
     <div className="p-6">
       {successMessage && (
-        <Typography variant="h6" color="green" className="mb-4">
+        <Typography variant="h6" color="green" className="mb-4 dark:text-green-400">
           {successMessage}
         </Typography>
       )}
-      <Typography variant="h4" className="mb-4">Create a New Quiz</Typography>
-      <Card className="p-6 space-y-6">
+      <Typography variant="h4" className="mb-4 dark:text-white-100">Create a New Quiz</Typography>
+      <Card className="p-6 space-y-6 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* General Information Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,13 +114,13 @@ export function CreateQuiz() {
               label="Quiz Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mb-4"
+              className="mb-4 dark:bg-gray-700 dark:text-gray-200"
             />
             <Input
               label="Category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="mb-4"
+              className="mb-4 dark:bg-gray-700 dark:text-gray-200"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -129,27 +129,27 @@ export function CreateQuiz() {
               type="number"
               value={timer}
               onChange={(e) => setTimer(Number(e.target.value))}
-              className="mb-6"
+              className="mb-6 dark:bg-gray-700 dark:text-gray-200"
             />
             <Switch
               id="random-questions"
               label="Random Questions"
               checked={randomQuestions}
               onChange={(e) => setRandomQuestions(e.target.checked)}
-              className="mb-6 flex items-center"
+              className="mb-6 flex items-center dark:text-gray-200"
             />
           </div>
 
           {/* Questions Section */}
           {questions.map((question, qIndex) => (
-            <div key={qIndex} className="mb-6 p-4 border rounded-lg space-y-4">
-              <Typography variant="h6" className="mb-4">Question {qIndex + 1}</Typography>
+            <div key={qIndex} className="mb-6 p-4 border rounded-lg space-y-4 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
+              <Typography variant="h6" className="mb-4 dark:text-gray-200">Question {qIndex + 1}</Typography>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Select
                   label="Question Type"
                   value={question.type}
                   onChange={(value) => handleQuestionTypeChange(qIndex, value)}
-                  className="mb-4"
+                  className="mb-4 dark:bg-gray-700 dark:text-gray-200"
                 >
                   <Option value="multiple-choice">Multiple Choice</Option>
                   <Option value="true-false">True/False</Option>
@@ -159,7 +159,7 @@ export function CreateQuiz() {
                   label={`Question ${qIndex + 1}`}
                   value={question.text}
                   onChange={(e) => handleInputChange(qIndex, e.target.value)}
-                  className="mb-4"
+                  className="mb-4 dark:bg-gray-700 dark:text-gray-200"
                 />
               </div>
               {question.type === "multiple-choice" && (
@@ -170,7 +170,7 @@ export function CreateQuiz() {
                       label={`Answer ${aIndex + 1}`}
                       value={answer}
                       onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
-                      className="mb-2"
+                      className="mb-2 dark:bg-gray-700 dark:text-gray-200"
                     />
                   ))}
                 </div>
@@ -180,14 +180,14 @@ export function CreateQuiz() {
                   label="Correct Answer"
                   value={question.correctAnswer}
                   onChange={(e) => handleCorrectAnswerChange(qIndex, e.target.value)}
-                  className="mb-2"
+                  className="mb-2 dark:bg-gray-700 dark:text-gray-200"
                 />
                 <Input
                   label="Points for this question"
                   type="number"
                   value={question.points}
                   onChange={(e) => handlePointsChange(qIndex, e.target.value)}
-                  className="mb-2"
+                  className="mb-2 dark:bg-gray-700 dark:text-gray-200"
                 />
               </div>
             </div>
@@ -195,10 +195,10 @@ export function CreateQuiz() {
 
           {/* Buttons Section */}
           <div className="flex justify-between items-center">
-            <Button type="button" onClick={addQuestion} className="mb-4">
+            <Button type="button" onClick={addQuestion} className="mb-4 dark:bg-gray-700 dark:text-gray-200">
               Add Another Question
             </Button>
-            <Button type="submit" color="blue">
+            <Button type="submit" color="blue" className="dark:bg-blue-800 dark:text-gray-200">
               Create Quiz
             </Button>
           </div>

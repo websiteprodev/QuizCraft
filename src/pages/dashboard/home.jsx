@@ -13,6 +13,7 @@ export function Home() {
   const [quizzes, setQuizzes] = useState([]);
   const [quizzesCount, setQuizzesCount] = useState(0);
   const [myQuizzesCount, setMyQuizzesCount] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -29,6 +30,16 @@ export function Home() {
     fetchQuizzes();
   }, []);
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const usersCount = usersSnapshot.size;
+
+      setTotalUsers(usersCount);
+    };
+
+    fetchUsers();
+  }, []);
   useEffect(() => {
     const fetchMyQuizzesCount = async (uid) => {
       const quizzesRef = collection(db, "quizzes");
@@ -52,12 +63,14 @@ export function Home() {
         return { ...card, value: quizzesCount.toString() };
       } else if (card.title === "My quizzes") {
         return { ...card, value: myQuizzesCount.toString() };
+      } else if (card.title ==="Total Users"){
+        return { ...card, value: totalUsers.toString()}
       }
       return card;
     });
 
     setLocalStatsData(updatedStats);
-  }, [quizzesCount, myQuizzesCount]);
+  }, [quizzesCount, myQuizzesCount, totalUsers]);
 
   return (
     <div className="mt-12">

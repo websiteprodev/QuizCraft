@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Card, CardHeader, CardBody, IconButton, Menu, MenuHandler, MenuList, MenuItem, Button } from "@material-tailwind/react";
-import { EllipsisVerticalIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { EllipsisVerticalIcon, CheckCircleIcon, PlayCircleIcon, PlayIcon } from "@heroicons/react/24/outline";
 import { StatisticsCard } from "@/widgets/cards";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import statisticsCardsData from "@/data/statistics-cards-data";
-import { PlayCircleIcon, PlayIcon, ScaleIcon } from "@heroicons/react/24/solid";
+import { ArrowDownRightIcon, ArrowLeftIcon, ArrowRightIcon, ScaleIcon } from "@heroicons/react/24/solid";
 
 export function Home() {
   const [localStatsData, setLocalStatsData] = useState(statisticsCardsData);
@@ -15,6 +15,8 @@ export function Home() {
   const [quizzesCount, setQuizzesCount] = useState(0);
   const [myQuizzesCount, setMyQuizzesCount] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const quizzesPerPage = 6;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,13 +69,31 @@ export function Home() {
       } else if (card.title === "My quizzes") {
         return { ...card, value: myQuizzesCount.toString() };
       } else if (card.title === "Total Users") {
-        return { ...card, value: totalUsers.toString() }
+        return { ...card, value: totalUsers.toString() };
       }
       return card;
     });
 
     setLocalStatsData(updatedStats);
   }, [quizzesCount, myQuizzesCount, totalUsers]);
+
+  const indexOfLastQuiz = currentPage * quizzesPerPage;
+  const indexOfFirstQuiz = indexOfLastQuiz - quizzesPerPage;
+  const currentQuizzes = quizzes.slice(indexOfFirstQuiz, indexOfLastQuiz);
+
+  const totalPages = Math.ceil(quizzes.length / quizzesPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="mt-12">
@@ -154,44 +174,74 @@ export function Home() {
                 </tr>
               </thead>
               <tbody>
-                {quizzes.map((quiz) => (
+                {currentQuizzes.map((quiz) => (
                   <tr key={quiz.id}>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
-                      <Typography variant="small" color="blue-gray" className="font-medium">
+                      <Typography variant="small" color="black-grey" className="font-medium">
                         {quiz.title}
                       </Typography>
                     </td>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
-                      <Typography variant="small" color="blue-gray" className="font-medium">
+                      <Typography variant="small" color="black-grey" className="font-medium">
                         {quiz.category}
                       </Typography>
                     </td>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
-                      <Typography variant="small" color="blue-gray" className="font-medium">
+                      <Typography variant="small" color="black-grey" className="font-medium">
                         {quiz.numberOfQuestions}
                       </Typography>
                     </td>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
-                      <Typography variant="small" color="blue-gray" className="font-medium">
+                      <Typography variant="small" color="black-grey" className="font-medium">
                         {new Date(quiz.createdAt.seconds * 1000).toLocaleDateString()}
                       </Typography>
                     </td>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
                       <Button
                         variant="gradient"
-                        color="black"
+                        color="green"
                         onClick={() => navigate(`/dashboard/quiz/${quiz.id}`)}
                       >
                         <PlayIcon
-                          strokeWidth={2}
-                          className="h-3.5 w-3.5 text-white-500"
+                          stroke="white"
+                          fill="white" 
+                          strokeWidth={2  }
+                          className="h-3 w-3" 
                         />
                       </Button>
+
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-between items-center mt-4">
+              <Button
+                variant="text"
+                color="blue-gray"
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+              >
+                <ArrowLeftIcon
+                  strokeWidth={2}
+                  className="h-4 w-4 text-black-500"
+                />
+              </Button>
+              <Typography variant="small">
+                Page {currentPage} of {totalPages}
+              </Typography>
+              <Button
+                variant="text"
+                color="blue-gray"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
+                <ArrowRightIcon
+                  strokeWidth={2}
+                  className="h-4 w-4 text-black-500"
+                />
+              </Button>
+            </div>
           </CardBody>
         </Card>
         <Card className="border border-blue-gray-100 shadow-sm">
@@ -215,6 +265,7 @@ export function Home() {
               <strong>Your ranking is:</strong> user.ranking
             </Typography>
           </CardHeader>
+
         </Card>
       </div>
     </div>

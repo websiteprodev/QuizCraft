@@ -28,6 +28,7 @@ import {
 } from "@/context";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/configs/firebase"; 
+import { useNavigate } from "react-router-dom";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -37,6 +38,7 @@ export function DashboardNavbar() {
 
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -48,6 +50,7 @@ export function DashboardNavbar() {
 
   const handleSignOut = async () => {
     await signOut(auth);
+    navigate('/auth/sign-in');
   };
 
   useEffect(() => {

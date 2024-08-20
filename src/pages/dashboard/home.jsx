@@ -1,13 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Card, CardHeader, CardBody, IconButton, Menu, MenuHandler, MenuList, MenuItem, Button } from "@material-tailwind/react";
-import { EllipsisVerticalIcon, CheckCircleIcon, PlayCircleIcon, PlayIcon } from "@heroicons/react/24/outline";
+import {
+  Typography,
+  Card,
+  CardHeader,
+  CardBody,
+  IconButton,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
+  Button,
+} from "@material-tailwind/react";
+import {
+  EllipsisVerticalIcon,
+  CheckCircleIcon,
+  PlayCircleIcon,
+  PlayIcon,
+} from "@heroicons/react/24/outline";
 import { StatisticsCard } from "@/widgets/cards";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import statisticsCardsData from "@/data/statistics-cards-data";
-import { ArrowDownRightIcon, ArrowLeftIcon, ArrowRightIcon, ScaleIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowDownRightIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ScaleIcon,
+} from "@heroicons/react/24/solid";
 
 export function Home() {
   const [localStatsData, setLocalStatsData] = useState(statisticsCardsData);
@@ -22,7 +43,7 @@ export function Home() {
   useEffect(() => {
     const fetchQuizzes = async () => {
       const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
-      const quizzesList = quizzesSnapshot.docs.map(doc => ({
+      const quizzesList = quizzesSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -133,7 +154,10 @@ export function Home() {
                 variant="small"
                 className="flex items-center gap-1 font-normal text-blue-gray-600"
               >
-                <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
+                <CheckCircleIcon
+                  strokeWidth={3}
+                  className="h-4 w-4 text-blue-gray-200"
+                />
                 <strong>{quizzes.length} new</strong> this month
               </Typography>
             </div>
@@ -158,7 +182,13 @@ export function Home() {
             <table className="w-full min-w-[640px] table-auto">
               <thead>
                 <tr>
-                  {["Quizzes", "Category", "Total Questions", "Date", "Action"].map((el) => (
+                  {[
+                    "Quizzes",
+                    "Category",
+                    "Total Questions",
+                    "Date",
+                    "Action",
+                  ].map((el) => (
                     <th
                       key={el}
                       className="border-b border-blue-gray-50 py-3 px-6 text-left"
@@ -177,22 +207,38 @@ export function Home() {
                 {currentQuizzes.map((quiz) => (
                   <tr key={quiz.id}>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
-                      <Typography variant="small" color="black-grey" className="font-medium">
+                      <Typography
+                        variant="small"
+                        color="gray" // Updated color
+                        className="font-medium"
+                      >
                         {quiz.title}
                       </Typography>
                     </td>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
-                      <Typography variant="small" color="black-grey" className="font-medium">
+                      <Typography
+                        variant="small"
+                        color="gray" // Updated color
+                        className="font-medium"
+                      >
                         {quiz.category}
                       </Typography>
                     </td>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
-                      <Typography variant="small" color="black-grey" className="font-medium">
+                      <Typography
+                        variant="small"
+                        color="gray" // Updated color
+                        className="font-medium"
+                      >
                         {quiz.numberOfQuestions}
                       </Typography>
                     </td>
                     <td className="border-b border-blue-gray-50 py-3 px-6">
-                      <Typography variant="small" color="black-grey" className="font-medium">
+                      <Typography
+                        variant="small"
+                        color="gray" // Updated color
+                        className="font-medium"
+                      >
                         {new Date(quiz.createdAt.seconds * 1000).toLocaleDateString()}
                       </Typography>
                     </td>
@@ -204,12 +250,11 @@ export function Home() {
                       >
                         <PlayIcon
                           stroke="white"
-                          fill="white" 
-                          strokeWidth={2  }
-                          className="h-3 w-3" 
+                          fill="white"
+                          strokeWidth={2}
+                          className="h-3 w-3"
                         />
                       </Button>
-
                     </td>
                   </tr>
                 ))}
@@ -265,7 +310,6 @@ export function Home() {
               <strong>Your ranking is:</strong> user.ranking
             </Typography>
           </CardHeader>
-
         </Card>
       </div>
     </div>

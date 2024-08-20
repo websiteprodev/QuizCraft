@@ -88,11 +88,11 @@ export function Profile({}) {
   }
   return (
     <>
-      <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
+      <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover bg-center">
         <div className="absolute inset-0 h-full w-full bg-gray-900/75" />
       </div>
-      <Card className="mx-3 -mt-16 mb-6 lg:mx-4 border border-blue-gray-100">
-        <CardBody className="p-4">
+      <Card className="mx-3 -mt-16 mb-6 lg:mx-4 border border-blue-gray-100 dark:border-gray-700">
+        <CardBody className="p-4 dark:bg-gray-800">
           <div className="mb-10 flex items-center justify-between flex-wrap gap-6">
             <div className="flex items-center gap-6">
               <Avatar
@@ -103,12 +103,12 @@ export function Profile({}) {
                 className="rounded-lg shadow-lg shadow-blue-gray-500/40"
               />
               <div>
-                <Typography variant="h5" color="blue-gray" className="mb-1">
+                <Typography variant="h5" color="blue-gray" className="mb-1 dark:text-gray-100">
                   Richard Davis
                 </Typography>
                 <Typography
                   variant="small"
-                  className="font-normal text-blue-gray-600"
+                  className="font-normal text-blue-gray-600 dark:text-gray-300"
                 >
                   CEO / Co-Founder
                 </Typography>
@@ -118,15 +118,15 @@ export function Profile({}) {
               <Tabs value="app">
                 <TabsHeader>
                   <Tab value="app">
-                    <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
+                    <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5 dark:text-gray-100" />
                     App
                   </Tab>
                   <Tab value="message">
-                    <ChatBubbleLeftEllipsisIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
+                    <ChatBubbleLeftEllipsisIcon className="-mt-0.5 mr-2 inline-block h-5 w-5 dark:text-gray-100" />
                     Message
                   </Tab>
                   <Tab value="settings">
-                    <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
+                    <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5 dark:text-gray-100" />
                     Settings
                   </Tab>
                 </TabsHeader>
@@ -135,13 +135,13 @@ export function Profile({}) {
           </div>
           <div className="gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3">
             <div>
-              <Typography variant="h6" color="blue-gray" className="mb-3">
+              <Typography variant="h6" color="blue-gray" className="mb-3 dark:text-gray-100">
                 Platform Settings
               </Typography>
               <div className="flex flex-col gap-12">
                 {platformSettingsData.map(({ title, options }) => (
                   <div key={title}>
-                    <Typography className="mb-4 block text-xs font-semibold uppercase text-blue-gray-500">
+                    <Typography className="mb-4 block text-xs font-semibold uppercase text-blue-gray-500 dark:text-gray-400">
                       {title}
                     </Typography>
                     <div className="flex flex-col gap-6">
@@ -152,7 +152,7 @@ export function Profile({}) {
                           label={label}
                           defaultChecked={checked}
                           labelProps={{
-                            className: "text-sm font-normal text-blue-gray-500",
+                            className: "text-sm font-normal text-blue-gray-500 dark:text-gray-300",
                           }}
                         />
                       ))}
@@ -171,20 +171,20 @@ export function Profile({}) {
                 location: "USA",
                 social: (
                   <div className="flex items-center gap-4">
-                    <i className="fa-brands fa-facebook text-blue-700" />
-                    <i className="fa-brands fa-twitter text-blue-400" />
-                    <i className="fa-brands fa-instagram text-purple-500" />
+                    <i className="fa-brands fa-facebook text-blue-700 dark:text-blue-500" />
+                    <i className="fa-brands fa-twitter text-blue-400 dark:text-blue-300" />
+                    <i className="fa-brands fa-instagram text-purple-500 dark:text-purple-400" />
                   </div>
                 ),
               }}
               action={
                 <Tooltip content="Edit Profile">
-                  <PencilIcon className="h-4 w-4 cursor-pointer text-blue-gray-500" />
+                  <PencilIcon className="h-4 w-4 cursor-pointer text-blue-gray-500 dark:text-gray-300" />
                 </Tooltip>
               }
             />
             <div>
-              <Typography variant="h6" color="blue-gray" className="mb-3">
+              <Typography variant="h6" color="blue-gray" className="mb-3 dark:text-gray-100">
                 Platform Settings
               </Typography>
               <ul className="flex flex-col gap-6">
@@ -193,7 +193,7 @@ export function Profile({}) {
                     key={props.name}
                     {...props}
                     action={
-                      <Button variant="text" size="sm">
+                      <Button variant="text" size="sm" className="dark:text-gray-300">
                         reply
                       </Button>
                     }
@@ -290,23 +290,23 @@ export function Profile({}) {
       </form>
     </section>
           <div className="px-4 pb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-2">
+            <Typography variant="h6" color="blue-gray" className="mb-2 dark:text-gray-100">
               Projects
             </Typography>
             <Typography
               variant="small"
-              className="font-normal text-blue-gray-500"
+              className="font-normal text-blue-gray-500 dark:text-gray-300"
             >
               Architects design houses
             </Typography>
             <div className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-4">
               {projectsData.map(
                 ({ img, title, description, tag, route, members }) => (
-                  <Card key={title} color="transparent" shadow={false}>
+                  <Card key={title} color="transparent" shadow={false} className="dark:bg-gray-800">
                     <CardHeader
                       floated={false}
                       color="gray"
-                      className="mx-0 mt-0 mb-4 h-64 xl:h-40"
+                      className="mx-0 mt-0 mb-4 h-64 xl:h-40 dark:bg-gray-900"
                     >
                       <img
                         src={img}
@@ -317,27 +317,27 @@ export function Profile({}) {
                     <CardBody className="py-0 px-1">
                       <Typography
                         variant="small"
-                        className="font-normal text-blue-gray-500"
+                        className="font-normal text-blue-gray-500 dark:text-gray-300"
                       >
                         {tag}
                       </Typography>
                       <Typography
                         variant="h5"
                         color="blue-gray"
-                        className="mt-1 mb-2"
+                        className="mt-1 mb-2 dark:text-gray-100"
                       >
                         {title}
                       </Typography>
                       <Typography
                         variant="small"
-                        className="font-normal text-blue-gray-500"
+                        className="font-normal text-blue-gray-500 dark:text-gray-300"
                       >
                         {description}
                       </Typography>
                     </CardBody>
                     <CardFooter className="mt-6 flex items-center justify-between py-0 px-1">
                       <Link to={route}>
-                        <Button variant="outlined" size="sm">
+                        <Button variant="outlined" size="sm" className="dark:text-gray-300">
                           view project
                         </Button>
                       </Link>
@@ -351,7 +351,7 @@ export function Profile({}) {
                               variant="circular"
                               className={`cursor-pointer border-2 border-white ${
                                 key === 0 ? "" : "-ml-2.5"
-                              }`}
+                              } dark:border-gray-700`}
                             />
                           </Tooltip>
                         ))}

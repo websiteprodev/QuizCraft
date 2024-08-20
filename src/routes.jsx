@@ -1,4 +1,16 @@
-import { HomeIcon, UserCircleIcon, TableCellsIcon, InformationCircleIcon, PlusCircleIcon, PuzzlePieceIcon, MagnifyingGlassIcon, AcademicCapIcon, ServerStackIcon, RectangleStackIcon } from "@heroicons/react/24/solid";
+import { 
+  HomeIcon, 
+  UserCircleIcon, 
+  TableCellsIcon, 
+  InformationCircleIcon, 
+  PlusCircleIcon, 
+  PuzzlePieceIcon, 
+  MagnifyingGlassIcon, 
+  AcademicCapIcon, 
+  ServerStackIcon, 
+  RectangleStackIcon,
+  UsersIcon  // Добави иконата за групите
+} from "@heroicons/react/24/solid";
 import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import CreateQuiz from "@/pages/dashboard/CreateQuiz";
@@ -7,6 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BrowseQuizzes from "@/pages/dashboard/BrowseQuizzes";
 import TakeQuiz from "@/pages/dashboard/TakeQuiz";
 import SampleQuiz from "@/pages/dashboard/SampleQuiz";
+import GroupList from "@/pages/dashboard/GroupList"; // Импортирай новия компонент
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -71,6 +84,16 @@ export const routes = [
         name: "sample quiz",
         path: "/sample-quiz",
         element: <SampleQuiz />,
+      },
+      {
+        icon: <UsersIcon {...icon} />, // Добави новия маршрут
+        name: "groups",
+        path: "/groups",
+        element: (
+          <ProtectedRoute>
+            <GroupList />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

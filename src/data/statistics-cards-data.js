@@ -23,7 +23,7 @@ export const statisticsCardsData = [
     color: "gray",
     icon: CheckCircleIcon,
     title: "Online Users",
-    value: "7",
+    value: "1",
     footer: {
      
     },

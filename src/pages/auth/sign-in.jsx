@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { Input, Button, Typography } from "@material-tailwind/react";
+import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "@/configs/firebase";
-import {collection, query, where, getDoc, doc} from "firebase/firestore";
+import { getDoc, doc } from "firebase/firestore";
 
 export function SignIn() {
   const [username, setUsername] = useState("");
@@ -99,6 +99,10 @@ export function SignIn() {
             Sign In
           </Button>
         </form>
+        <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
+            Do not have an account?
+            <Link to="/auth/sign-up" className="text-gray-900 ml-1">Register</Link>
+          </Typography>
       </div>
       <div className="w-2/5 h-full hidden lg:block">
         <img

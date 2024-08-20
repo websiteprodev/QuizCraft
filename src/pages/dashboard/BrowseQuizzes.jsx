@@ -27,24 +27,28 @@ export function BrowseQuizzes() {
     );
 
     return (
-        <div className="p-6">
-            <Typography variant="h4" className="mb-4">Browse Quizzes</Typography>
+        <div className="p-6  dark:text-gray-100">
+            <Typography variant="h4" className="mb-4 dark:text-gray-100">Browse Quizzes</Typography>
             <Input
                 label="Search Quizzes"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="mb-6"
+                className="mb-6 dark:bg-gray-700 dark:text-gray-200"
             />
             {filteredQuizzes.length > 0 ? (
                 filteredQuizzes.map((quiz) => (
-                    <Card key={quiz.id} className="p-4 mb-4">
-                        <Typography variant="h6" className="mb-2">{quiz.title}</Typography>
-                        <Typography variant="paragraph" color="gray">Category: {quiz.category}</Typography>
-                        <Typography variant="paragraph" color="gray">Questions: {quiz.numberOfQuestions}</Typography>
+                    <Card key={quiz.id} className="p-4 mb-4 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700">
+                        <Typography variant="h6" className="mb-2 dark:text-gray-100">{quiz.title}</Typography>
+                        <Typography variant="paragraph" color="gray" className="dark:text-gray-400">
+                            Category: {quiz.category}
+                        </Typography>
+                        <Typography variant="paragraph" color="gray" className="dark:text-gray-400">
+                            Questions: {quiz.numberOfQuestions}
+                        </Typography>
                         <Button
                             variant="gradient"
                             color="blue"
-                            className="mt-4"
+                            className="mt-4 dark:bg-blue-800 dark:text-gray-100"
                             onClick={() => navigate(`/dashboard/quiz/${quiz.id}`)}
                         >
                             Take Quiz
@@ -52,7 +56,7 @@ export function BrowseQuizzes() {
                     </Card>
                 ))
             ) : (
-                <Typography>No quizzes found.</Typography>
+                <Typography className="dark:text-gray-400">No quizzes found.</Typography>
             )}
         </div>
     );

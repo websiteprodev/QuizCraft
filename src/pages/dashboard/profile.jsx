@@ -1,15 +1,91 @@
-import { Card, CardBody, CardHeader, CardFooter, Avatar, Typography, Tabs, TabsHeader, Tab, Switch, Tooltip, Button, } from "@material-tailwind/react";
+import { Card, CardBody, CardHeader, CardFooter, Avatar, Typography, Tabs, TabsHeader, Tab, Switch, Tooltip, Button, Input, } from "@material-tailwind/react";
 import { HomeIcon, ChatBubbleLeftEllipsisIcon, Cog6ToothIcon, PencilIcon, } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { ProfileInfoCard, MessageCard } from "@/widgets/cards";
 import { platformSettingsData, conversationsData, projectsData } from "@/data";
 import {getDoc, doc, updateDoc, query, where, getDocs, collection} from "firebase/firestore";
 import React, {useState, useEffect} from 'react';
-import { db } from "@/configs/firebase";
+import { db, storage } from "@/configs/firebase";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/authContext";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-export function Profile({username}) {
+export function Profile({}) {
+  const {user} = useAuth();
+  const [userData, setUserData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    photoURL: '',
+    address: '',
+    role: ''
+  });
 
+  const [error, setError] = useState('');
+  const [file, setFile] = useState(null);
+
+  useEffect(() =>{
+    if(user){
+      setUserData({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        address: user.address,
+        photoURL: user.photoURL,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+       });
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    setUserData({...userData, [name]: value,});
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  }
+
+  const handleSubmit = async (e) =>{
+    e.preventDefault();
+    setError('');
+
+    try{
+      const userDocRef = doc(db, "users", user.username);
+      let updatedPhotoURL = userData.photoURL;
+
+      if(file){
+        const storageRef = ref(storage, `profileImages/${user.username}`);
+        await uploadBytes(storageRef, file);
+        updatedPhotoURL = await getDownloadURL(storageRef);
+      }
+
+      const phoneQuery = query(collection(db, "users"), where("phoneNumber", "==", userData.phoneNumber));
+      const phoneQuerySnapshot = await getDocs(phoneQuery);
+
+      if(!phoneQuerySnapshot.empty && phoneQuerySnapshot.docs[0].id !== user.username){
+        alert("Phone number is already in use by another user.");
+        throw new Error("Phone number is already in use by another user.")
+        
+      }
+
+      await updateDoc(userDocRef, {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        address: userData.address,
+        photoURL: updatedPhotoURL,
+        phoneNumber: userData.phoneNumber 
+      });
+
+      alert('Profile updated successfully');
+
+    }catch(error){
+      console.error("Error updating profile:", error);
+      setError('Failed to update profile. Please try again.');
+    }
+  }
   return (
     <>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
@@ -126,6 +202,93 @@ export function Profile({username}) {
               </ul>
             </div>
           </div>
+          <section className="m-8 flex flex-col items-center justify-center">
+      <div className="text-center mb-6">
+        <Typography variant="h2" className="font-bold">Edit Profile</Typography>
+      </div>
+      <form onSubmit={handleSubmit} className="w-80 max-w-screen-lg lg:w-1/2">
+        <div className="mb-6 flex flex-col gap-6">
+          {error && <Typography color="red">{error}</Typography>}
+          <div>
+            <Typography variant="small" color="blue-gray" className="font-medium">Username</Typography>
+            <Input
+              size="lg"
+              name="username"
+              value={user.username} // Display the document ID as the username
+              disabled // Username is displayed but not editable
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+            />
+          </div>
+          <div>
+            <Typography variant="small" color="blue-gray" className="font-medium">First Name</Typography>
+            <Input
+              size="lg"
+              name="firstName"
+              value={userData.firstName}
+              onChange={handleChange}
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+            />
+          </div>
+          <div>
+            <Typography variant="small" color="blue-gray" className="font-medium">Last Name</Typography>
+            <Input
+              size="lg"
+              name="lastName"
+              value={userData.lastName}
+              onChange={handleChange}
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+            />
+          </div>
+          <div>
+            <Typography variant="small" color="blue-gray" className="font-medium">Email</Typography>
+            <Input
+              size="lg"
+              name="email"
+              value={userData.email}
+              disabled
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+            />
+          </div>
+          <div>
+            <Typography variant="small" color="blue-gray" className="font-medium">Address</Typography>
+            <Input
+              size="lg"
+              name="address"
+              value={userData.address}
+              onChange={handleChange}
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+            />
+          </div>
+          <div>
+            <Typography variant="small" color="blue-gray" className="font-medium">Phone Number</Typography>
+            <Input
+              size="lg"
+              name="phoneNumber"
+              value={userData.phoneNumber}
+              onChange={handleChange} // Phone number is now editable
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+            />
+          </div>
+          <div>
+            <Typography variant="small" color="blue-gray" className="font-medium">Profile Picture</Typography>
+            <Input
+              size="lg"
+              type="file"
+              onChange={handleFileChange}
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+            />
+          </div>
+          {userData.photoURL && (
+            <div className="mt-4">
+              <img src={userData.photoURL} alt="Profile" className="w-32 h-32 rounded-full mx-auto" />
+            </div>
+          )}
+        </div>
+        <Button className="mt-6" fullWidth type="submit">
+          Save Changes
+        </Button>
+      </form>
+    </section>
           <div className="px-4 pb-4">
             <Typography variant="h6" color="blue-gray" className="mb-2">
               Projects

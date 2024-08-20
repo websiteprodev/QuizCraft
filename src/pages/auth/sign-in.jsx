@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "@/configs/firebase";
 import { getDoc, doc } from "firebase/firestore";
 
+
 export function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Button, Typography } from "@material-tailwind/react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/configs/firebase";
+import { fetchQuizById, recordQuizScore } from "@/services/quizService"; 
+import { auth } from "@/configs/firebase";
 
 export function TakeQuiz() {
-    const { id } = useParams();
+    const { id } = useParams();  
     const [quiz, setQuiz] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -13,19 +13,15 @@ export function TakeQuiz() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchQuiz = async () => {
+        const loadQuiz = async () => {
             try {
-                const quizDoc = await getDoc(doc(db, "quizzes", id));
-                if (quizDoc.exists()) {
-                    setQuiz(quizDoc.data());
-                } else {
-                    console.error("No such quiz!");
-                }
+                const quizData = await fetchQuizById(id);
+                setQuiz(quizData);
             } catch (error) {
                 console.error("Error fetching quiz:", error);
             }
         };
-        fetchQuiz();
+        loadQuiz();
     }, [id]);
 
     const handleNextQuestion = () => {
@@ -36,7 +32,21 @@ export function TakeQuiz() {
         if (currentQuestionIndex < quiz.questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            navigate(`/dashboard/quiz/${id}/result`, { state: { score } });
+            saveScore(); 
+        }
+    };
+
+    const saveScore = async () => {
+        const user = auth.currentUser;
+        if (user) {
+            try {
+                await recordQuizScore(id, user.email, score);
+                navigate(`/dashboard/quiz/${id}/result`, { state: { score } });
+            } catch (error) {
+                console.error("Error recording score:", error);
+            }
+        } else {
+            console.error("User is not logged in");
         }
     };
 

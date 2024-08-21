@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "@/configs/firebase";
@@ -27,8 +27,13 @@ export function SignIn() {
         return;
       }
 
-  
       const userData = userDoc.data();
+
+      // Проверка дали потребителят е блокиран
+      if (userData.isBlocked) {
+        alert("This account is blocked.");
+        return;
+      }
 
       const email = userData.email;
 

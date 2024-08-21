@@ -93,6 +93,7 @@ export function SignUp() {
         address,
         role,
         uid: user.uid,
+        isBlocked: false, // Добавяне на isBlocked поле
       });
 
       navigate("/auth/sign-in");
@@ -277,4 +278,3 @@ export function SignUp() {
 }
 
 export default SignUp;
-

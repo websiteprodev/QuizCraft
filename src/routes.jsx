@@ -19,7 +19,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BrowseQuizzes from "@/pages/dashboard/BrowseQuizzes";
 import TakeQuiz from "@/pages/dashboard/TakeQuiz";
 import SampleQuiz from "@/pages/dashboard/SampleQuiz";
-import GroupList from "@/pages/dashboard/GroupList"; // Импортирай новия компонент
+import GroupList from "@/pages/dashboard/GroupList"; 
+import { UserManagement } from "@/admin/UserManagement";
+
+
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -29,6 +32,7 @@ export const routes = [
   {
     layout: "dashboard",
     pages: [
+      
       {
         icon: <HomeIcon {...icon} />,
         name: "home",
@@ -41,6 +45,19 @@ export const routes = [
         path: "/profile",
         element: <Profile />,
       },
+      
+      {
+        icon: <UsersIcon {...icon} />,
+        name: "user management",
+        path: "/user-management",
+        element: (
+          <ProtectedRoute>
+            <UserManagement />
+          </ProtectedRoute>
+        ),
+      },
+      
+      
       {
         icon: <TableCellsIcon {...icon} />,
         name: "tables",
@@ -86,7 +103,7 @@ export const routes = [
         element: <SampleQuiz />,
       },
       {
-        icon: <UsersIcon {...icon} />, // Добави новия маршрут
+        icon: <UsersIcon {...icon} />,
         name: "groups",
         path: "/groups",
         element: (

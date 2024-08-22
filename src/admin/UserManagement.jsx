@@ -18,11 +18,16 @@ export function UserManagement() {
         setLoading(true);
         try {
             const querySnapshot = await getDocs(collection(db, 'users'));
-            let fetchedUsers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            let fetchedUsers = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
 
             if (searchTerm) {
-                fetchedUsers = fetchedUsers.filter(user => 
-                    user.firstName?.toLowerCase().includes(searchTerm.toLowerCase())
+                fetchedUsers = fetchedUsers.filter((user) =>
+                    user.firstName
+                        ?.toLowerCase()
+                        .includes(searchTerm.toLowerCase()),
                 );
             }
 
@@ -39,18 +44,18 @@ export function UserManagement() {
             await updateDoc(doc(db, 'users', userId), {
                 isBlocked: true,
             });
-            fetchUsers();  
+            fetchUsers();
         } catch (error) {
             console.error('Error blocking user:', error);
         }
     };
-    
+
     const unblockUser = async (userId) => {
         try {
             await updateDoc(doc(db, 'users', userId), {
                 isBlocked: false,
             });
-            fetchUsers();  
+            fetchUsers();
         } catch (error) {
             console.error('Error unblocking user:', error);
         }
@@ -58,20 +63,22 @@ export function UserManagement() {
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
-        setCurrentPage(1); 
+        setCurrentPage(1);
     };
 
     const handleNextPage = () => {
-        setCurrentPage(prevPage => prevPage + 1);
+        setCurrentPage((prevPage) => prevPage + 1);
     };
 
     const handlePreviousPage = () => {
-        setCurrentPage(prevPage => prevPage - 1);
+        setCurrentPage((prevPage) => prevPage - 1);
     };
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
-            <Typography variant="h4" className="mb-4 text-gray-800">User Management</Typography>
+            <Typography variant="h4" className="mb-4 text-gray-800">
+                User Management
+            </Typography>
             <Input
                 label="Search Users"
                 value={searchTerm}
@@ -82,27 +89,41 @@ export function UserManagement() {
             <div className="mb-6">
                 {loading ? (
                     <Typography>Loading...</Typography>
-                ) : (
-                    users.length > 0 ? (
-                        users.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage).map((user) => (
-                            <Card key={user.id} className="p-4 mb-4 flex justify-between items-center bg-white shadow-md">
+                ) : users.length > 0 ? (
+                    users
+                        .slice(
+                            (currentPage - 1) * usersPerPage,
+                            currentPage * usersPerPage,
+                        )
+                        .map((user) => (
+                            <Card
+                                key={user.id}
+                                className="p-4 mb-4 flex justify-between items-center bg-white shadow-md"
+                            >
                                 <div>
-                                    <Typography variant="h6" color="blue-gray">{user.firstName || 'No Name'}</Typography>
-                                    <Typography variant="body2" color="gray">Email: {user.email || 'No Email'}</Typography>
-                                    <Typography variant="body2" color="gray">Status: {user.isBlocked ? "Blocked" : "Active"}</Typography>
+                                    <Typography variant="h6" color="blue-gray">
+                                        {user.firstName || 'No Name'}
+                                    </Typography>
+                                    <Typography variant="body2" color="gray">
+                                        Email: {user.email || 'No Email'}
+                                    </Typography>
+                                    <Typography variant="body2" color="gray">
+                                        Status:{' '}
+                                        {user.isBlocked ? 'Blocked' : 'Active'}
+                                    </Typography>
                                 </div>
                                 <div>
                                     {user.isBlocked ? (
-                                        <Button 
-                                            onClick={() => unblockUser(user.id)} 
+                                        <Button
+                                            onClick={() => unblockUser(user.id)}
                                             color="green"
                                             className="bg-green-500 hover:bg-green-600 text-white"
                                         >
                                             Unblock
                                         </Button>
                                     ) : (
-                                        <Button 
-                                            onClick={() => blockUser(user.id)} 
+                                        <Button
+                                            onClick={() => blockUser(user.id)}
                                             color="red"
                                             className="bg-red-500 hover:bg-red-600 text-white"
                                         >
@@ -112,22 +133,21 @@ export function UserManagement() {
                                 </div>
                             </Card>
                         ))
-                    ) : (
-                        <Typography>No users found.</Typography>
-                    )
+                ) : (
+                    <Typography>No users found.</Typography>
                 )}
             </div>
             <div className="flex justify-between">
-                <Button 
-                    onClick={handlePreviousPage} 
+                <Button
+                    onClick={handlePreviousPage}
                     disabled={currentPage === 1}
                     className="bg-blue-500 hover:bg-blue-600 text-white"
                 >
                     Previous
                 </Button>
-                <Button 
-                    onClick={handleNextPage} 
-                    disabled={(currentPage * usersPerPage) >= users.length}
+                <Button
+                    onClick={handleNextPage}
+                    disabled={currentPage * usersPerPage >= users.length}
                     className="bg-blue-500 hover:bg-blue-600 text-white"
                 >
                     Next

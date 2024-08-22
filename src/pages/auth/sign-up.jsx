@@ -12,8 +12,6 @@ export function SignUp() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -21,57 +19,53 @@ export function SignUp() {
   const [profileImage, setProfileImage] = useState(null); // File input for image
   const [address, setAddress] = useState("");
   const [role, setRole] = React.useState("react"); // "organizer" or "student"
-  const [errors, setErros] = useState("react");
+  const [errors, setErrors] = useState("react");
   const navigate = useNavigate();
 
   const validateInputs = () =>{
+    const newErrors = {};
     const nameRegex = /^[A-Za-z]{1,30}$/;
     const phoneRegex = /^[0-9]{10}$/;
 
-    if(!nameRegex.test(firstName) || !nameRegex.test(lastName)){
-      alert("First and last names must only contain letters and be between 1 and 30 characters ");
-      return false;
+    if(!nameRegex.test(firstName)){
+      newErrors.firstName = "First name must only contain letters and be between 1 and 30 characters ";
+    }
+    if(!nameRegex.test(lastName)){
+      newErrors.lastName = "Last names must only contain letters and be between 1 and 30 characters ";
     }
     if(username.length < 3 || username.length > 30){
-      alert("Username must be between 3 and 30 characters.");
-      return false;
+      newErrors.username = "Username must be between 3 and 30 characters.";
     }
     if(!phoneRegex.test(phoneNumber)){
-      alert("Phone number must be exactly 10 digits.");
-      return false;
+      newErrors.phoneNumber = "Phone number must be exactly 10 digits.";
     }
-    return true;
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      newErrors.email = "Invalid email format.";
+    }
+
+    if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters long.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
      if(!validateInputs()) return;
-    
-    setEmailError("");
-    setPasswordError("");
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailError("Invalid email format.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters long.");
-      return;
-    }
-
    
    try {
       const usernameSnapshot = await getDocs(query(collection(db, "users"), where("username", "==", username)));
       if(!usernameSnapshot.empty){
-        alert("Username is already taken.");
+        setErrors((prevErrors) => ({...prevErrors, username: "Username is already taken."}));
         return;
       }
 
       const phoneSnapshot = await getDocs(query(collection(db, "users"), where("phoneNumber", "==", phoneNumber)));
       if(!phoneSnapshot.empty){
-        alert("Phone number is already registered.");
+        setErrors((prevErrors) => ({...prevErrors, phoneNumber: "Phone number is already registered."}));
         return;
       }
 
@@ -100,7 +94,7 @@ export function SignUp() {
       navigate("/auth/sign-in");
     } catch (error) {
       console.error("Error signing up:", error);
-      alert(error.message);
+      setErrors((prevErrors) => ({...prevErrors, general: error.message}));
     }
   };
 
@@ -127,11 +121,16 @@ export function SignUp() {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className={errors.username ? "!border-red-500":"!border-t-blue-gray-200 focus:!border-t-gray-900"}
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
             />
+            {errors.username && (
+              <Typography variant="small" color="red" className="mt-1">
+                {errors.username}
+              </Typography>
+            )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
             </Typography>
@@ -140,14 +139,14 @@ export function SignUp() {
               placeholder="name@mail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className={errors.email ? "!border-red-500":"!border-t-blue-gray-200 focus:!border-t-gray-900"}
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
             />
-            {emailError && (
+            {errors.email && (
               <Typography variant="small" color="red" className="mt-1">
-                {emailError}
+                {errors.email}
               </Typography>
             )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
@@ -159,14 +158,14 @@ export function SignUp() {
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className={errors.password ? "!border-red-500":"!border-t-blue-gray-200 focus:!border-t-gray-900"}
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
             />
-            {passwordError && (
+            {errors.password && (
               <Typography variant="small" color="red" className="mt-1">
-                {passwordError}
+                {errors.password}
               </Typography>
             )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
@@ -177,11 +176,16 @@ export function SignUp() {
               placeholder="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className={errors.firstName ? "!border-red-500":"!border-t-blue-gray-200 focus:!border-t-gray-900"}
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
             />
+            {errors.firstName && (
+              <Typography variant="small" color="red" className="mt-1">
+                {errors.firstName}
+              </Typography>
+            )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
             Last Name
             </Typography>
@@ -190,11 +194,16 @@ export function SignUp() {
               placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className={errors.lastName ? "!border-red-500":"!border-t-blue-gray-200 focus:!border-t-gray-900"}
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
             />
+            {errors.lastName && (
+              <Typography variant="small" color="red" className="mt-1">
+                {errors.lastName}
+              </Typography>
+            )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
             Phone Number
             </Typography>
@@ -203,11 +212,16 @@ export function SignUp() {
               placeholder="10 digits only: ex. 0123456789"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className={errors.phoneNumber ? "!border-red-500":"!border-t-blue-gray-200 focus:!border-t-gray-900"}
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
             />
+            {errors.phoneNumber && (
+              <Typography variant="small" color="red" className="mt-1">
+                {errors.phoneNumber}
+              </Typography>
+            )}
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
             Photo 
             </Typography>
@@ -242,7 +256,7 @@ export function SignUp() {
               onChange={(e) => setRole(e)}
             >
               <Option value="student">Student</Option>
-              <Option value="organizer">Teacher</Option>
+              <Option value="organizer">Organizer</Option>
             </Select>
             </div>
             </div>

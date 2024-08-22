@@ -21,6 +21,7 @@ export function SignUp() {
   const [profileImage, setProfileImage] = useState(null); // File input for image
   const [address, setAddress] = useState("");
   const [role, setRole] = React.useState("react"); // "organizer" or "student"
+  const [errors, setErros] = useState("react");
   const navigate = useNavigate();
 
   const validateInputs = () =>{
@@ -130,7 +131,7 @@ export function SignUp() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            required/>
+            />
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
             </Typography>
@@ -143,7 +144,7 @@ export function SignUp() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            required/>
+            />
             {emailError && (
               <Typography variant="small" color="red" className="mt-1">
                 {emailError}
@@ -162,7 +163,7 @@ export function SignUp() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-             required/>
+            />
             {passwordError && (
               <Typography variant="small" color="red" className="mt-1">
                 {passwordError}
@@ -180,7 +181,7 @@ export function SignUp() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            required/>
+            />
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
             Last Name
             </Typography>
@@ -193,20 +194,20 @@ export function SignUp() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            required/>
+            />
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
             Phone Number
             </Typography>
             <Input
               size="lg"
-              placeholder="Phone Number"
+              placeholder="10 digits only: ex. 0123456789"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            required/>
+            />
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
             Photo 
             </Typography>
@@ -217,7 +218,7 @@ export function SignUp() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            required/>
+            />
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
             Address
             </Typography>
@@ -241,29 +242,10 @@ export function SignUp() {
               onChange={(e) => setRole(e)}
             >
               <Option value="student">Student</Option>
-              <Option value="organizer">Organizer</Option>
+              <Option value="organizer">Teacher</Option>
             </Select>
             </div>
-            
             </div>
-            <Checkbox
-            label={
-              <Typography
-                variant="small"
-                color="gray"
-                className="flex items-center justify-start font-medium"
-              >
-                I agree the&nbsp;
-                <a
-                  href="#"
-                  className="font-normal text-black transition-colors hover:text-gray-900 underline"
-                >
-                  Terms and Conditions
-                </a>
-              </Typography>
-            }
-            containerProps={{ className: "-ml-2.5" }}
-          />
           <Button className="mt-6" fullWidth type="submit">
             Register Now
           </Button>

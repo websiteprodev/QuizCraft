@@ -84,7 +84,7 @@ export function SignIn() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            required/>
+            />
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Password
             </Typography>
@@ -98,7 +98,7 @@ export function SignIn() {
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
-            required/>
+            />
           </div>
           {error && <Typography color="red">{error}</Typography>}
           <Button className="mt-6" fullWidth type="submit">

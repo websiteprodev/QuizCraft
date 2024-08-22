@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import {Route, Routes, Navigate } from "react-router-dom";
 import { Home, Auth } from "@/layouts";
 import { SignIn, SignUp } from "./pages/auth";
 import React from "react";

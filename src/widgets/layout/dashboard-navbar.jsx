@@ -29,7 +29,8 @@ import {
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/configs/firebase';
 import { useNavigate } from 'react-router-dom';
-
+import { AuthProvider } from '@/pages/auth/AuthContext';
+import { useAuth } from '@/pages/auth/AuthContext';
 export function DashboardNavbar() {
     const [controller, dispatch] = useMaterialTailwindController();
     const { fixedNavbar, openSidenav } = controller;
@@ -63,7 +64,7 @@ export function DashboardNavbar() {
         }
         localStorage.setItem('darkMode', darkMode);
     }, [darkMode]);
-
+    const { currentUser } = useAuth();
     return (
         <Navbar
             color={fixedNavbar ? 'white' : 'transparent'}

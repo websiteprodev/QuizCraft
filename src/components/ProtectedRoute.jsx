@@ -1,19 +1,19 @@
-import { Navigate } from "react-router-dom";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../configs/firebase"; 
+import { Navigate } from 'react-router-dom';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../configs/firebase';
 
 function ProtectedRoute({ children }) {
-  const [user, loading] = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
 
-  if (loading) {
-    return <div>Loading...</div>; 
-  }
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
-  if (!user) {
-    return <Navigate to="/auth/sign-in" />;
-  }
+    if (!user) {
+        return <Navigate to="/auth/sign-in" />;
+    }
 
-  return children;
+    return children;
 }
 
 export default ProtectedRoute;

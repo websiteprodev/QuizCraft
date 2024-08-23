@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Button, Typography } from "@material-tailwind/react";
-import { fetchQuizById, recordQuizScore } from "@/services/quizService"; 
+import { fetchQuizById, recordQuizScore } from "@/services/quizService";
 import { auth } from "@/configs/firebase";
+import { useAuth } from "../auth/AuthContext";
 
 export function TakeQuiz() {
-    const { id } = useParams();  
+    const { id } = useParams();
     const [quiz, setQuiz] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState("");
     const [score, setScore] = useState(0);
     const [isQuizFinished, setIsQuizFinished] = useState(false);
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     useEffect(() => {
         const loadQuiz = async () => {
@@ -33,21 +35,20 @@ export function TakeQuiz() {
         if (currentQuestionIndex < quiz.questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            setIsQuizFinished(true);  
+            setIsQuizFinished(true);
         }
     };
 
     useEffect(() => {
         if (isQuizFinished) {
-            saveScore();  
+            saveScore();
         }
     }, [isQuizFinished]);
 
     const saveScore = async () => {
-        const user = auth.currentUser;
         if (user) {
             try {
-                await recordQuizScore(id, user.email, score);
+                await recordQuizScore(id, user.username, score);
             } catch (error) {
                 console.error("Error recording score:", error);
             }

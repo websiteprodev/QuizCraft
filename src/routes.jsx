@@ -9,7 +9,8 @@ import {
     AcademicCapIcon,
     ServerStackIcon,
     RectangleStackIcon,
-    UsersIcon, // Добави иконата за групите
+    UsersIcon,
+    ShieldCheckIcon, // Импортирайте иконата тук
 } from '@heroicons/react/24/solid';
 import { Home, Profile, Tables, Notifications } from '@/pages/dashboard';
 import { SignIn, SignUp } from '@/pages/auth';
@@ -20,12 +21,12 @@ import BrowseQuizzes from '@/pages/dashboard/BrowseQuizzes';
 import TakeQuiz from '@/pages/dashboard/TakeQuiz';
 import SampleQuiz from '@/pages/dashboard/SampleQuiz';
 import GroupList from '@/pages/dashboard/GroupList';
-import { UserManagement } from '@/admin/UserManagement';
+import UserManagement from "@/admin/UserManagement";
+
 
 const icon = {
     className: 'w-5 h-5 text-inherit',
 };
-
 export const routes = [
     {
         layout: 'dashboard',
@@ -42,7 +43,6 @@ export const routes = [
                 path: '/profile',
                 element: <Profile />,
             },
-
             {
                 icon: <UsersIcon {...icon} />,
                 name: 'user management',
@@ -53,7 +53,6 @@ export const routes = [
                     </ProtectedRoute>
                 ),
             },
-
             {
                 icon: <TableCellsIcon {...icon} />,
                 name: 'tables',

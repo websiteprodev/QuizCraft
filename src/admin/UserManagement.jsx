@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Input, Button, Card, Typography } from '@material-tailwind/react';
-import { db } from '@/configs/firebase';
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import React, { useState, useEffect } from "react";
+import { Card, Input, Button, Typography, Table } from "@material-tailwind/react";
+import { collection, getDocs, updateDoc, doc, deleteDoc } from "firebase/firestore";
+import { db } from "@/configs/firebase";
 
-export function UserManagement() {
+function UserManagement() {
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
@@ -104,10 +104,10 @@ export function UserManagement() {
                                     <Typography variant="h6" color="blue-gray">
                                         {user.firstName || 'No Name'}
                                     </Typography>
-                                    <Typography variant="body2" color="gray">
+                                    <Typography variant="paragraph" color="gray">
                                         Email: {user.email || 'No Email'}
                                     </Typography>
-                                    <Typography variant="body2" color="gray">
+                                    <Typography variant="paragraph" color="gray">
                                         Status:{' '}
                                         {user.isBlocked ? 'Blocked' : 'Active'}
                                     </Typography>
@@ -156,3 +156,5 @@ export function UserManagement() {
         </div>
     );
 }
+
+export default UserManagement;

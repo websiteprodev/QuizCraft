@@ -3,6 +3,7 @@ import { Home, Auth } from '@/layouts';
 import { SignIn, SignUp } from './pages/auth';
 import React from 'react';
 import { AuthProvider } from './pages/auth/authContext';
+import AdminPanel from "./admin/AdminPanel";
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
                 <Route path="/auth/sign-up" element={<SignUp />} />
                 <Route path="/auth/*" element={<Auth />} />
                 <Route path="/auth/sign-in" element={<SignIn />} />
+                <Route path="/admin/*" element={<AdminPanel />} />
                 <Route
                     path="*"
                     element={<Navigate to="/dashboard/home" replace />}

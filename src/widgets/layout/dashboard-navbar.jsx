@@ -29,15 +29,14 @@ import {
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/configs/firebase';
 import { useNavigate } from 'react-router-dom';
-import { AuthProvider } from '@/pages/auth/AuthContext';
 import { useAuth } from '@/pages/auth/AuthContext';
+
 export function DashboardNavbar() {
     const [controller, dispatch] = useMaterialTailwindController();
     const { fixedNavbar, openSidenav } = controller;
     const { pathname } = useLocation();
     const [layout, page] = pathname.split('/').filter((el) => el !== '');
-    const { user } = useAuth();
-    const [currentUser, setUser] = useState(null);
+    const [user, setUser] = useState(null);
     const [darkMode, setDarkMode] = useState(
         () => localStorage.getItem('darkMode') === 'true',
     );
@@ -64,6 +63,9 @@ export function DashboardNavbar() {
         }
         localStorage.setItem('darkMode', darkMode);
     }, [darkMode]);
+
+    const { currentUser } = useAuth();
+
     return (
         <Navbar
             color={fixedNavbar ? 'white' : 'transparent'}
@@ -114,7 +116,7 @@ export function DashboardNavbar() {
                             color="blue-gray"
                             className="mr-4 dark:text-[#e0e0e0]"
                         >
-                            Welcome, {user.firstName} {user.lastName}!
+                            Welcome, {user.email}
                         </Typography>
                     )}
                     <div className="mr-auto md:mr-4 md:w-56">
@@ -132,6 +134,18 @@ export function DashboardNavbar() {
                     >
                         {darkMode ? 'Light Mode' : 'Dark Mode'}
                     </Button>
+
+                    {currentUser && currentUser.role === 'admin' && (
+                        <Link to="/dashboard/admin">
+                            <Button
+                                variant="text"
+                                color="blue-gray"
+                                className="hidden items-center gap-1 px-4 xl:flex normal-case dark:text-[#e0e0e0]"
+                            >
+                                Admin
+                            </Button>
+                        </Link>
+                    )}
 
                     {user ? (
                         <>

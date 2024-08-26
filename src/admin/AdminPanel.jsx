@@ -1,17 +1,34 @@
-import React from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
-import AdminLayout from "./AdminLayout"; 
-import adminRoutes from "../adminRoutes"; 
+import { useNavigate } from 'react-router-dom';
 
-export default function AdminPanel() {
+function AdminPanel() {
+    const navigate = useNavigate();
+
     return (
-        <AdminLayout>
-            <Routes>
-                {adminRoutes.map(({ path, element }) => (
-                    <Route key={path} path={path} element={element} />
-                ))}
-                <Route path="*" element={<Navigate to="/admin/user-management" replace />} />
-            </Routes>
-        </AdminLayout>
+        <div className="p-6">
+            <Typography variant="h4" className="mb-6">Admin Panel</Typography>
+            <Button
+                onClick={() => navigate('/admin/user-management')}
+                className="mb-4"
+                color="blue"
+            >
+                User Management
+            </Button>
+            <Button
+                onClick={() => navigate('/admin/ranking-moderation')}
+                className="mb-4"
+                color="blue"
+            >
+                Ranking Moderation
+            </Button>
+            <Button
+                onClick={() => navigate('/admin/test-management')}
+                className="mb-4"
+                color="blue"
+            >
+                Test Management
+            </Button>
+        </div>
     );
 }
+
+export default AdminPanel;

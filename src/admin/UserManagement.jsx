@@ -1,160 +1,87 @@
-import React, { useState, useEffect } from "react";
-import { Card, Input, Button, Typography, Table } from "@material-tailwind/react";
-import { collection, getDocs, updateDoc, doc, deleteDoc } from "firebase/firestore";
-import { db } from "@/configs/firebase";
 
-function UserManagement() {
+import React, { useState, useEffect } from 'react';
+import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
+import { db } from '@/configs/firebase';
+import { Button, Input, Typography } from '@material-tailwind/react';
+
+const UserManagement = () => {
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const usersPerPage = 10;
 
     useEffect(() => {
+        const fetchUsers = async () => {
+            const usersCollection = collection(db, 'users');
+            const usersSnapshot = await getDocs(usersCollection);
+            const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setUsers(usersList);
+        };
+
         fetchUsers();
-    }, [currentPage, searchTerm]);
+    }, []);
 
-    const fetchUsers = async () => {
-        setLoading(true);
-        try {
-            const querySnapshot = await getDocs(collection(db, 'users'));
-            let fetchedUsers = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-
-            if (searchTerm) {
-                fetchedUsers = fetchedUsers.filter((user) =>
-                    user.firstName
-                        ?.toLowerCase()
-                        .includes(searchTerm.toLowerCase()),
-                );
-            }
-
-            setUsers(fetchedUsers);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const blockUser = async (userId) => {
-        try {
-            await updateDoc(doc(db, 'users', userId), {
-                isBlocked: true,
-            });
-            fetchUsers();
-        } catch (error) {
-            console.error('Error blocking user:', error);
-        }
-    };
-
-    const unblockUser = async (userId) => {
-        try {
-            await updateDoc(doc(db, 'users', userId), {
-                isBlocked: false,
-            });
-            fetchUsers();
-        } catch (error) {
-            console.error('Error unblocking user:', error);
-        }
-    };
-
-    const handleSearchChange = (e) => {
+    const handleSearch = (e) => {
         setSearchTerm(e.target.value);
-        setCurrentPage(1);
     };
 
-    const handleNextPage = () => {
-        setCurrentPage((prevPage) => prevPage + 1);
-    };
+    const filteredUsers = users.filter(user => 
+        user.email.includes(searchTerm) || 
+        user.firstName.includes(searchTerm) || 
+        user.lastName.includes(searchTerm)
+    );
 
-    const handlePreviousPage = () => {
-        setCurrentPage((prevPage) => prevPage - 1);
+    const toggleBlockUser = async (userId, isBlocked) => {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, {
+            blocked: !isBlocked,
+        });
+        setUsers(prevUsers =>
+            prevUsers.map(user =>
+                user.id === userId ? { ...user, blocked: !isBlocked } : user
+            )
+        );
     };
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            <Typography variant="h4" className="mb-4 text-gray-800">
-                User Management
-            </Typography>
+        <div className="p-6">
+            <Typography variant="h4" className="mb-4">User Management</Typography>
             <Input
-                label="Search Users"
+                type="text"
+                placeholder="Search by email, first name, or last name"
                 value={searchTerm}
-                onChange={handleSearchChange}
-                className="mb-6"
-                color="blue"
+                onChange={handleSearch}
+                className="mb-4"
             />
-            <div className="mb-6">
-                {loading ? (
-                    <Typography>Loading...</Typography>
-                ) : users.length > 0 ? (
-                    users
-                        .slice(
-                            (currentPage - 1) * usersPerPage,
-                            currentPage * usersPerPage,
-                        )
-                        .map((user) => (
-                            <Card
-                                key={user.id}
-                                className="p-4 mb-4 flex justify-between items-center bg-white shadow-md"
-                            >
-                                <div>
-                                    <Typography variant="h6" color="blue-gray">
-                                        {user.firstName || 'No Name'}
-                                    </Typography>
-                                    <Typography variant="paragraph" color="gray">
-                                        Email: {user.email || 'No Email'}
-                                    </Typography>
-                                    <Typography variant="paragraph" color="gray">
-                                        Status:{' '}
-                                        {user.isBlocked ? 'Blocked' : 'Active'}
-                                    </Typography>
-                                </div>
-                                <div>
-                                    {user.isBlocked ? (
-                                        <Button
-                                            onClick={() => unblockUser(user.id)}
-                                            color="green"
-                                            className="bg-green-500 hover:bg-green-600 text-white"
-                                        >
-                                            Unblock
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            onClick={() => blockUser(user.id)}
-                                            color="red"
-                                            className="bg-red-500 hover:bg-red-600 text-white"
-                                        >
-                                            Block
-                                        </Button>
-                                    )}
-                                </div>
-                            </Card>
-                        ))
-                ) : (
-                    <Typography>No users found.</Typography>
-                )}
-            </div>
-            <div className="flex justify-between">
-                <Button
-                    onClick={handlePreviousPage}
-                    disabled={currentPage === 1}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
-                >
-                    Previous
-                </Button>
-                <Button
-                    onClick={handleNextPage}
-                    disabled={currentPage * usersPerPage >= users.length}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
-                >
-                    Next
-                </Button>
-            </div>
+            <table className="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {filteredUsers.map(user => (
+                        <tr key={user.id}>
+                            <td>{user.email}</td>
+                            <td>{user.firstName}</td>
+                            <td>{user.lastName}</td>
+                            <td>{user.blocked ? 'Blocked' : 'Active'}</td>
+                            <td>
+                                <Button
+                                    color={user.blocked ? 'green' : 'red'}
+                                    onClick={() => toggleBlockUser(user.id, user.blocked)}
+                                >
+                                    {user.blocked ? 'Unblock' : 'Block'}
+                                </Button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
-}
+};
 
 export default UserManagement;

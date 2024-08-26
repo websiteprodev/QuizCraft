@@ -11,13 +11,13 @@ function AdminLayout() {
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
             <div className="flex space-x-4 mb-6">
-                <NavLink to="user-management" className={linkClasses}>
+            <NavLink to="/admin/user-management" className={linkClasses}>
                     <Button>User Management</Button>
                 </NavLink>
-                <NavLink to="ranking-moderation" className={linkClasses}>
+                <NavLink to="/admin/ranking-moderation" className={linkClasses}>
                     <Button>Ranking Moderation</Button>
                 </NavLink>
-                <NavLink to="test-management" className={linkClasses}>
+                <NavLink to="/admin/test-management" className={linkClasses}>
                     <Button>Test Management</Button>
                 </NavLink>
             </div>

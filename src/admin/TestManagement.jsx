@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/configs/firebase";
-import { Typography, Button, Input } from "@material-tailwind/react";
+import { Typography, Button } from "@material-tailwind/react";
 
 export function TestManagement() {
     const [tests, setTests] = useState([]);
 
     useEffect(() => {
         const fetchTests = async () => {
-            const testsSnapshot = await getDocs(collection(db, "quizzes"));
-            const testsList = testsSnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setTests(testsList);
+            try {
+                const testsSnapshot = await getDocs(collection(db, "quizzes"));
+                const testsList = testsSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setTests(testsList);
+            } catch (error) {
+                console.error("Error fetching tests: ", error);
+            }
         };
 
         fetchTests();
@@ -45,16 +49,16 @@ export function TestManagement() {
             <Typography variant="h4" className="mb-4">Test Management</Typography>
             <div className="grid gap-4">
                 {tests.map((test) => (
-                    <div key={test.id} className="flex justify-between items-center">
+                    <div key={test.id} className="flex justify-between items-center p-4 border rounded-lg shadow-md">
                         <div>
-                            <Typography variant="h6">{test.title}</Typography>
-                            <Typography variant="body2">{test.category}</Typography>
+                            <Typography variant="h5">{test.title}</Typography>
+                            <Typography variant="paragraph">{test.category}</Typography>
                         </div>
                         <div className="flex gap-2">
                             <Button
                                 variant="gradient"
                                 color="blue"
-                                onClick={() => handleEditTest(test.id, { title: "Updated Title" })} // Примерно обновление
+                                onClick={() => handleEditTest(test.id, { title: "Updated Title" })} 
                             >
                                 Edit
                             </Button>

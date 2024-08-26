@@ -1,4 +1,4 @@
-// src/context/GroupContext.jsx
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '@/configs/firebase';
 import {

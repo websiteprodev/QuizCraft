@@ -10,7 +10,7 @@ import {
     ServerStackIcon,
     RectangleStackIcon,
     UsersIcon,
-    ShieldCheckIcon, 
+    ShieldCheckIcon,
 } from '@heroicons/react/24/solid';
 import { Home, Profile, Tables, Notifications } from '@/pages/dashboard';
 import { SignIn, SignUp } from '@/pages/auth';
@@ -103,7 +103,7 @@ export const routes = [
             {
                 icon: <ShieldCheckIcon {...icon} />,
                 name: 'admin',
-                path: '/admin/*',
+                path: '/dashboard/admin/*', 
                 element: (
                     <ProtectedRoute>
                         <AdminLayout />

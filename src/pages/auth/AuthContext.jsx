@@ -1,14 +1,7 @@
 import React, { useContext, useState, useEffect, createContext } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import {
-    getDoc,
-    doc,
-    collection,
-    query,
-    where,
-    getDocs,
-} from 'firebase/firestore';
-import { db } from '@/configs/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { db, auth } from '@/configs/firebase'; // Импортирайте auth директно от firebase.js
 
 const AuthContext = createContext();
 
@@ -21,7 +14,6 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 try {
@@ -48,14 +40,13 @@ export const AuthProvider = ({ children }) => {
             }
             setLoading(false);
         });
+
         return unsubscribe;
     }, []);
 
-    const value = { user, setUser };
-
     return (
         <AuthContext.Provider value={{ user, loading }}>
-            {children}
+            {!loading && children}
         </AuthContext.Provider>
     );
 };

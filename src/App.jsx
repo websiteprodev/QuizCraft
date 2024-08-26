@@ -4,6 +4,9 @@ import { SignIn, SignUp } from './pages/auth';
 import React from 'react';
 import { AuthProvider } from './pages/auth/authContext';
 import AdminPanel from "./admin/AdminPanel";
+import UserManagement from "./admin/UserManagement"; 
+import RankingModeration from "./admin/RankingModeration";
+import TestManagement from "./admin/TestManagement";
 
 function App() {
     return (
@@ -13,7 +16,12 @@ function App() {
                 <Route path="/auth/sign-up" element={<SignUp />} />
                 <Route path="/auth/*" element={<Auth />} />
                 <Route path="/auth/sign-in" element={<SignIn />} />
-                <Route path="/admin/*" element={<AdminPanel />} />
+                <Route path="/admin" element={<AdminPanel />}>
+                    <Route path="user-management" element={<UserManagement />} />
+                    <Route path="ranking-moderation" element={<RankingModeration />} />
+                    <Route path="test-management" element={<TestManagement />} />
+                </Route>
+                
                 <Route
                     path="*"
                     element={<Navigate to="/dashboard/home" replace />}

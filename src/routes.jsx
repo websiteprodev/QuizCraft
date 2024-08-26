@@ -10,7 +10,7 @@ import {
     ServerStackIcon,
     RectangleStackIcon,
     UsersIcon,
-    ShieldCheckIcon, // Импортирайте иконата тук
+    ShieldCheckIcon, 
 } from '@heroicons/react/24/solid';
 import { Home, Profile, Tables, Notifications } from '@/pages/dashboard';
 import { SignIn, SignUp } from '@/pages/auth';
@@ -21,12 +21,15 @@ import BrowseQuizzes from '@/pages/dashboard/BrowseQuizzes';
 import TakeQuiz from '@/pages/dashboard/TakeQuiz';
 import SampleQuiz from '@/pages/dashboard/SampleQuiz';
 import GroupList from '@/pages/dashboard/GroupList';
+import AdminLayout from "@/admin/AdminLayout";
 import UserManagement from "@/admin/UserManagement";
-
+import RankingModeration from "@/admin/RankingModeration";
+import TestManagement from "@/admin/TestManagement";
 
 const icon = {
     className: 'w-5 h-5 text-inherit',
 };
+
 export const routes = [
     {
         layout: 'dashboard',
@@ -42,16 +45,6 @@ export const routes = [
                 name: 'profile',
                 path: '/profile',
                 element: <Profile />,
-            },
-            {
-                icon: <UsersIcon {...icon} />,
-                name: 'user management',
-                path: '/user-management',
-                element: (
-                    <ProtectedRoute>
-                        <UserManagement />
-                    </ProtectedRoute>
-                ),
             },
             {
                 icon: <TableCellsIcon {...icon} />,
@@ -106,6 +99,30 @@ export const routes = [
                         <GroupList />
                     </ProtectedRoute>
                 ),
+            },
+            {
+                icon: <ShieldCheckIcon {...icon} />,
+                name: 'admin',
+                path: '/admin/*',
+                element: (
+                    <ProtectedRoute>
+                        <AdminLayout />
+                    </ProtectedRoute>
+                ),
+                children: [
+                    {
+                        path: 'user-management',
+                        element: <UserManagement />,
+                    },
+                    {
+                        path: 'ranking-moderation',
+                        element: <RankingModeration />,
+                    },
+                    {
+                        path: 'test-management',
+                        element: <TestManagement />,
+                    },
+                ],
             },
         ],
     },

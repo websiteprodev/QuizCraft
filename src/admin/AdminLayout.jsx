@@ -1,26 +1,27 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAdmin } from "@/hooks/useAdmin";
-import { Sidenav, Footer, DashboardNavbar } from "@/widgets/layout";
-import adminRoutes from "../adminRoutes"; 
 
-function AdminLayout({ children }) {
-    const isAdmin = useAdmin();
+import React from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
+import { Button } from '@material-tailwind/react';
 
-    if (!isAdmin) {
-        return <Navigate to="/dashboard/home" />;
-    }
+function AdminLayout() {
+    const linkClasses = ({ isActive }) =>
+        isActive ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700';
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <Sidenav routes={adminRoutes} />
-            <div className="flex-1">
-                <DashboardNavbar />
-                <div className="p-6">
-                    {children}
-                </div>
-                <Footer />
+        <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
+            <div className="flex space-x-4 mb-6">
+                <NavLink to="user-management" className={linkClasses}>
+                    <Button>User Management</Button>
+                </NavLink>
+                <NavLink to="ranking-moderation" className={linkClasses}>
+                    <Button>Ranking Moderation</Button>
+                </NavLink>
+                <NavLink to="test-management" className={linkClasses}>
+                    <Button>Test Management</Button>
+                </NavLink>
             </div>
+            <Outlet />
         </div>
     );
 }

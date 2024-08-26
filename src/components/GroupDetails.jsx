@@ -1,4 +1,4 @@
-// src/components/GroupDetails.jsx
+
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Button } from '@material-tailwind/react';
 import { useGroupContext } from '@/context/GroupContext';

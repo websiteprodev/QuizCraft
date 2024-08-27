@@ -9,8 +9,8 @@ export function CreateQuiz() {
   const [questions, setQuestions] = useState([
     { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 },
   ]);
-  const [timer, setTimer] = useState(0); // Timer in seconds
-  const [totalPoints, setTotalPoints] = useState(0); // Total points
+  const [timer, setTimer] = useState(0); 
+  const [totalPoints, setTotalPoints] = useState(0); 
   const [randomQuestions, setRandomQuestions] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -56,47 +56,46 @@ export function CreateQuiz() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (title.length < 3 || title.length > 30) {
-      console.error("The title must be between 3 and 30 characters");
-      return;
+        console.error("The title must be between 3 and 30 characters");
+        return;
     }
 
-    // Check if the title already exists
     const querySnapshot = await getDocs(query(collection(db, "quizzes"), where("title", "==", title)));
     if (!querySnapshot.empty) {
-      console.error("The title already exists");
-      return;
+        console.error("The title already exists");
+        return;
     }
 
     try {
-      const user = auth.currentUser;
-      if (!user) {
-        console.error("User is not logged in");
-        return;
-      }
-      
-      await addDoc(collection(db, "quizzes"), {
-        title,
-        category,
-        numberOfQuestions: questions.length,
-        questions,
-        timer,
-        totalPoints,
-        randomQuestions, // Променено поле
-        createdBy: user.uid,
-        createdAt: new Date(),
-      });
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("User is not logged in");
+            return;
+        }
+        
+        await addDoc(collection(db, "quizzes"), {
+            title,
+            category,
+            numberOfQuestions: questions.length,
+            questions,
+            timer,  
+            totalPoints,
+            randomQuestions,
+            createdBy: user.uid,
+            createdAt: new Date(),
+        });
 
-      setTitle("");
-      setCategory("");
-      setQuestions([{ text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 }]);
-      setTimer(0);
-      setTotalPoints(0);
-      setRandomQuestions(false); // Променено поле
-      setSuccessMessage("You have successfully created a new quiz!");
+        setTitle("");
+        setCategory("");
+        setQuestions([{ text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 }]);
+        setTimer(0);
+        setTotalPoints(0);
+        setRandomQuestions(false);
+        setSuccessMessage("You have successfully created a new quiz!");
     } catch (e) {
-      console.error("Error adding quiz: ", e);
+        console.error("Error adding quiz: ", e);
     }
-  };
+};
 
   return (
     <div className="p-6">

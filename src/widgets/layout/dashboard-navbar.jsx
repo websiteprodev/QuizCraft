@@ -36,12 +36,12 @@ export function DashboardNavbar() {
     const { fixedNavbar, openSidenav } = controller;
     const { pathname } = useLocation();
     const [layout, page] = pathname.split('/').filter((el) => el !== '');
-    const [user, setUser] = useState(null);
+    const [currentUser, setUser] = useState(null);
     const [darkMode, setDarkMode] = useState(
         () => localStorage.getItem('darkMode') === 'true',
     );
     const navigate = useNavigate();
-
+   const { user } = useAuth();
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -64,7 +64,6 @@ export function DashboardNavbar() {
         localStorage.setItem('darkMode', darkMode);
     }, [darkMode]);
 
-    const { currentUser } = useAuth();
 
     return (
         <Navbar
@@ -116,7 +115,7 @@ export function DashboardNavbar() {
                             color="blue-gray"
                             className="mr-4 dark:text-[#e0e0e0]"
                         >
-                            Welcome, {user.email}
+                            Welcome, {user.firstName} {user.lastName}!
                         </Typography>
                     )}
                     <div className="mr-auto md:mr-4 md:w-56">

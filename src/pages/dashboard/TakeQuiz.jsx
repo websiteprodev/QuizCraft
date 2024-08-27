@@ -6,12 +6,13 @@ import { auth } from "@/configs/firebase";
 import { useAuth } from "../auth/AuthContext";
 
 export function TakeQuiz() {
-    const { id } = useParams();
+    const { id } = useParams();  
     const [quiz, setQuiz] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState("");
     const [score, setScore] = useState(0);
     const [isQuizFinished, setIsQuizFinished] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(null);  
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -20,12 +21,27 @@ export function TakeQuiz() {
             try {
                 const quizData = await fetchQuizById(id);
                 setQuiz(quizData);
+                setTimeLeft(quizData.timer);  
             } catch (error) {
                 console.error("Error fetching quiz:", error);
             }
         };
         loadQuiz();
     }, [id]);
+
+    useEffect(() => {
+        if (timeLeft === 0) {
+            handleNextQuestion();  
+        }
+
+        if (timeLeft > 0) {
+            const timerId = setInterval(() => {
+                setTimeLeft(timeLeft - 1);
+            }, 1000);
+
+            return () => clearInterval(timerId);
+        }
+    }, [timeLeft]);
 
     const handleNextQuestion = () => {
         if (quiz.questions[currentQuestionIndex].correctAnswer === selectedAnswer) {
@@ -34,6 +50,7 @@ export function TakeQuiz() {
         setSelectedAnswer("");
         if (currentQuestionIndex < quiz.questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
+            setTimeLeft(quiz.timer);  
         } else {
             setIsQuizFinished(true);
         }
@@ -101,6 +118,7 @@ export function TakeQuiz() {
                                 <span className="ml-2">{answer}</span>
                             </label>
                         ))}
+                        <Typography className="dark:text-red-500 text-red-500 font-bold mt-4">Time Left: {timeLeft} seconds</Typography> 
                         <Button
                             variant="gradient"
                             color="blue"

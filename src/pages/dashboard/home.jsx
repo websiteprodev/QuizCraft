@@ -216,7 +216,7 @@ export function Home() {
                       <Typography
                         variant="small"
                         color="gray" // Updated color
-                       className="font-medium dark:text-blue-200"
+                        className="font-medium dark:text-blue-200"
                       >
                         {quiz.category}
                       </Typography>
@@ -225,7 +225,7 @@ export function Home() {
                       <Typography
                         variant="small"
                         color="gray" // Updated color
-                       className="font-medium dark:text-blue-200"
+                        className="font-medium dark:text-blue-200"
                       >
                         {quiz.numberOfQuestions}
                       </Typography>

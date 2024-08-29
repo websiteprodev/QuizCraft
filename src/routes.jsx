@@ -25,6 +25,7 @@ import AdminLayout from "@/admin/AdminLayout";
 import UserManagement from "@/admin/UserManagement";
 import RankingModeration from "@/admin/RankingModeration";
 import TestManagement from "@/admin/TestManagement";
+import EditQuiz from '@/pages/dashboard/EditQuiz';
 
 const icon = {
     className: 'w-5 h-5 text-inherit',
@@ -35,10 +36,10 @@ export const routes = [
         layout: 'dashboard',
         pages: [
             {
-                icon: <HomeIcon {...icon} />,
-                name: 'home',
-                path: '/home',
-                element: <Home />,
+                icon: <AcademicCapIcon {...icon} />,  
+                name: 'edit quiz',
+                path: '/test-management/edit/:id',
+                element: <EditQuiz />, 
             },
             {
                 icon: <UserCircleIcon {...icon} />,

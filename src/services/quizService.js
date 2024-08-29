@@ -68,3 +68,15 @@ export const fetchTopScores = async (quizId) => {
         return [];
     }
 };
+
+
+
+export const updateQuiz = async (id, updatedData) => {
+    try {
+        const quizRef = doc(db, 'quizzes', id);
+        await updateDoc(quizRef, updatedData);
+    } catch (error) {
+        console.error('Error updating quiz:', error);
+        throw error;
+    }
+};

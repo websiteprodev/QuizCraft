@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, Input, Button, Typography, Switch, Select, Option } from "@material-tailwind/react";
+import axios from "@/configs/axiosConfig"; 
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase";
 
@@ -95,7 +96,22 @@ export function CreateQuiz() {
     } catch (e) {
         console.error("Error adding quiz: ", e);
     }
-};
+  };
+
+  // Нов метод за генериране на въпрос чрез AI
+  const generateAIQuestion = async () => {
+    try {
+      const response = await axios.post("/api/generate-question", { topic: category });
+      const { question, answers, correctAnswer } = response.data;
+
+      setQuestions([
+        ...questions,
+        { text: question, type: "multiple-choice", answers, correctAnswer, points: 1 },
+      ]);
+    } catch (error) {
+      console.error("Error generating AI question:", error);
+    }
+  };
 
   return (
     <div className="p-6">
@@ -196,6 +212,9 @@ export function CreateQuiz() {
           <div className="flex justify-between items-center">
             <Button type="button" onClick={addQuestion} className="mb-4 dark:bg-gray-700 dark:text-gray-200">
               Add Another Question
+            </Button>
+            <Button type="button" onClick={generateAIQuestion} className="mb-4 dark:bg-gray-700 dark:text-gray-200">
+              Generate AI Question
             </Button>
             <Button type="submit" color="blue" className="dark:bg-blue-800 dark:text-gray-200">
               Create Quiz

@@ -36,6 +36,12 @@ export const routes = [
         layout: 'dashboard',
         pages: [
             {
+                icon: <HomeIcon {...icon} />,
+                name: 'home',
+                path: '/home',
+                element: <Home />,
+            },
+            {
                 icon: <ServerStackIcon {...icon} />,  
                 name: 'edit quiz',
                 path: '/admin/test-management/edit/:id',

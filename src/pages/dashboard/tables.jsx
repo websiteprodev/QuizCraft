@@ -8,10 +8,8 @@ import {
   Tooltip,
   Progress,
 } from "@material-tailwind/react";
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-import { authorsTableData, projectsTableData } from "@/data";
 import { useNavigate } from 'react-router-dom';
-
+import { authorsTableData } from "@/data"; 
 
 export function Tables() {
   const navigate = useNavigate(); 
@@ -45,7 +43,7 @@ export function Tables() {
             </thead>
             <tbody>
               {authorsTableData.map(
-                ({ img, name, email, job, online, date }, key) => {
+                ({ id, img, name, email, job, online, date }) => {
                   const className = `py-3 px-5 ${
                     key === authorsTableData.length - 1
                       ? ""
@@ -53,7 +51,7 @@ export function Tables() {
                   }`;
 
                   return (
-                    <tr key={name}>
+                    <tr key={id}>
                       <td className={className}>
                         <div className="flex items-center gap-4">
                           <Avatar src={img} alt={name} size="sm" variant="rounded" />
@@ -97,7 +95,7 @@ export function Tables() {
                           as="a"
                           href="#"
                           className="text-xs font-semibold text-blue-gray-600"
-                          onClick={() => navigate(`/admin/test-management/edit/${name}`)}
+                          onClick={() => navigate(`/admin/test-management/edit/${id}`)} 
                         >
                           Edit
                         </Typography>

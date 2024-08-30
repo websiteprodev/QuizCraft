@@ -7,15 +7,21 @@ const EditQuiz = () => {
     const { id } = useParams(); 
     const [quiz, setQuiz] = useState(null);
     const [title, setTitle] = useState('');
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadQuiz = async () => {
             try {
+                if (!id) {
+                    throw new Error("Quiz ID is missing.");
+                }
+                console.log("Quiz ID:", id); // Логване на ID-то на теста
                 const quizData = await fetchQuizById(id); 
                 setQuiz(quizData);
                 setTitle(quizData.title); 
             } catch (error) {
                 console.error("Error fetching quiz:", error);
+                setError("Quiz not found or doesn't exist.");
             }
         };
 
@@ -31,6 +37,10 @@ const EditQuiz = () => {
             alert('Failed to update quiz');
         }
     };
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     if (!quiz) {
         return <div>Loading...</div>;

@@ -7,7 +7,7 @@ import {
     PuzzlePieceIcon,
     MagnifyingGlassIcon,
     AcademicCapIcon,
-    ServerStackIcon,
+    ServerStackIcon,  // Добавихме ServerStackIcon
     RectangleStackIcon,
     UsersIcon,
     ShieldCheckIcon,
@@ -36,9 +36,9 @@ export const routes = [
         layout: 'dashboard',
         pages: [
             {
-                icon: <AcademicCapIcon {...icon} />,  
+                icon: <ServerStackIcon {...icon} />,  
                 name: 'edit quiz',
-                path: '/test-management/edit/:id',
+                path: '/admin/test-management/edit/:id',
                 element: <EditQuiz />, 
             },
             {

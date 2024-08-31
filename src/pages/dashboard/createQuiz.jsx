@@ -3,6 +3,7 @@ import { Card, Input, Button, Typography, Switch, Select, Option } from "@materi
 import axios from "@/configs/axiosConfig"; 
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase";
+import { generateQuestion } from "@/services/gptService";
 
 export function CreateQuiz() {
   const [title, setTitle] = useState("");
@@ -98,16 +99,10 @@ export function CreateQuiz() {
     }
   };
 
-  // Нов метод за генериране на въпрос чрез AI
+
   const generateAIQuestion = async () => {
     try {
-      const response = await axios.post("/api/generate-question", { topic: category });
-      const { question, answers, correctAnswer } = response.data;
-
-      setQuestions([
-        ...questions,
-        { text: question, type: "multiple-choice", answers, correctAnswer, points: 1 },
-      ]);
+console.log(await generateQuestion("bulgerian"));
     } catch (error) {
       console.error("Error generating AI question:", error);
     }

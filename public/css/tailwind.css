@@ -1,6 +1,49 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body {
-  @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+  @apply bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white;
+  font-family: 'Inter', sans-serif;
+}
+
+.circle {
+  fill: none;
+  stroke: #4FD1C5;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 283; /* Circumference of the circle */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear; /* Smooth transition for each second */
+  transform: rotate(-90deg); /* Only rotate the circle */
+  transform-origin: center; /* Ensure rotation occurs around the center */
+}
+
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4FD1C5; /* Match the stroke color */
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease-out forwards;
 }

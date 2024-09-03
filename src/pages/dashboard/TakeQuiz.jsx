@@ -2,17 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Button, Typography } from "@material-tailwind/react";
 import { fetchQuizById, recordQuizScore } from "@/services/quizService";
-import { auth } from "@/configs/firebase";
 import { useAuth } from "../auth/AuthContext";
 
 export function TakeQuiz() {
-    const { id } = useParams();  
+    const { id } = useParams();
     const [quiz, setQuiz] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState("");
     const [score, setScore] = useState(0);
     const [isQuizFinished, setIsQuizFinished] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(null);  
+    const [timeLeft, setTimeLeft] = useState(null);
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -21,7 +20,7 @@ export function TakeQuiz() {
             try {
                 const quizData = await fetchQuizById(id);
                 setQuiz(quizData);
-                setTimeLeft(quizData.timer);  
+                setTimeLeft(quizData.timer);
             } catch (error) {
                 console.error("Error fetching quiz:", error);
             }
@@ -31,7 +30,7 @@ export function TakeQuiz() {
 
     useEffect(() => {
         if (timeLeft === 0) {
-            handleNextQuestion();  
+            handleNextQuestion();
         }
 
         if (timeLeft > 0) {
@@ -50,7 +49,7 @@ export function TakeQuiz() {
         setSelectedAnswer("");
         if (currentQuestionIndex < quiz.questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setTimeLeft(quiz.timer);  
+            setTimeLeft(quiz.timer);
         } else {
             setIsQuizFinished(true);
         }
@@ -78,11 +77,19 @@ export function TakeQuiz() {
         navigate("/dashboard/browse-quizzes");
     };
 
+    // Calculate strokeDashoffset
+    const calculateDashOffset = () => {
+        const maxTime = quiz.timer;
+        const dashArray = 283; // Circumference of the circle
+        const dashOffset = (dashArray * timeLeft) / maxTime;
+        return dashOffset;
+    };
+
     return (
         <div className="p-6 dark:text-gray-100">
             {quiz ? (
                 isQuizFinished ? (
-                    <Card className="p-6 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 text-center">
+                    <Card className="p-6 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 text-center bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 shadow-lg">
                         <Typography variant="h5" className="mb-4 dark:text-white">
                             End of Quiz
                         </Typography>
@@ -99,7 +106,7 @@ export function TakeQuiz() {
                         </Button>
                     </Card>
                 ) : (
-                    <Card className="p-6 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700">
+                    <Card className="p-6 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg rounded-lg">
                         <Typography variant="h5" className="mb-4 dark:text-white">
                             Question {currentQuestionIndex + 1}
                         </Typography>
@@ -118,7 +125,21 @@ export function TakeQuiz() {
                                 <span className="ml-2">{answer}</span>
                             </label>
                         ))}
-                        <Typography className="dark:text-red-500 text-red-500 font-bold mt-4">Time Left: {timeLeft} seconds</Typography> 
+                        <div className="mt-4 mb-4 flex flex-col items-center relative">
+                            <svg width="100" height="100" className="countdown-timer">
+                                <circle
+                                    r="45"
+                                    cx="50"
+                                    cy="50"
+                                    className="circle"
+                                    style={{ strokeDashoffset: calculateDashOffset() }}
+                                ></circle>
+                            </svg>
+                            <div className="timer-text">
+                                {timeLeft}
+                            </div>
+                        </div>
+    
                         <Button
                             variant="gradient"
                             color="blue"
@@ -134,6 +155,7 @@ export function TakeQuiz() {
             )}
         </div>
     );
+    
 }
 
 export default TakeQuiz;

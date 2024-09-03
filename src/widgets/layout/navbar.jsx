@@ -46,8 +46,8 @@ export function Navbar({ brandName, routes, action }) {
     );
 
     return (
-        <MTNavbar className="p-3">
-            <div className="container mx-auto flex items-center justify-between text-blue-gray-900">
+        <MTNavbar className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 shadow-lg">
+            <div className="container mx-auto flex items-center justify-between text-white">
                 <Link to="/">
                     <Typography
                         variant="small"
@@ -58,12 +58,12 @@ export function Navbar({ brandName, routes, action }) {
                 </Link>
                 <div className="hidden lg:block">{navList}</div>
                 {React.cloneElement(action, {
-                    className: 'hidden lg:inline-block',
+                    className: 'hidden lg:inline-block bg-blue-500 text-white',
                 })}
                 <IconButton
                     variant="text"
                     size="sm"
-                    className="ml-auto text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+                    className="ml-auto text-white hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
                     onClick={() => setOpenNav(!openNav)}
                 >
                     {openNav ? (
@@ -77,12 +77,13 @@ export function Navbar({ brandName, routes, action }) {
                 <div className="container mx-auto">
                     {navList}
                     {React.cloneElement(action, {
-                        className: 'w-full block lg:hidden',
+                        className: 'w-full block lg:hidden bg-blue-500 text-white',
                     })}
                 </div>
             </Collapse>
         </MTNavbar>
     );
+    
 }
 
 Navbar.defaultProps = {

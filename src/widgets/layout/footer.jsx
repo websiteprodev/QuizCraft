@@ -6,11 +6,11 @@ export function Footer({ brandName, brandLink, routes }) {
     const year = new Date().getFullYear();
 
     return (
-        <footer className="py-2">
-            <div className="flex w-full flex-wrap items-center justify-center gap-6 px-2 md:justify-between">
+        <footer className="py-6 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white">
+            <div className="container mx-auto flex w-full flex-wrap items-center justify-center gap-6 px-2 md:justify-between">
                 <Typography
                     variant="small"
-                    className="font-normal text-inherit"
+                    className="font-normal"
                 >
                     &copy; {year}, made with{' '}
                     <HeartIcon className="-mt-0.5 inline-block h-3.5 w-3.5 text-red-600" />{' '}
@@ -18,7 +18,7 @@ export function Footer({ brandName, brandLink, routes }) {
                     <a
                         href={brandLink}
                         target="_blank"
-                        className="transition-colors hover:text-blue-500 font-bold"
+                        className="transition-colors hover:text-blue-300 font-bold"
                     >
                         {brandName}
                     </a>{' '}
@@ -32,7 +32,7 @@ export function Footer({ brandName, brandLink, routes }) {
                                 href={path}
                                 target="_blank"
                                 variant="small"
-                                className="py-0.5 px-1 font-normal text-inherit transition-colors hover:text-blue-500"
+                                className="py-0.5 px-1 font-normal transition-colors hover:text-blue-300"
                             >
                                 {name}
                             </Typography>
@@ -42,6 +42,7 @@ export function Footer({ brandName, brandLink, routes }) {
             </div>
         </footer>
     );
+с    
 }
 
 Footer.defaultProps = {

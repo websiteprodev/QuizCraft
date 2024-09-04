@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { Link } from "react-router-dom"; 
 import { db } from "@/configs/firebase";
 import { Typography, Button } from "@material-tailwind/react";
 
@@ -32,18 +34,6 @@ export function TestManagement() {
         }
     };
 
-    const handleEditTest = async (testId, updatedTest) => {
-        try {
-            const testDocRef = doc(db, "quizzes", testId);
-            await updateDoc(testDocRef, updatedTest);
-            setTests((prevTests) =>
-                prevTests.map((test) => (test.id === testId ? { ...test, ...updatedTest } : test))
-            );
-        } catch (error) {
-            console.error("Error editing test: ", error);
-        }
-    };
-
     return (
         <div className="p-6">
             <Typography variant="h4" className="mb-4">Test Management</Typography>
@@ -55,13 +45,11 @@ export function TestManagement() {
                             <Typography variant="paragraph">{test.category}</Typography>
                         </div>
                         <div className="flex gap-2">
-                            <Button
-                                variant="gradient"
-                                color="blue"
-                                onClick={() => handleEditTest(test.id, { title: "Updated Title" })} 
-                            >
-                                Edit
-                            </Button>
+                            <Link to={`/admin/edit-quiz/${test.id}`}>
+                                <Button variant="gradient" color="blue">
+                                    Edit
+                                </Button>
+                            </Link>
                             <Button
                                 variant="outlined"
                                 color="red"

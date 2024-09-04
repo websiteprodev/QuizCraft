@@ -30,9 +30,9 @@ export function SignUp() {
     const [lastName, setLastName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [photoURL, setPhotoURL] = useState('');
-    const [profileImage, setProfileImage] = useState(null); // File input for image
+    const [profileImage, setProfileImage] = useState(null); 
     const [address, setAddress] = useState('');
-    const [role, setRole] = React.useState('react'); // "organizer" or "student"
+    const [role, setRole] = React.useState('react'); 
     const [errors, setErrors] = useState('react');
     const navigate = useNavigate();
 
@@ -125,7 +125,7 @@ export function SignUp() {
                 address,
                 role,
                 uid: user.uid,
-                isBlocked: false, // Добавяне на isBlocked поле
+                isBlocked: false, 
             });
 
             navigate('/auth/sign-in');

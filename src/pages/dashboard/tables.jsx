@@ -112,7 +112,6 @@ export function Tables() {
           </table>
         </CardBody>
       </Card>
-      {/* Можете да добавите други таблици тук */}
     </div>
   );
 }

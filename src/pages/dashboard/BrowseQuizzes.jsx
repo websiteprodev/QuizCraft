@@ -129,7 +129,7 @@ export function BrowseQuizzes() {
 
 export default BrowseQuizzes;
 
-// Функция за динамично присвояване на цветове за категориите
+
 function getColorForCategory(category) {
     switch (category.toLowerCase()) {
         case 'math':

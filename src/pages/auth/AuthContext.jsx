@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, createContext } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { db, auth } from '@/configs/firebase'; // Импортирайте auth директно от firebase.js
+import { db, auth } from '@/configs/firebase'; 
 
 const AuthContext = createContext();
 

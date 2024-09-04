@@ -7,7 +7,7 @@ import {
     PuzzlePieceIcon,
     MagnifyingGlassIcon,
     AcademicCapIcon,
-    ServerStackIcon,  // Добавихме ServerStackIcon
+    ServerStackIcon,  
     RectangleStackIcon,
     UsersIcon,
     ShieldCheckIcon,
@@ -25,7 +25,7 @@ import AdminLayout from "@/admin/AdminLayout";
 import UserManagement from "@/admin/UserManagement";
 import RankingModeration from "@/admin/RankingModeration";
 import TestManagement from "@/admin/TestManagement";
-import EditQuiz from '@/pages/dashboard/EditQuiz';
+import AdminEditQuiz from "@/admin/AdminEditQuiz";
 
 const icon = {
     className: 'w-5 h-5 text-inherit',
@@ -40,12 +40,6 @@ export const routes = [
                 name: 'home',
                 path: '/home',
                 element: <Home />,
-            },
-            {
-                icon: <ServerStackIcon {...icon} />,  
-                name: 'edit quiz',
-                path: '/admin/test-management/edit/:id',
-                element: <EditQuiz />, 
             },
             {
                 icon: <UserCircleIcon {...icon} />,
@@ -77,7 +71,7 @@ export const routes = [
             },
             {
                 icon: <PuzzlePieceIcon {...icon} />,
-                name: 'quizzes',
+                name: 'Your Quizzes',
                 path: '/quizzes',
                 element: <Quizzes />,
             },
@@ -148,6 +142,19 @@ export const routes = [
                 name: 'sign up',
                 path: '/sign-up',
                 element: <SignUp />,
+            },
+        ],
+    },
+    {
+        layout: null, 
+        pages: [
+            {
+                path: '/admin/edit-quiz/:id',
+                element: (
+                    <ProtectedRoute>
+                        <AdminEditQuiz />
+                    </ProtectedRoute>
+                ),
             },
         ],
     },

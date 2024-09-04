@@ -4,9 +4,10 @@ import { SignIn, SignUp } from './pages/auth';
 import React from 'react';
 import { AuthProvider } from './pages/auth/authContext';
 import AdminPanel from "./admin/AdminPanel";
-import UserManagement from "./admin/UserManagement"; 
+import UserManagement from "./admin/UserManagement";
 import RankingModeration from "./admin/RankingModeration";
 import TestManagement from "./admin/TestManagement";
+import AdminEditQuiz from "./admin/AdminEditQuiz";
 
 function App() {
     return (
@@ -21,11 +22,8 @@ function App() {
                     <Route path="ranking-moderation" element={<RankingModeration />} />
                     <Route path="test-management" element={<TestManagement />} />
                 </Route>
-                
-                <Route
-                    path="*"
-                    element={<Navigate to="/dashboard/home" replace />}
-                />
+                <Route path="/test-management/edit/:id" element={<AdminEditQuiz />} />
+                <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
             </Routes>
         </AuthProvider>
     );

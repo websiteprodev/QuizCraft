@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import { db } from "@/configs/firebase";
 import { Typography, Button } from "@material-tailwind/react";
 
@@ -45,7 +45,7 @@ export function TestManagement() {
                             <Typography variant="paragraph">{test.category}</Typography>
                         </div>
                         <div className="flex gap-2">
-                            <Link to={`/admin/edit-quiz/${test.id}`}>
+                            <Link to={`/test-management/edit/${test.id}`}>
                                 <Button variant="gradient" color="blue">
                                     Edit
                                 </Button>

@@ -6,7 +6,7 @@ import { Card, Input, Button, Typography, Switch } from "@material-tailwind/reac
 import { useAuth } from '@/pages/auth/AuthContext'; 
 
 const AdminEditQuiz = () => {
-    const { id } = useParams();  // ID на куиза от URL-а
+    const { id } = useParams();  
     const [quiz, setQuiz] = useState(null);
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
@@ -15,14 +15,14 @@ const AdminEditQuiz = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
 
-    // Проверка дали потребителят е администратор
+
     useEffect(() => {
         if (user?.role !== "admin") {
             navigate("/dashboard/home");
         }
     }, [user, navigate]);
 
-    // Зареждане на куиза по ID
+
     useEffect(() => {
         const loadQuiz = async () => {
             try {

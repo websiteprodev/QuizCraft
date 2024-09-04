@@ -17,7 +17,7 @@ export function Scoreboard({ quizId }) {
                 querySnapshot.forEach((doc) => {
                     fetchedScores.push(doc.data());
                 });
-                setScores(fetchedScores.sort((a, b) => b.score - a.score)); // Sort by score in descending order
+                setScores(fetchedScores.sort((a, b) => b.score - a.score)); 
             } catch (e) {
                 console.error("Error fetching scores: ", e.message);
                 setError("Failed to load scores. Please check your permissions.");

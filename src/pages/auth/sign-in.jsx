@@ -27,7 +27,6 @@ export function SignIn() {
 
             const userData = userDoc.data();
 
-            // Проверка дали потребителят е блокиран
             if (userData.isBlocked) {
                 alert('This account is blocked.');
                 return;
@@ -43,10 +42,10 @@ export function SignIn() {
                 'Failed to sign in. Please check your credentials and try again.',
             );
 
-            // Logging full error object
+            
             console.log('Full error object:', error);
 
-            // Handling different error cases
+            
             switch (error.code) {
                 case 'auth/invalid-credential':
                     setErrorMessage('Invalid credentials. Please try again.');

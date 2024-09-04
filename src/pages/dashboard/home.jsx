@@ -206,7 +206,7 @@ export function Home() {
                     <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
                       <Typography
                         variant="small"
-                        color="gray" // Updated color
+                        color="gray" 
                         className="font-medium dark:text-blue-200"
                       >
                         {quiz.title}
@@ -215,7 +215,7 @@ export function Home() {
                     <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
                       <Typography
                         variant="small"
-                        color="gray" // Updated color
+                        color="gray" 
                         className="font-medium dark:text-blue-200"
                       >
                         {quiz.category}
@@ -224,7 +224,7 @@ export function Home() {
                     <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
                       <Typography
                         variant="small"
-                        color="gray" // Updated color
+                        color="gray" 
                         className="font-medium dark:text-blue-200"
                       >
                         {quiz.numberOfQuestions}
@@ -233,7 +233,7 @@ export function Home() {
                     <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
                       <Typography
                         variant="small"
-                        color="gray" // Updated color
+                        color="gray" 
                         className="font-medium dark:text-blue-200"
                       >
                         {new Date(quiz.createdAt.seconds * 1000).toLocaleDateString()}

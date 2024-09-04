@@ -6,19 +6,19 @@ import { Button, Input, Typography } from '@material-tailwind/react';
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [lastVisible, setLastVisible] = useState(null); // За последния видим документ
-    const [loading, setLoading] = useState(false); // Състояние за зареждане на данни
-    const [hasMore, setHasMore] = useState(true); // Следи дали има още данни за зареждане
+    const [lastVisible, setLastVisible] = useState(null); 
+    const [loading, setLoading] = useState(false); 
+    const [hasMore, setHasMore] = useState(true); 
 
     useEffect(() => {
-        fetchUsers(); // Зареждаме първоначалния набор от потребители
+        fetchUsers(); 
     }, []);
 
     const fetchUsers = async (isPagination = false) => {
         setLoading(true);
         try {
             const usersCollection = collection(db, 'users');
-            let usersQuery = query(usersCollection, limit(10)); // Ограничаваме до 10 потребители
+            let usersQuery = query(usersCollection, limit(10)); 
 
             if (isPagination && lastVisible) {
                 usersQuery = query(usersCollection, startAfter(lastVisible), limit(10));
@@ -28,9 +28,9 @@ const UserManagement = () => {
             const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
             setUsers(prevUsers => isPagination ? [...prevUsers, ...usersList] : usersList);
-            setLastVisible(usersSnapshot.docs[usersSnapshot.docs.length - 1]); // Задаваме последния видим документ
+            setLastVisible(usersSnapshot.docs[usersSnapshot.docs.length - 1]); 
 
-            // Ако върнатите документи са по-малко от 10, няма повече потребители
+
             if (usersSnapshot.docs.length < 10) {
                 setHasMore(false);
             } else {

@@ -7,7 +7,7 @@ import {
     Configurator,
     Footer,
 } from '@/widgets/layout';
-import routes from '@/routes';
+import routes, { hiddenRoutes } from '@/routes';  
 import { useMaterialTailwindController, setOpenConfigurator } from '@/context';
 import { useAuth } from '@/pages/auth/AuthContext';
 import React from 'react';
@@ -49,6 +49,11 @@ export function Home({ children }) {
                             pages.map(({ path, element }) => (
                                 <Route exact path={path} element={element} />
                             )),
+                    )}
+                    {hiddenRoutes.map(({ pages }) => 
+                        pages.map(({ path, element }) => (
+                            <Route exact path={path} element={element} />
+                        ))
                     )}
                 </Routes>
                 <div className="text-blue-gray-600 dark:text-gray-300">

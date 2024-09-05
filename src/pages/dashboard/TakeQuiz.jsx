@@ -110,7 +110,7 @@ export function TakeQuiz() {
                         <Typography variant="h5" className="mb-4 text-gray-900 dark:text-gray-100">
                             Question {currentQuestionIndex + 1}
                         </Typography>
-                        <Typography variant="body1" className="mb-4 text-gray-700 dark:text-gray-300">
+                        <Typography variant="paragraph" className="mb-4 text-gray-700 dark:text-gray-300">
                             {quiz.questions[currentQuestionIndex].text}
                         </Typography>
                         {quiz.questions[currentQuestionIndex].answers.map((answer, index) => (

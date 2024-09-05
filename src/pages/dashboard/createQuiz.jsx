@@ -1,227 +1,438 @@
-import React, { useState, useEffect } from "react";
-import { Card, Input, Button, Typography, Switch, Select, Option } from "@material-tailwind/react";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
-import { db, auth } from "@/configs/firebase";
-import { generateQuestion } from "@/services/gptService";
+import React, { useState, useEffect } from 'react';
+import {
+    Card,
+    Input,
+    Button,
+    Typography,
+    Switch,
+    Select,
+    Option,
+} from '@material-tailwind/react';
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { db, auth } from '@/configs/firebase';
+import { generateQuestion } from '@/services/gptService';
 
 export function CreateQuiz() {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-  const [questions, setQuestions] = useState([
-    { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "1", points: 0 },
-  ]);
-  const [timer, setTimer] = useState(0);
-  const [totalPoints, setTotalPoints] = useState(0);
-  const [randomQuestions, setRandomQuestions] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+    const [title, setTitle] = useState('');
+    const [category, setCategory] = useState('');
+    const [questions, setQuestions] = useState([
+        {
+            text: '',
+            type: 'multiple-choice',
+            answers: ['', '', '', ''],
+            correctAnswer: '1',
+            points: 0,
+        },
+    ]);
+    const [timer, setTimer] = useState(0);
+    const [totalPoints, setTotalPoints] = useState(0);
+    const [randomQuestions, setRandomQuestions] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
-  useEffect(() => {
-    const total = questions.reduce((sum, question) => sum + question.points, 0);
-    setTotalPoints(total);
-  }, [questions]);
+    const [questionBank, setQuestionBank] = useState([]);
+    const [newQuestionText, setNewQuestionText] = useState('');
+    const [selectedBankQuestionId, setSelectedBankQuestionId] = useState('');
 
-  const handleInputChange = (index, value) => {
-    const newQuestions = [...questions];
-    newQuestions[index].text = value;
-    setQuestions(newQuestions);
-  };
+    useEffect(() => {
+        const total = questions.reduce(
+            (sum, question) => sum + question.points,
+            0,
+        );
+        setTotalPoints(total);
+    }, [questions]);
 
-  const handleAnswerChange = (qIndex, aIndex, value) => {
-    const newQuestions = [...questions];
-    newQuestions[qIndex].answers[aIndex] = value;
-    setQuestions(newQuestions);
-  };
+    useEffect(() => {
+        // Fetch the question bank on component mount
+        fetchQuestionBank();
+    }, []);
 
-  const handleCorrectAnswerChange = (index, value) => {
-    const newQuestions = [...questions];
-    newQuestions[index].correctAnswer = value; 
-    setQuestions(newQuestions);
-  };
+    const fetchQuestionBank = async () => {
+        const querySnapshot = await getDocs(collection(db, 'questionBank'));
+        const fetchedQuestions = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        setQuestionBank(fetchedQuestions);
+    };
 
-  const handlePointsChange = (index, value) => {
-    const newQuestions = [...questions];
-    newQuestions[index].points = Number(value);
-    setQuestions(newQuestions);
-  };
+    const handleInputChange = (index, value) => {
+        const newQuestions = [...questions];
+        newQuestions[index].text = value;
+        setQuestions(newQuestions);
+    };
 
-  const handleQuestionTypeChange = (index, value) => {
-    const newQuestions = [...questions];
-    newQuestions[index].type = value;
-    setQuestions(newQuestions);
-  };
+    const handleAnswerChange = (qIndex, aIndex, value) => {
+        const newQuestions = [...questions];
+        newQuestions[qIndex].answers[aIndex] = value;
+        setQuestions(newQuestions);
+    };
 
-  const addQuestion = () => {
-    setQuestions([...questions, { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "1", points: 0 }]);
-  };
+    const handleCorrectAnswerChange = (index, value) => {
+        const newQuestions = [...questions];
+        newQuestions[index].correctAnswer = value;
+        setQuestions(newQuestions);
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (title.length < 3 || title.length > 30) {
-      console.error("The title must be between 3 and 30 characters");
-      return;
-    }
+    const handlePointsChange = (index, value) => {
+        const newQuestions = [...questions];
+        newQuestions[index].points = Number(value);
+        setQuestions(newQuestions);
+    };
 
-    const querySnapshot = await getDocs(query(collection(db, "quizzes"), where("title", "==", title)));
-    if (!querySnapshot.empty) {
-      console.error("The title already exists");
-      return;
-    }
+    const handleQuestionTypeChange = (index, value) => {
+        const newQuestions = [...questions];
+        newQuestions[index].type = value;
+        setQuestions(newQuestions);
+    };
 
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        console.error("User is not logged in");
-        return;
-      }
+    const addQuestion = () => {
+        setQuestions([
+            ...questions,
+            {
+                text: '',
+                type: 'multiple-choice',
+                answers: ['', '', '', ''],
+                correctAnswer: '1',
+                points: 0,
+            },
+        ]);
+    };
 
-      await addDoc(collection(db, "quizzes"), {
-        title,
-        category,
-        numberOfQuestions: questions.length,
-        questions,
-        timer,
-        totalPoints,
-        randomQuestions,
-        createdBy: user.uid,
-        createdAt: new Date(),
-      });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (title.length < 3 || title.length > 30) {
+            console.error('The title must be between 3 and 30 characters');
+            return;
+        }
 
-      setTitle("");
-      setCategory("");
-      setQuestions([{ text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "1", points: 0 }]);
-      setTimer(0);
-      setTotalPoints(0);
-      setRandomQuestions(false);
-      setSuccessMessage("You have successfully created a new quiz!");
-    } catch (e) {
-      console.error("Error adding quiz: ", e);
-    }
-  };
+        const querySnapshot = await getDocs(
+            query(collection(db, 'quizzes'), where('title', '==', title)),
+        );
+        if (!querySnapshot.empty) {
+            console.error('The title already exists');
+            return;
+        }
 
-  const generateAIQuestion = async () => {
-    try {
-      console.log(await generateQuestion("bulgarian"));
-    } catch (error) {
-      console.error("Error generating AI question:", error);
-    }
-  };
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                console.error('User is not logged in');
+                return;
+            }
 
-  return (
-    <div className="p-6">
-      {successMessage && (
-        <Typography variant="h6" color="green" className="mb-4 text-green-500 dark:text-green-400">
-          {successMessage}
-        </Typography>
-      )}
-      <Typography variant="h4" className="mb-4 text-gray-900 dark:text-white">Create a New Quiz</Typography>
-      <Card className="p-6 space-y-6 bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Quiz Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
-            />
-            <Input
-              label="Category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-pink-500 dark:focus:border-pink-500 transition duration-300"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Timer (in seconds)"
-              type="number"
-              value={timer}
-              onChange={(e) => setTimer(Number(e.target.value))}
-              className="mb-6 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
-            />
-            <Switch
-              id="random-questions"
-              label="Random Questions"
-              checked={randomQuestions}
-              onChange={(e) => setRandomQuestions(e.target.checked)}
-              className="mb-6 text-gray-900 dark:text-gray-200"
-            />
-          </div>
+            await addDoc(collection(db, 'quizzes'), {
+                title,
+                category,
+                numberOfQuestions: questions.length,
+                questions,
+                timer,
+                totalPoints,
+                randomQuestions,
+                createdBy: user.uid,
+                createdAt: new Date(),
+            });
 
-          {questions.map((question, qIndex) => (
-            <div key={qIndex} className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 shadow-md">
-              <Typography variant="h6" className="mb-4 text-gray-900 dark:text-gray-200">Question {qIndex + 1}</Typography>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Select
-                  label="Question Type"
-                  value={question.type}
-                  onChange={(value) => handleQuestionTypeChange(qIndex, value)}
-                  className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-yellow-500 dark:focus:border-yellow-500 transition duration-300"
+            setTitle('');
+            setCategory('');
+            setQuestions([
+                {
+                    text: '',
+                    type: 'multiple-choice',
+                    answers: ['', '', '', ''],
+                    correctAnswer: '1',
+                    points: 0,
+                },
+            ]);
+            setTimer(0);
+            setTotalPoints(0);
+            setRandomQuestions(false);
+            setSuccessMessage('You have successfully created a new quiz!');
+        } catch (e) {
+            console.error('Error adding quiz: ', e);
+        }
+    };
+
+    const generateAIQuestion = async () => {
+        try {
+            console.log(await generateQuestion('bulgarian'));
+        } catch (error) {
+            console.error('Error generating AI question:', error);
+        }
+    };
+
+    //Function to add new question to the question bank
+    const addToQuestionBank = async () => {
+        if (newQuestionText.trim()) {
+            try {
+                await addDoc(collection(db, 'questionBank'), {
+                    question: newQuestionText,
+                });
+                setNewQuestionText(''); // Clear input after adding
+                fetchQuestionBank(); //Refresh the question bank list
+            } catch (e) {
+                console.error('Error adding to question bank: ', e);
+            }
+        }
+    };
+
+    // Function to add a question from the question bank to the current quiz
+    const addQuestionFromBank = (question) => {
+        const selectedQuestion = questionBank.find(
+            (q) => q.id === selectedBankQuestionId,
+        );
+        if (selectedQuestion) {
+            setQuestions([
+                ...questions,
+                {
+                    text: selectedQuestion.question,
+                    type: 'multiple-choice',
+                    answers: ['', '', '', ''],
+                    correctAnswer: '',
+                    points: 0,
+                },
+            ]);
+        }
+    };
+
+    return (
+        <div className="p-6">
+            {successMessage && (
+                <Typography
+                    variant="h6"
+                    color="green"
+                    className="mb-4 text-green-500 dark:text-green-400"
                 >
-                  <Option value="multiple-choice">Multiple Choice</Option>
-                  <Option value="true-false">True/False</Option>
-                  <Option value="short-answer">Short Answer</Option>
-                </Select>
-                <Input
-                  label={`Question ${qIndex + 1}`}
-                  value={question.text}
-                  onChange={(e) => handleInputChange(qIndex, e.target.value)}
-                  className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-500 transition duration-300"
-                />
-              </div>
-              {question.type === "multiple-choice" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  {question.answers.map((answer, aIndex) => (
-                    <Input
-                      key={aIndex}
-                      label={`Answer ${aIndex + 1}`}
-                      value={answer}
-                      onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
-                      className="mb-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-teal-500 dark:focus:border-teal-500 transition duration-300"
-                    />
-                  ))}
-                </div>
-              )}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Select
-                  label="Correct Answer"
-                  value={question.correctAnswer}
-                  onChange={(value) => handleCorrectAnswerChange(qIndex, value)}
-                  className="mb-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-indigo-500 dark:focus:border-indigo-500 transition duration-300"
-                >
-                  <Option value="1">1</Option>
-                  <Option value="2">2</Option>
-                  <Option value="3">3</Option>
-                  <Option value="4">4</Option>
-                </Select>
-                <Input
-                  label="Points for this question"
-                  type="number"
-                  value={question.points}
-                  onChange={(e) => handlePointsChange(qIndex, e.target.value)}
-                  className="mb-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-red-500 dark:focus:border-red-500 transition duration-300"
-                />
-              </div>
-            </div>
-          ))}
-
-          <div className="flex justify-between items-center">
-            <Button type="button" onClick={addQuestion} className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-300 px-4 py-2">
-              Add Another Question
-            </Button>
-            <Button type="button" onClick={generateAIQuestion} className="bg-green-500 hover:bg-green-600 text-white rounded-lg transition duration-300 px-4 py-2">
-              Generate AI Question
-            </Button>
-            <Button
-              type="submit"
-              className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition duration-300 px-4 py-2"
+                    {successMessage}
+                </Typography>
+            )}
+            <Typography
+                variant="h4"
+                className="mb-4 text-gray-900 dark:text-white"
             >
-              Create Quiz
-            </Button>
-          </div>
-        </form>
-      </Card>
-    </div>
-  );
+                Create a New Quiz
+            </Typography>
+            <Card className="p-6 space-y-6 bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input
+                            label="Quiz Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
+                        />
+                        <Input
+                            label="Category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-pink-500 dark:focus:border-pink-500 transition duration-300"
+                        />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input
+                            label="Timer (in seconds)"
+                            type="number"
+                            value={timer}
+                            onChange={(e) => setTimer(Number(e.target.value))}
+                            className="mb-6 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
+                        />
+                        <Switch
+                            id="random-questions"
+                            label="Random Questions"
+                            checked={randomQuestions}
+                            onChange={(e) =>
+                                setRandomQuestions(e.target.checked)
+                            }
+                            className="mb-6 text-gray-900 dark:text-gray-200"
+                        />
+                    </div>
+
+                    {questions.map((question, qIndex) => (
+                        <div
+                            key={qIndex}
+                            className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 shadow-md"
+                        >
+                            <Typography
+                                variant="h6"
+                                className="mb-4 text-gray-900 dark:text-gray-200"
+                            >
+                                Question {qIndex + 1}
+                            </Typography>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Select
+                                    label="Question Type"
+                                    value={question.type}
+                                    onChange={(value) =>
+                                        handleQuestionTypeChange(qIndex, value)
+                                    }
+                                    className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-yellow-500 dark:focus:border-yellow-500 transition duration-300"
+                                >
+                                    <Option value="multiple-choice">
+                                        Multiple Choice
+                                    </Option>
+                                    <Option value="true-false">
+                                        True/False
+                                    </Option>
+                                    <Option value="short-answer">
+                                        Short Answer
+                                    </Option>
+                                </Select>
+                                <Input
+                                    label={`Question ${qIndex + 1}`}
+                                    value={question.text}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            qIndex,
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-500 transition duration-300"
+                                />
+                            </div>
+                            {question.type === 'multiple-choice' && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    {question.answers.map((answer, aIndex) => (
+                                        <Input
+                                            key={aIndex}
+                                            label={`Answer ${aIndex + 1}`}
+                                            value={answer}
+                                            onChange={(e) =>
+                                                handleAnswerChange(
+                                                    qIndex,
+                                                    aIndex,
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="mb-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-teal-500 dark:focus:border-teal-500 transition duration-300"
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Select
+                                    label="Correct Answer"
+                                    value={question.correctAnswer}
+                                    onChange={(value) =>
+                                        handleCorrectAnswerChange(qIndex, value)
+                                    }
+                                    className="mb-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-indigo-500 dark:focus:border-indigo-500 transition duration-300"
+                                >
+                                    <Option value="1">1</Option>
+                                    <Option value="2">2</Option>
+                                    <Option value="3">3</Option>
+                                    <Option value="4">4</Option>
+                                </Select>
+                                <Input
+                                    label="Points for this question"
+                                    type="number"
+                                    value={question.points}
+                                    onChange={(e) =>
+                                        handlePointsChange(
+                                            qIndex,
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="mb-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-red-500 dark:focus:border-red-500 transition duration-300"
+                                />
+                            </div>
+                        </div>
+                    ))}
+
+                    <div className="flex justify-between items-center">
+                        <Button
+                            type="button"
+                            onClick={addQuestion}
+                            className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-300 px-4 py-2"
+                        >
+                            Add Another Question
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={generateAIQuestion}
+                            className="bg-green-500 hover:bg-green-600 text-white rounded-lg transition duration-300 px-4 py-2"
+                        >
+                            Generate AI Question
+                        </Button>
+                        <Button
+                            type="submit"
+                            className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition duration-300 px-4 py-2"
+                        >
+                            Create Quiz
+                        </Button>
+                    </div>
+                </form>
+                {/* Add question to the question bank */}
+                <div className="mt-8">
+                    <Typography
+                        variant="h6"
+                        className="text-gray-900 dark:text-white mb-4"
+                    >
+                        Add a Question to the Question Bank
+                    </Typography>
+                    <Input
+                        label="New Question for Question Bank"
+                        value={newQuestionText}
+                        onChange={(e) => setNewQuestionText(e.target.value)}
+                        className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
+                    />
+                    <Button
+                        onClick={addToQuestionBank}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
+                    >
+                        Add to Question Bank
+                    </Button>
+                </div>
+
+                {/* Select question from the question bank */}
+                <div className="mt-8">
+                    <Typography
+                        variant="h6"
+                        className="text-gray-900 dark:text-white mb-4"
+                    >
+                        Question Bank
+                    </Typography>
+                    {questionBank.length > 0 ? (
+                        <>
+                            <Select
+                                label="Select a Question"
+                                value={selectedBankQuestionId}
+                                onChange={(value) =>
+                                    setSelectedBankQuestionId(value)
+                                }
+                                className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
+                            >
+                                {questionBank.map((question) => (
+                                    <Option
+                                        key={question.id}
+                                        value={question.id}
+                                    >
+                                        {question.question}
+                                    </Option>
+                                ))}
+                            </Select>
+                            <Button
+                                onClick={addQuestionFromBank}
+                                disabled={!selectedBankQuestionId}
+                                className={`${
+                                    selectedBankQuestionId
+                                        ? 'bg-teal-500 hover:bg-teal-600'
+                                        : 'bg-gray-400 cursor-not-allowed'
+                                } text-white rounded-lg`}
+                            >
+                                Add Selected Question to Quiz
+                            </Button>
+                        </>
+                    ) : (
+                        <Typography
+                            variant="body1"
+                            className="text-gray-600 dark:text-gray-400"
+                        >
+                            No questions available in the question bank.
+                        </Typography>
+                    )}
+                </div>
+            </Card>
+        </div>
+    );
 }
 
 export default CreateQuiz;

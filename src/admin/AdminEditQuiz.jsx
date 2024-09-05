@@ -15,14 +15,6 @@ const AdminEditQuiz = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
 
-
-    useEffect(() => {
-        if (user?.role !== "admin") {
-            navigate("/dashboard/home");
-        }
-    }, [user, navigate]);
-
-
     useEffect(() => {
         const loadQuiz = async () => {
             try {
@@ -35,7 +27,7 @@ const AdminEditQuiz = () => {
                     setTitle(quizData.title);
                     setCategory(quizData.category);
                     setQuestions(quizData.questions);
-                    setIsRandomized(quizData.isRandomized);
+                    setIsRandomized(quizData.isRandomized || false);  // Осигуряваме валидност за isRandomized
                 } else {
                     console.error("Quiz not found!");
                 }
@@ -66,12 +58,20 @@ const AdminEditQuiz = () => {
     const handleSave = async () => {
         try {
             const quizRef = doc(db, "quizzes", id);
-            await updateDoc(quizRef, {
+            
+            // Създаване на обект с обновените данни за викторината
+            const updatedQuizData = {
                 title,
                 category,
                 questions,
-                isRandomized,
-            });
+            };
+            
+            // Проверка дали isRandomized има валидна стойност преди да го добавим
+            if (typeof isRandomized !== "undefined") {
+                updatedQuizData.isRandomized = isRandomized;
+            }
+
+            await updateDoc(quizRef, updatedQuizData);
             alert("Quiz updated successfully!");
             navigate("/dashboard/admin");
         } catch (error) {
@@ -85,42 +85,63 @@ const AdminEditQuiz = () => {
 
     return (
         <div className="p-6">
-            <Typography variant="h4" className="mb-4">Edit Quiz</Typography>
-            <Card className="p-6">
-                <Input label="Title" value={title} onChange={(e) => setTitle(e.target.value)} className="mb-4" />
-                <Input label="Category" value={category} onChange={(e) => setCategory(e.target.value)} className="mb-4" />
-                {questions.map((question, questionIndex) => (
-                    <div key={questionIndex} className="mb-4">
-                        <Input
-                            label={`Question ${questionIndex + 1}`}
-                            value={question.text}
-                            onChange={(e) => handleQuestionChange(questionIndex, "text", e.target.value)}
-                        />
-                        {question.answers.map((answer, answerIndex) => (
+            <Typography variant="h4" className="mb-6">Edit Quiz</Typography>
+            <Card className="p-6 space-y-6">
+                <div className="space-y-4">
+                    <Input 
+                        label="Title" 
+                        value={title} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                    />
+                    <Input 
+                        label="Category" 
+                        value={category} 
+                        onChange={(e) => setCategory(e.target.value)} 
+                    />
+                </div>
+
+                <div className="space-y-6">
+                    {questions.map((question, questionIndex) => (
+                        <div key={questionIndex} className="border-b pb-6">
                             <Input
-                                key={answerIndex}
-                                label={`Answer ${answerIndex + 1}`}
-                                value={answer}
-                                onChange={(e) => handleAnswerChange(questionIndex, answerIndex, e.target.value)}
+                                label={`Question ${questionIndex + 1}`}
+                                value={question.text}
+                                onChange={(e) => handleQuestionChange(questionIndex, "text", e.target.value)}
+                                className="mb-4"
+                            />
+                            {question.answers.map((answer, answerIndex) => (
+                                <Input
+                                    key={answerIndex}
+                                    label={`Answer ${answerIndex + 1}`}
+                                    value={answer}
+                                    onChange={(e) => handleAnswerChange(questionIndex, answerIndex, e.target.value)}
+                                    className="mb-2"
+                                />
+                            ))}
+                            <Input
+                                label="Correct Answer"
+                                value={question.correctAnswer}
+                                onChange={(e) => handleQuestionChange(questionIndex, "correctAnswer", e.target.value)}
                                 className="mt-2"
                             />
-                        ))}
-                        <Input
-                            label="Correct Answer"
-                            value={question.correctAnswer}
-                            onChange={(e) => handleQuestionChange(questionIndex, "correctAnswer", e.target.value)}
-                            className="mt-2"
-                        />
-                    </div>
-                ))}
-                <Button onClick={addQuestion} className="mb-4">Add Another Question</Button>
-                <Switch
-                    label="Randomize Questions"
-                    checked={isRandomized}
-                    onChange={(e) => setIsRandomized(e.target.checked)}
-                    className="mb-4"
-                />
-                <Button onClick={handleSave} color="blue">
+                        </div>
+                    ))}
+                </div>
+
+                <Button onClick={addQuestion} className="mt-6" variant="gradient" color="blue">
+                    Add Another Question
+                </Button>
+
+                <div className="flex items-center mt-6 space-x-4">
+                    <Switch
+                        label="Randomize Questions"
+                        checked={isRandomized}
+                        onChange={(e) => setIsRandomized(e.target.checked)}
+                    />
+                    <Typography>Randomize Questions</Typography>
+                </div>
+
+                <Button onClick={handleSave} className="mt-6" color="green">
                     Save Changes
                 </Button>
             </Card>

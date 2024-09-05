@@ -462,7 +462,7 @@ export function CreateQuiz() {
                         </>
                     ) : (
                         <Typography
-                            variant="body1"
+                            variant="paragraph"
                             className="text-gray-600 dark:text-gray-400"
                         >
                             No questions available in the question bank.

@@ -8,7 +8,7 @@ export function CreateQuiz() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [questions, setQuestions] = useState([
-    { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 },
+    { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "1", points: 0 },
   ]);
   const [timer, setTimer] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
@@ -34,7 +34,7 @@ export function CreateQuiz() {
 
   const handleCorrectAnswerChange = (index, value) => {
     const newQuestions = [...questions];
-    newQuestions[index].correctAnswer = value;
+    newQuestions[index].correctAnswer = value; 
     setQuestions(newQuestions);
   };
 
@@ -51,7 +51,7 @@ export function CreateQuiz() {
   };
 
   const addQuestion = () => {
-    setQuestions([...questions, { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 }]);
+    setQuestions([...questions, { text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "1", points: 0 }]);
   };
 
   const handleSubmit = async (e) => {
@@ -88,7 +88,7 @@ export function CreateQuiz() {
 
       setTitle("");
       setCategory("");
-      setQuestions([{ text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "", points: 0 }]);
+      setQuestions([{ text: "", type: "multiple-choice", answers: ["", "", "", ""], correctAnswer: "1", points: 0 }]);
       setTimer(0);
       setTotalPoints(0);
       setRandomQuestions(false);
@@ -182,12 +182,17 @@ export function CreateQuiz() {
                 </div>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
+                <Select
                   label="Correct Answer"
                   value={question.correctAnswer}
-                  onChange={(e) => handleCorrectAnswerChange(qIndex, e.target.value)}
+                  onChange={(value) => handleCorrectAnswerChange(qIndex, value)}
                   className="mb-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-indigo-500 dark:focus:border-indigo-500 transition duration-300"
-                />
+                >
+                  <Option value="1">1</Option>
+                  <Option value="2">2</Option>
+                  <Option value="3">3</Option>
+                  <Option value="4">4</Option>
+                </Select>
                 <Input
                   label="Points for this question"
                   type="number"

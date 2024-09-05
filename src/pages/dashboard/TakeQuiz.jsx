@@ -43,9 +43,13 @@ export function TakeQuiz() {
     }, [timeLeft]);
 
     const handleNextQuestion = () => {
-        if (quiz.questions[currentQuestionIndex].correctAnswer === selectedAnswer) {
+        const currentQuestion = quiz.questions[currentQuestionIndex];
+        const correctAnswerIndex = parseInt(currentQuestion.correctAnswer, 10) - 1;
+
+        if (quiz.questions[currentQuestionIndex].answers[correctAnswerIndex] === selectedAnswer) {
             setScore((prevScore) => prevScore + quiz.questions[currentQuestionIndex].points);
         }
+
         setSelectedAnswer("");
         if (currentQuestionIndex < quiz.questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -90,7 +94,7 @@ export function TakeQuiz() {
                 isQuizFinished ? (
                     <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg">
                         <Typography variant="h5" className="mb-4 text-gray-900 dark:text-gray-100">
-                            Quiz Finished! Your Score: {score}
+                            Quiz Finished! Your Score: {score}/{quiz.totalPoints}
                         </Typography>
                         <Button
                             variant="gradient"

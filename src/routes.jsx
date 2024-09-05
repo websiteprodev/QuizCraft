@@ -82,10 +82,6 @@ export const routes = [
                 element: <BrowseQuizzes />,
             },
             {
-                path: '/quiz/:id',
-                element: <TakeQuiz />,
-            },
-            {
                 icon: <AcademicCapIcon {...icon} />,
                 name: 'sample quiz',
                 path: '/sample-quiz',
@@ -145,9 +141,16 @@ export const routes = [
             },
         ],
     },
+];
+
+export const hiddenRoutes = [
     {
         layout: null, 
         pages: [
+            {
+                path: '/quiz/:id',
+                element: <TakeQuiz />,
+            },
             {
                 path: '/admin/edit-quiz/:id',
                 element: (

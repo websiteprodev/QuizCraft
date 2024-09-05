@@ -2,22 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
-  @apply bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white;
+  @apply bg-white dark:bg-black text-black dark:text-white;
   font-family: 'Inter', sans-serif;
 }
 
 .circle {
   fill: none;
-  stroke: #4FD1C5;
+  stroke: #000; 
   stroke-width: 10;
   stroke-linecap: round;
-  stroke-dasharray: 283; /* Circumference of the circle */
+  stroke-dasharray: 283; 
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1s linear; /* Smooth transition for each second */
-  transform: rotate(-90deg); /* Only rotate the circle */
-  transform-origin: center; /* Ensure rotation occurs around the center */
+  transition: stroke-dashoffset 1s linear; 
+  transform: rotate(-90deg); 
+  transform-origin: center;
 }
+
 
 .timer-text {
   position: absolute;
@@ -26,12 +28,13 @@ body {
   transform: translate(-50%, -50%);
   font-size: 2rem;
   font-weight: bold;
-  color: #4FD1C5; /* Match the stroke color */
+  color: #000; 
 }
 
 select::-ms-expand {
   display: none;
 }
+
 
 @keyframes slideIn {
   from {
@@ -46,4 +49,14 @@ select::-ms-expand {
 
 .slide-in {
   animation: slideIn 0.5s ease-out forwards;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .circle {
+    stroke: #fff; 
+  }
+  .timer-text {
+    color: #fff; /
+  }
 }

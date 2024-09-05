@@ -77,7 +77,6 @@ export function TakeQuiz() {
         navigate("/dashboard/browse-quizzes");
     };
 
-    // Calculate strokeDashoffset
     const calculateDashOffset = () => {
         const maxTime = quiz.timer;
         const dashArray = 283; // Circumference of the circle
@@ -89,32 +88,29 @@ export function TakeQuiz() {
         <div className="p-6 dark:text-gray-100">
             {quiz ? (
                 isQuizFinished ? (
-                    <Card className="p-6 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 text-center bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 shadow-lg">
-                        <Typography variant="h5" className="mb-4 dark:text-white">
-                            End of Quiz
-                        </Typography>
-                        <Typography variant="h6" className="mb-4 dark:text-white">
-                            Your score is: {score}
+                    <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg">
+                        <Typography variant="h5" className="mb-4 text-gray-900 dark:text-gray-100">
+                            Quiz Finished! Your Score: {score}
                         </Typography>
                         <Button
                             variant="gradient"
                             color="blue"
-                            className="mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-800 dark:text-gray-100"
+                            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-700 dark:hover:bg-blue-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                             onClick={handleTakeAnotherQuiz}
                         >
                             Take Another Quiz
                         </Button>
                     </Card>
                 ) : (
-                    <Card className="p-6 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg rounded-lg">
-                        <Typography variant="h5" className="mb-4 dark:text-white">
+                    <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg">
+                        <Typography variant="h5" className="mb-4 text-gray-900 dark:text-gray-100">
                             Question {currentQuestionIndex + 1}
                         </Typography>
-                        <Typography variant="paragraph" className="mb-4 dark:text-gray-300">
+                        <Typography variant="body1" className="mb-4 text-gray-700 dark:text-gray-300">
                             {quiz.questions[currentQuestionIndex].text}
                         </Typography>
                         {quiz.questions[currentQuestionIndex].answers.map((answer, index) => (
-                            <label key={index} className="flex items-center mb-2 dark:text-gray-300">
+                            <label key={index} className="flex items-center mb-2 text-gray-700 dark:text-gray-300">
                                 <input
                                     type="radio"
                                     value={answer}
@@ -132,18 +128,17 @@ export function TakeQuiz() {
                                     cx="50"
                                     cy="50"
                                     className="circle"
-                                    style={{ strokeDashoffset: calculateDashOffset() }}
+                                    style={{ strokeDashoffset: calculateDashOffset(), stroke: "#4FD1C5" }}
                                 ></circle>
                             </svg>
-                            <div className="timer-text">
+                            <div className="timer-text text-gray-900 dark:text-gray-100">
                                 {timeLeft}
                             </div>
                         </div>
-    
                         <Button
                             variant="gradient"
                             color="blue"
-                            className="mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-800 dark:text-gray-100"
+                            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-700 dark:hover:bg-blue-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                             onClick={handleNextQuestion}
                         >
                             {currentQuestionIndex < quiz.questions.length - 1 ? "Next" : "Finish"}
@@ -155,7 +150,6 @@ export function TakeQuiz() {
             )}
         </div>
     );
-    
 }
 
 export default TakeQuiz;

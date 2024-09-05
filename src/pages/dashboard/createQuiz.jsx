@@ -32,6 +32,8 @@ export function CreateQuiz() {
     const [questionBank, setQuestionBank] = useState([]);
     const [newQuestionText, setNewQuestionText] = useState('');
     const [selectedBankQuestionId, setSelectedBankQuestionId] = useState('');
+    const [newAnswers, setNewAnswers] = useState(['', '', '', '']);
+    const [newCorrectAnswer, setNewCorrectAnswer] = useState('1'); // Default to 1
 
     useEffect(() => {
         const total = questions.reduce(
@@ -160,23 +162,34 @@ export function CreateQuiz() {
         }
     };
 
-    //Function to add new question to the question bank
+    //Function to add new question with answers to the question bank
     const addToQuestionBank = async () => {
-        if (newQuestionText.trim()) {
+        if (
+            newQuestionText.trim() &&
+            newCorrectAnswer.trim() &&
+            newAnswers.every((ans) => ans.trim() !== '')
+        ) {
             try {
                 await addDoc(collection(db, 'questionBank'), {
                     question: newQuestionText,
+                    answers: newAnswers,
+                    correctAnswer: newCorrectAnswer,
                 });
+                // Reset the fields after successfully adding the question
                 setNewQuestionText(''); // Clear input after adding
-                fetchQuestionBank(); //Refresh the question bank list
+                setNewAnswers(['', '', '', '']); //Clear answers after adding
+                setNewCorrectAnswer('1'); //Clear correct answer after adding
+                fetchQuestionBank(); //Fetch the updated question bank
             } catch (e) {
                 console.error('Error adding to question bank: ', e);
             }
+        } else {
+            console.error('Please fill in all fields correctly');
         }
     };
 
     // Function to add a question from the question bank to the current quiz
-    const addQuestionFromBank = (question) => {
+    const addQuestionFromBank = () => {
         const selectedQuestion = questionBank.find(
             (q) => q.id === selectedBankQuestionId,
         );
@@ -186,8 +199,8 @@ export function CreateQuiz() {
                 {
                     text: selectedQuestion.question,
                     type: 'multiple-choice',
-                    answers: ['', '', '', ''],
-                    correctAnswer: '',
+                    answers: selectedQuestion.answers,
+                    correctAnswer: selectedQuestion.correctAnswer,
                     points: 0,
                 },
             ]);
@@ -369,14 +382,40 @@ export function CreateQuiz() {
                         Add a Question to the Question Bank
                     </Typography>
                     <Input
-                        label="New Question for Question Bank"
+                        label="New Question"
                         value={newQuestionText}
                         onChange={(e) => setNewQuestionText(e.target.value)}
                         className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
                     />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md-4">
+                        {newAnswers.map((answer, index) => (
+                            <Input
+                                key={index}
+                                label={`Answer ${index + 1}`}
+                                value={answer}
+                                onChange={(e) => {
+                                    const newAns = [...newAnswers];
+                                    newAns[index] = e.target.value;
+                                    setNewAnswers(newAns);
+                                }}
+                                className="mb-2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
+                            />
+                        ))}
+                    </div>
+                    <Select
+                        label="Correct Answer"
+                        value={newCorrectAnswer}
+                        onChange={(value) => setNewCorrectAnswer(value)}
+                        className="md-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
+                    >
+                        <Option value="1">1</Option>
+                        <Option value="2">2</Option>
+                        <Option value="3">3</Option>
+                        <Option value="4">4</Option>
+                    </Select>
                     <Button
                         onClick={addToQuestionBank}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-blue-gray-900 rounded-lg"
                     >
                         Add to Question Bank
                     </Button>

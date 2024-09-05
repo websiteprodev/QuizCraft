@@ -12,6 +12,8 @@ export function TakeQuiz() {
     const [score, setScore] = useState(0);
     const [isQuizFinished, setIsQuizFinished] = useState(false);
     const [timeLeft, setTimeLeft] = useState(null);
+    const [answerResult, setAnswerResult] = useState(null); 
+    const [showAnimation, setShowAnimation] = useState(false); 
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -30,7 +32,7 @@ export function TakeQuiz() {
 
     useEffect(() => {
         if (timeLeft === 0) {
-            handleNextQuestion();
+            handleTimeExpired();
         }
 
         if (timeLeft > 0) {
@@ -48,15 +50,45 @@ export function TakeQuiz() {
 
         if (quiz.questions[currentQuestionIndex].answers[correctAnswerIndex] === selectedAnswer) {
             setScore((prevScore) => prevScore + quiz.questions[currentQuestionIndex].points);
+            setAnswerResult("Верен отговор!"); 
+            setShowAnimation(true); 
+        } else {
+            setAnswerResult("Грешен отговор!"); 
+            setShowAnimation(true); 
         }
 
-        setSelectedAnswer("");
-        if (currentQuestionIndex < quiz.questions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setTimeLeft(quiz.timer);
-        } else {
-            setIsQuizFinished(true);
-        }
+        
+        setTimeout(() => {
+            setSelectedAnswer("");
+            setShowAnimation(false);
+            setAnswerResult(null);
+
+            if (currentQuestionIndex < quiz.questions.length - 1) {
+                setCurrentQuestionIndex(currentQuestionIndex + 1);
+                setTimeLeft(quiz.timer);
+            } else {
+                setIsQuizFinished(true);
+            }
+        }, 2000); 
+    };
+
+    const handleTimeExpired = () => {
+        setAnswerResult("Времето изтече!");
+        setShowAnimation(true);
+
+        
+        setTimeout(() => {
+            setSelectedAnswer("");
+            setShowAnimation(false);
+            setAnswerResult(null);
+
+            if (currentQuestionIndex < quiz.questions.length - 1) {
+                setCurrentQuestionIndex(currentQuestionIndex + 1);
+                setTimeLeft(quiz.timer);
+            } else {
+                setIsQuizFinished(true);
+            }
+        }, 2000);
     };
 
     useEffect(() => {
@@ -83,7 +115,7 @@ export function TakeQuiz() {
 
     const calculateDashOffset = () => {
         const maxTime = quiz.timer;
-        const dashArray = 283; // Circumference of the circle
+        const dashArray = 283; 
         const dashOffset = (dashArray * timeLeft) / maxTime;
         return dashOffset;
     };
@@ -125,6 +157,7 @@ export function TakeQuiz() {
                                 <span className="ml-2">{answer}</span>
                             </label>
                         ))}
+
                         <div className="mt-4 mb-4 flex flex-col items-center relative">
                             <svg width="100" height="100" className="countdown-timer">
                                 <circle
@@ -139,6 +172,14 @@ export function TakeQuiz() {
                                 {timeLeft}
                             </div>
                         </div>
+
+                        
+                        {showAnimation && (
+                            <div className="mt-4 mb-4 text-lg font-semibold animate-bounce">
+                                {answerResult}
+                            </div>
+                        )}
+
                         <Button
                             variant="gradient"
                             color="blue"
@@ -150,7 +191,8 @@ export function TakeQuiz() {
                     </Card>
                 )
             ) : (
-                <Typography className="dark:text-gray-400">Loading...</Typography>
+                <Typography
+                className="dark:text-gray-400">Loading...</Typography>
             )}
         </div>
     );

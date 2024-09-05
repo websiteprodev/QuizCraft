@@ -6,33 +6,31 @@ export function Footer({ brandName, brandLink, routes }) {
     const year = new Date().getFullYear();
 
     return (
-        <footer className="py-6 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white">
-            <div className="container mx-auto flex w-full flex-wrap items-center justify-center gap-6 px-2 md:justify-between">
-                <Typography
-                    variant="small"
-                    className="font-normal"
-                >
+        <footer className="py-6 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-t border-gray-200 dark:border-gray-700">
+            <div className="container mx-auto flex flex-wrap items-center justify-center gap-6 px-2 md:justify-between">
+                <Typography variant="small" className="font-normal text-center">
                     &copy; {year}, made with{' '}
-                    <HeartIcon className="-mt-0.5 inline-block h-3.5 w-3.5 text-red-600" />{' '}
-                    by{' '}
+                    <HeartIcon className="-mt-0.5 inline-block h-3.5 w-3.5 text-red-600" /> by{' '}
                     <a
                         href={brandLink}
                         target="_blank"
-                        className="transition-colors hover:text-blue-300 font-bold"
+                        rel="noopener noreferrer"
+                        className="font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-500 transition-colors"
                     >
                         {brandName}
                     </a>{' '}
                     for a better web.
                 </Typography>
-                <ul className="flex items-center gap-4">
+                <ul className="flex flex-wrap items-center gap-4">
                     {routes.map(({ name, path }) => (
                         <li key={name}>
                             <Typography
                                 as="a"
                                 href={path}
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 variant="small"
-                                className="py-0.5 px-1 font-normal transition-colors hover:text-blue-300"
+                                className="font-normal text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                             >
                                 {name}
                             </Typography>
@@ -42,7 +40,6 @@ export function Footer({ brandName, brandLink, routes }) {
             </div>
         </footer>
     );
-с    
 }
 
 Footer.defaultProps = {

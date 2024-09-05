@@ -193,7 +193,18 @@ export function CreateQuiz() {
         const selectedQuestion = questionBank.find(
             (q) => q.id === selectedBankQuestionId,
         );
-        if (selectedQuestion) {
+        if (!questions[0].text.trim()){
+            //If Question 1 is empty, populate it with the selected question from the question bank
+            const updatedQuestions = [...questions];
+            updatedQuestions[0] = {
+                text: selectedQuestion.question,
+                type: 'multiple-choice',
+                answers: selectedQuestion.answers,
+                correctAnswer: selectedQuestion.correctAnswer,
+                points: 0, 
+            };
+            setQuestions(updatedQuestions);
+        }else{ //If Question 1 is already populated , add a new question
             setQuestions([
                 ...questions,
                 {

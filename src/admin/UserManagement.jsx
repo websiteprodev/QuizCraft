@@ -30,7 +30,6 @@ const UserManagement = () => {
             setUsers(prevUsers => isPagination ? [...prevUsers, ...usersList] : usersList);
             setLastVisible(usersSnapshot.docs[usersSnapshot.docs.length - 1]); 
 
-
             if (usersSnapshot.docs.length < 10) {
                 setHasMore(false);
             } else {

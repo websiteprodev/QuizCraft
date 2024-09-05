@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { Link } from "react-router-dom";
@@ -34,6 +33,16 @@ export function TestManagement() {
         }
     };
 
+    const handleSendInvitation = async (testId) => {
+        try {
+            // Възможно е тук да добавите функция за изпращане на покани по имейл.
+            console.log(`Invitations for test ${testId} sent.`);
+            alert(`Invitations sent for test ${testId}`);
+        } catch (error) {
+            console.error("Error sending invitations: ", error);
+        }
+    };
+
     return (
         <div className="p-6">
             <Typography variant="h4" className="mb-4">Test Management</Typography>
@@ -56,6 +65,13 @@ export function TestManagement() {
                                 onClick={() => handleDeleteTest(test.id)}
                             >
                                 Delete
+                            </Button>
+                            <Button
+                                variant="gradient"
+                                color="green"
+                                onClick={() => handleSendInvitation(test.id)}
+                            >
+                                Send Invitation
                             </Button>
                         </div>
                     </div>

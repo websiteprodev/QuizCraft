@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Card, Input, Typography, Button } from "@material-tailwind/react";
 import { fetchQuizzes, fetchTopScores } from "@/services/quizService";  
 import { useNavigate } from "react-router-dom";
-import { PlayIcon, ChartBarIcon, TrophyIcon, StarIcon } from "@heroicons/react/24/solid"; // Използваме StarIcon вместо MedalIcon
+import { PlayIcon, ChartBarIcon, TrophyIcon, StarIcon } from "@heroicons/react/24/solid";
+import RankProgress from "@/components/RankProgress";
 
 export function BrowseQuizzes() {
     const [quizzes, setQuizzes] = useState([]);
@@ -42,6 +43,9 @@ export function BrowseQuizzes() {
 
     return (
         <div className="p-6 dark:text-gray-100">
+            {/* Прогрес на ранга */}
+            <RankProgress />
+
             <Typography variant="h4" className="mb-4 dark:text-gray-100">Browse Quizzes</Typography>
             <Input
                 label="Search Quizzes"
@@ -85,7 +89,7 @@ export function BrowseQuizzes() {
             ) : (
                 <Typography className="dark:text-gray-400">No quizzes found.</Typography>
             )}
-    
+
             {showScoreboard && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                     <div className="bg-white dark:bg-gray-800 p-10 rounded-xl shadow-lg relative animate-fade-in-up max-w-lg w-full">
@@ -124,11 +128,9 @@ export function BrowseQuizzes() {
             )}
         </div>
     );
-    
 }
 
 export default BrowseQuizzes;
-
 
 function getColorForCategory(category) {
     switch (category.toLowerCase()) {

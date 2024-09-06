@@ -193,7 +193,18 @@ export function CreateQuiz() {
         const selectedQuestion = questionBank.find(
             (q) => q.id === selectedBankQuestionId,
         );
-        if (selectedQuestion) {
+        if (!questions[0].text.trim()){
+            //If Question 1 is empty, populate it with the selected question from the question bank
+            const updatedQuestions = [...questions];
+            updatedQuestions[0] = {
+                text: selectedQuestion.question,
+                type: 'multiple-choice',
+                answers: selectedQuestion.answers,
+                correctAnswer: selectedQuestion.correctAnswer,
+                points: 0, 
+            };
+            setQuestions(updatedQuestions);
+        }else{ //If Question 1 is already populated , add a new question
             setQuestions([
                 ...questions,
                 {
@@ -270,7 +281,7 @@ export function CreateQuiz() {
                             >
                                 Question {qIndex + 1}
                             </Typography>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <Select
                                     label="Question Type"
                                     value={question.type}
@@ -385,9 +396,9 @@ export function CreateQuiz() {
                         label="New Question"
                         value={newQuestionText}
                         onChange={(e) => setNewQuestionText(e.target.value)}
-                        className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
+                        className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg mb-4"
                     />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 mt-2">
                         {newAnswers.map((answer, index) => (
                             <Input
                                 key={index}
@@ -406,7 +417,7 @@ export function CreateQuiz() {
                         label="Correct Answer"
                         value={newCorrectAnswer}
                         onChange={(value) => setNewCorrectAnswer(value)}
-                        className="md-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
+                        className="md-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
                     >
                         <Option value="1">1</Option>
                         <Option value="2">2</Option>
@@ -415,7 +426,7 @@ export function CreateQuiz() {
                     </Select>
                     <Button
                         onClick={addToQuestionBank}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-blue-gray-900 rounded-lg"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-blue-gray-900 rounded-lg mt-3"
                     >
                         Add to Question Bank
                     </Button>
@@ -451,7 +462,7 @@ export function CreateQuiz() {
                             <Button
                                 onClick={addQuestionFromBank}
                                 disabled={!selectedBankQuestionId}
-                                className={`${
+                                className={`mt-3 ${
                                     selectedBankQuestionId
                                         ? 'bg-teal-500 hover:bg-teal-600'
                                         : 'bg-gray-400 cursor-not-allowed'

@@ -194,3 +194,27 @@ const calculateNextRankThreshold = (currentRank) => {
     const basePoints = 100;
     return basePoints + currentRank * 100;
 };
+
+export const fetchUserScores = async (userId) => {
+  try {
+    const scoresCollectionRef = collection(db, "quizzes");
+    const q = query(scoresCollectionRef, where("userId", "==", userId));
+    const querySnapshot = await getDocs(q);
+
+    const scores = [];
+    querySnapshot.forEach((doc) => {
+      const quizData = doc.data();
+      scores.push({
+        quizId: doc.id,
+        title: quizData.title,
+        score: quizData.score,
+        totalPoints: quizData.totalPoints,
+      });
+    });
+
+    return scores;
+  } catch (error) {
+    console.error("Error fetching user scores:", error);
+    return [];
+  }
+};

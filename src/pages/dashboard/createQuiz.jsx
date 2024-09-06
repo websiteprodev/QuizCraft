@@ -162,7 +162,7 @@ export function CreateQuiz() {
         }
     };
 
-    //Function to add new question with answers to the question bank
+  
     const addToQuestionBank = async () => {
         if (
             newQuestionText.trim() &&
@@ -175,11 +175,11 @@ export function CreateQuiz() {
                     answers: newAnswers,
                     correctAnswer: newCorrectAnswer,
                 });
-                // Reset the fields after successfully adding the question
-                setNewQuestionText(''); // Clear input after adding
-                setNewAnswers(['', '', '', '']); //Clear answers after adding
-                setNewCorrectAnswer('1'); //Clear correct answer after adding
-                fetchQuestionBank(); //Fetch the updated question bank
+                
+                setNewQuestionText(''); 
+                setNewAnswers(['', '', '', '']); 
+                setNewCorrectAnswer('1'); 
+                fetchQuestionBank(); 
             } catch (e) {
                 console.error('Error adding to question bank: ', e);
             }
@@ -188,7 +188,7 @@ export function CreateQuiz() {
         }
     };
 
-    // Function to add a question from the question bank to the current quiz
+    
     const addQuestionFromBank = () => {
         const selectedQuestion = questionBank.find(
             (q) => q.id === selectedBankQuestionId,

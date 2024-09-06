@@ -1,7 +1,7 @@
-// inviteService.js
+
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/configs/firebase';
-import { sendEmail } from '@/utils/emailService'; // ще създадем помощна функция за изпращане на имейл
+import { sendEmail } from '@/utils/emailService'; 
 
 export const sendInvitation = async (quizId) => {
     try {

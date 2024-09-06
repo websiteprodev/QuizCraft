@@ -17,6 +17,9 @@ export function TakeQuiz() {
     const navigate = useNavigate();
     const { user } = useAuth();
 
+
+
+    
     useEffect(() => {
         const loadQuiz = async () => {
             try {
@@ -44,6 +47,8 @@ export function TakeQuiz() {
         }
     }, [timeLeft]);
 
+
+    
     const handleNextQuestion = () => {
         const currentQuestion = quiz.questions[currentQuestionIndex];
         const correctAnswerIndex = parseInt(currentQuestion.correctAnswer, 10) - 1;
@@ -93,14 +98,14 @@ export function TakeQuiz() {
 
     useEffect(() => {
         if (isQuizFinished) {
-            saveScore();
+            saveScore();  
         }
     }, [isQuizFinished]);
-
+    
     const saveScore = async () => {
         if (user) {
             try {
-                await recordQuizScore(id, user.username, score);
+                await recordQuizScore(id, user.username, score); 
             } catch (error) {
                 console.error("Error recording score:", error);
             }
@@ -108,6 +113,7 @@ export function TakeQuiz() {
             console.error("User is not logged in");
         }
     };
+    
 
     const handleTakeAnotherQuiz = () => {
         navigate("/dashboard/browse-quizzes");

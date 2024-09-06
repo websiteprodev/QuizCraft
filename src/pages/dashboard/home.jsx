@@ -29,6 +29,7 @@ import {
   ArrowRightIcon,
   ScaleIcon,
 } from "@heroicons/react/24/solid";
+import RankProgress from "@/components/RankProgress";
 
 export function Home() {
   const [localStatsData, setLocalStatsData] = useState(statisticsCardsData);
@@ -138,6 +139,10 @@ export function Home() {
           />
         ))}
       </div>
+      <div className="mb-12">
+        <RankProgress />
+      </div>
+
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2 border border-blue-gray-100 dark:border-gray-700 shadow-sm dark:bg-gray-800">
           <CardHeader

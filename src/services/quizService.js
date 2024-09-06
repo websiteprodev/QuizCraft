@@ -31,33 +31,36 @@ export const fetchQuizById = async (id) => {
 const updateUserRankAndPoints = async (userId, pointsToAdd) => {
     const userRef = doc(db, 'users', userId);
     const userSnap = await getDoc(userRef);
+
     if (userSnap.exists()) {
         const userData = userSnap.data();
         const updatedPoints = (userData.points || 0) + pointsToAdd;
+
+        console.log("Updated Points:", updatedPoints);  
+
         const nextRankThreshold = calculateNextRankThreshold(userData.rank || 0);
         if (updatedPoints >= nextRankThreshold) {
-            // Here you would define how rank updates if threshold is crossed
             await updateDoc(userRef, {
                 points: updatedPoints,
-                rank: (userData.rank || 0) + 1, // Increment rank
+                rank: (userData.rank || 0) + 1,
             });
         } else {
             await updateDoc(userRef, {
-                points: updatedPoints
+                points: updatedPoints,
             });
         }
+
+        console.log("Updated user:", userId, "with points:", updatedPoints);  
     } else {
         console.error("User not found");
     }
 };
 
+
 export const recordQuizScore = async (quizId, userId, score) => {
     try {
-        // Record the individual quiz score
         const scoreRef = doc(db, 'quizzes', quizId, 'scores', userId);
         await setDoc(scoreRef, { score, userId }, { merge: true });
-
-        // Update the user's total points and rank
         await updateUserRankAndPoints(userId, score);
     } catch (error) {
         console.error('Error recording score and updating user info:', error);
@@ -160,37 +163,31 @@ export const fetchUsersData = async () => {
         throw error;
     }
 };
-
 export const fetchUsersWithScores = async () => {
     const usersRef = collection(db, "users");
-    const scoresRef = collection(db, "scores");
     const userSnapshot = await getDocs(usersRef);
-    const scoreSnapshot = await getDocs(scoresRef);
-
-    let userScores = {};
-    scoreSnapshot.forEach((doc) => {
-        const data = doc.data();
-        const userId = data.userId; // Make sure this matches the user ID in your Firestore
-        if (userScores[userId]) {
-            userScores[userId].points += data.points; // Accumulate points for each user
-        } else {
-            userScores[userId] = { points: data.points, quizzesTaken: 1 }; // Initialize if not existing
-        }
-    });
 
     let users = [];
+
     userSnapshot.forEach((doc) => {
         const userData = doc.data();
+        const points = userData.points || 0;  
+        const rank = userData.rank || "Beginner";
+
         users.push({
             id: doc.id,
-            name: userData.firstName + ' ' + userData.lastName, // Concatenating first and last names
-            rank: userData.rank || "Beginner", // Default rank
-            points: userScores[doc.id] ? userScores[doc.id].points : 0 // Default to 0 if no scores found
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            rank: rank,
+            points: points,  
         });
     });
 
+    console.log("Users with Points:", users);  
     return users;
 };
+
+
 
 
 const calculateNextRankThreshold = (currentRank) => {

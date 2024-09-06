@@ -12,15 +12,16 @@ export function Tables() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      try {
-        const userData = await fetchUsersWithScores();
-        setUsers(userData);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
+        try {
+            const userData = await fetchUsersWithScores();
+            console.log("Fetched Users:", userData); 
+            setUsers(userData);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
     };
     fetchUsers();
-  }, []);
+}, []);
 
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
@@ -46,7 +47,7 @@ export function Tables() {
                 <tr key={user.id}>
                   <td className="py-3 px-5">
                     <Typography variant="small" color="blue-gray" className="font-semibold">
-                      {user.firstName} {user.lastName}  // Correctly mapping the 'firstName' and 'lastName'
+                      {user.firstName} {user.lastName} 
                     </Typography>
                   </td>
                   <td className="py-3 px-5">
@@ -56,7 +57,7 @@ export function Tables() {
                   </td>
                   <td className="py-3 px-5">
                     <Typography className="text-xs font-semibold text-blue-gray-600">
-                      {user.points}
+                      {user.points}  
                     </Typography>
                   </td>
                 </tr>
@@ -67,6 +68,7 @@ export function Tables() {
                   </td>
                 </tr>
               )}
+
             </tbody>
           </table>
         </CardBody>

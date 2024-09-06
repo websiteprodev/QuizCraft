@@ -129,7 +129,7 @@ export function Profile({}) {
             </div>
             <Card className="mx-3 -mt-16 mb-6 lg:mx-4 border border-blue-gray-100 dark:border-gray-700">
                 <CardBody className="p-4 dark:bg-gray-800">
-                    <div className="mb-10 flex items-center justify-between flex-wrap gap-6">
+                    <div className="mb-10 flex items-center gap-6">
                         <div className="flex items-center gap-6">
                             <Avatar
                                 src={user.photoURL}
@@ -155,7 +155,7 @@ export function Profile({}) {
                             </div>
                         </div>
                     </div>
-                    <div className="gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3">
+                    <div className="gird-col-1 mb-12 grid gap-6 px-4 lg:grid-cols-3 xl:grid-cols-3">
                         <ProfileInfoCard
                             title="Profile Information"
                             description="Hi, I'm Alec Thompson, Decisions: If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
@@ -178,154 +178,146 @@ export function Profile({}) {
                                 </Tooltip>
                             }
                         />
-                        <section className="m-8 flex flex-col items-center justify-center col-span-2">
-                            <div className="text-center mb-6">
-                                <Typography variant="h2" className="font-bold">
-                                    Edit Profile
-                                </Typography>
-                            </div>
-                            <form
-                                onSubmit={handleSubmit}
-                                className="w-80 max-w-screen-lg lg:w-2/5"
-                            >
-                                <div className="mb-6 flex flex-col gap-6 ">
-                                    {error && (
-                                        <Typography color="red">
-                                            {error}
-                                        </Typography>
-                                    )}
-                                    <div>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-medium dark:text-white"
-                                        >
-                                            Username
-                                        </Typography>
-                                        <Input
-                                            size="lg"
-                                            name="username"
-                                            value={user.username} 
-                                            disabled 
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-medium dark:text-white"
-                                        >
-                                            First Name
-                                        </Typography>
-                                        <Input
-                                            size="lg"
-                                            name="firstName"
-                                            value={userData.firstName}
-                                            onChange={handleChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-medium dark:text-white"
-                                        >
-                                            Last Name
-                                        </Typography>
-                                        <Input
-                                            size="lg"
-                                            name="lastName"
-                                            value={userData.lastName}
-                                            onChange={handleChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-medium dark:text-white"
-                                        >
-                                            Email
-                                        </Typography>
-                                        <Input
-                                            size="lg"
-                                            name="email"
-                                            value={userData.email}
-                                            disabled
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-medium dark:text-white"
-                                        >
-                                            Address
-                                        </Typography>
-                                        <Input
-                                            size="lg"
-                                            name="address"
-                                            value={userData.address}
-                                            onChange={handleChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-medium dark:text-white"
-                                        >
-                                            Phone Number
-                                        </Typography>
-                                        <Input
-                                            size="lg"
-                                            name="phoneNumber"
-                                            value={userData.phoneNumber}
-                                            onChange={handleChange} 
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
-                                        />
-                                    </div>
-                                    <div>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-medium dark:text-white"
-                                        >
-                                            Profile Picture
-                                        </Typography>
-                                        <Input
-                                            size="lg"
-                                            type="file"
-                                            onChange={handleFileChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
-                                        />
-                                    </div>
-                                    {userData.photoURL && (
-                                        <div className="mt-4 place-self-center">
-                                            <img
-                                                src={userData.photoURL}
-                                                alt="Profile"
-                                                variant="rounded"
-                                                className="rounded-lg shadow-lg shadow-blue-gray-500/40 max-h-48"
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                                <Button
-                                    className="mt-6"
-                                    fullWidth
-                                    type="submit"
-                                >
-                                    Save Changes
-                                </Button>
-                            </form>
-                        </section>
                     </div>
+                    <section className="m-8">
+                        <div className="text-center mb-6">
+                            <Typography variant="h2" className="font-bold">
+                                Edit Profile
+                            </Typography>
+                        </div>
+                        <form onSubmit={handleSubmit} className="w-auto">
+                            <div className="mb-4 gap-4 flex flex-col">
+                                {error && (
+                                    <Typography color="red">{error}</Typography>
+                                )}
+                                <div>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-medium dark:text-white"
+                                    >
+                                        Username
+                                    </Typography>
+                                    <Input
+                                        size="lg"
+                                        name="username"
+                                        value={user.username}
+                                        disabled
+                                        className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                    />
+                                </div>
+                                <div>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-medium dark:text-white"
+                                    >
+                                        First Name
+                                    </Typography>
+                                    <Input
+                                        size="lg"
+                                        name="firstName"
+                                        value={userData.firstName}
+                                        onChange={handleChange}
+                                        className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                    />
+                                </div>
+                                <div>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-medium dark:text-white"
+                                    >
+                                        Last Name
+                                    </Typography>
+                                    <Input
+                                        size="lg"
+                                        name="lastName"
+                                        value={userData.lastName}
+                                        onChange={handleChange}
+                                        className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                    />
+                                </div>
+                                <div>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-medium dark:text-white"
+                                    >
+                                        Email
+                                    </Typography>
+                                    <Input
+                                        size="lg"
+                                        name="email"
+                                        value={userData.email}
+                                        disabled
+                                        className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                    />
+                                </div>
+                                <div>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-medium dark:text-white"
+                                    >
+                                        Address
+                                    </Typography>
+                                    <Input
+                                        size="lg"
+                                        name="address"
+                                        value={userData.address}
+                                        onChange={handleChange}
+                                        className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                    />
+                                </div>
+                                <div>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-medium dark:text-white"
+                                    >
+                                        Phone Number
+                                    </Typography>
+                                    <Input
+                                        size="lg"
+                                        name="phoneNumber"
+                                        value={userData.phoneNumber}
+                                        onChange={handleChange}
+                                        className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                    />
+                                </div>
+                                <div>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-medium dark:text-white"
+                                    >
+                                        Profile Picture
+                                    </Typography>
+                                    <Input
+                                        size="lg"
+                                        type="file"
+                                        onChange={handleFileChange}
+                                        className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                    />
+                                </div>
+                                {userData.photoURL && (
+                                    <div className="mt-4 place-self-center">
+                                        <img
+                                            src={userData.photoURL}
+                                            alt="Profile"
+                                            variant="rounded"
+                                            className="rounded-lg shadow-lg shadow-blue-gray-500/40 max-h-48"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                            <Button className="mt-6" fullWidth type="submit">
+                                Save Changes
+                            </Button>
+                        </form>
+                    </section>
+
                     <div className="px-4 pb-4">
                         <Typography
                             variant="h6"
@@ -431,5 +423,4 @@ export function Profile({}) {
         </>
     );
 }
-
 export default Profile;

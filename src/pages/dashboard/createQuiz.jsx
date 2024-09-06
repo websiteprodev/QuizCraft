@@ -193,7 +193,7 @@ export function CreateQuiz() {
         const selectedQuestion = questionBank.find(
             (q) => q.id === selectedBankQuestionId,
         );
-        if (!questions[0].text.trim()){
+        if (!questions[0].text.trim()) {
             //If Question 1 is empty, populate it with the selected question from the question bank
             const updatedQuestions = [...questions];
             updatedQuestions[0] = {
@@ -201,10 +201,11 @@ export function CreateQuiz() {
                 type: 'multiple-choice',
                 answers: selectedQuestion.answers,
                 correctAnswer: selectedQuestion.correctAnswer,
-                points: 0, 
+                points: 0,
             };
             setQuestions(updatedQuestions);
-        }else{ //If Question 1 is already populated , add a new question
+        } else {
+            //If Question 1 is already populated , add a new question
             setQuestions([
                 ...questions,
                 {
@@ -417,7 +418,7 @@ export function CreateQuiz() {
                         label="Correct Answer"
                         value={newCorrectAnswer}
                         onChange={(value) => setNewCorrectAnswer(value)}
-                        className="md-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
+                        className="md-4 w-1/2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
                     >
                         <Option value="1">1</Option>
                         <Option value="2">2</Option>

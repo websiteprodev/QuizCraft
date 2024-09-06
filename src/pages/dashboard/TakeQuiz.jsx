@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card, Button, Typography } from "@material-tailwind/react";
 import { fetchQuizById, recordQuizScore } from "@/services/quizService";
 import { useAuth } from "../auth/AuthContext";
+import { updateUserQuizzesTaken } from "@/services/userService";
 
 export function TakeQuiz() {
     const { id } = useParams();
@@ -12,14 +13,12 @@ export function TakeQuiz() {
     const [score, setScore] = useState(0);
     const [isQuizFinished, setIsQuizFinished] = useState(false);
     const [timeLeft, setTimeLeft] = useState(null);
-    const [answerResult, setAnswerResult] = useState(null); 
-    const [showAnimation, setShowAnimation] = useState(false); 
+    const [answerResult, setAnswerResult] = useState(null);
+    const [showAnimation, setShowAnimation] = useState(false);
     const navigate = useNavigate();
     const { user } = useAuth();
 
 
-
-    
     useEffect(() => {
         const loadQuiz = async () => {
             try {
@@ -48,21 +47,21 @@ export function TakeQuiz() {
     }, [timeLeft]);
 
 
-    
+
     const handleNextQuestion = () => {
         const currentQuestion = quiz.questions[currentQuestionIndex];
         const correctAnswerIndex = parseInt(currentQuestion.correctAnswer, 10) - 1;
 
         if (quiz.questions[currentQuestionIndex].answers[correctAnswerIndex] === selectedAnswer) {
             setScore((prevScore) => prevScore + quiz.questions[currentQuestionIndex].points);
-            setAnswerResult("Верен отговор!"); 
-            setShowAnimation(true); 
+            setAnswerResult("Верен отговор!");
+            setShowAnimation(true);
         } else {
-            setAnswerResult("Грешен отговор!"); 
-            setShowAnimation(true); 
+            setAnswerResult("Грешен отговор!");
+            setShowAnimation(true);
         }
 
-        
+
         setTimeout(() => {
             setSelectedAnswer("");
             setShowAnimation(false);
@@ -73,15 +72,16 @@ export function TakeQuiz() {
                 setTimeLeft(quiz.timer);
             } else {
                 setIsQuizFinished(true);
+
             }
-        }, 2000); 
+        }, 2000);
     };
 
     const handleTimeExpired = () => {
         setAnswerResult("Времето изтече!");
         setShowAnimation(true);
 
-        
+
         setTimeout(() => {
             setSelectedAnswer("");
             setShowAnimation(false);
@@ -98,14 +98,16 @@ export function TakeQuiz() {
 
     useEffect(() => {
         if (isQuizFinished) {
-            saveScore();  
+            saveScore();
+            updateUserQuizzesTaken(user.username, id)
         }
     }, [isQuizFinished]);
-    
+
+
     const saveScore = async () => {
         if (user) {
             try {
-                await recordQuizScore(id, user.username, score); 
+                await recordQuizScore(id, user.username, score);
             } catch (error) {
                 console.error("Error recording score:", error);
             }
@@ -113,7 +115,7 @@ export function TakeQuiz() {
             console.error("User is not logged in");
         }
     };
-    
+
 
     const handleTakeAnotherQuiz = () => {
         navigate("/dashboard/browse-quizzes");
@@ -121,7 +123,7 @@ export function TakeQuiz() {
 
     const calculateDashOffset = () => {
         const maxTime = quiz.timer;
-        const dashArray = 283; 
+        const dashArray = 283;
         const dashOffset = (dashArray * timeLeft) / maxTime;
         return dashOffset;
     };
@@ -179,7 +181,7 @@ export function TakeQuiz() {
                             </div>
                         </div>
 
-                        
+
                         {showAnimation && (
                             <div className="mt-4 mb-4 text-lg font-semibold animate-bounce">
                                 {answerResult}
@@ -198,7 +200,7 @@ export function TakeQuiz() {
                 )
             ) : (
                 <Typography
-                className="dark:text-gray-400">Loading...</Typography>
+                    className="dark:text-gray-400">Loading...</Typography>
             )}
         </div>
     );

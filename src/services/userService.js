@@ -1,5 +1,5 @@
 
-import { collection, getDocs, query, orderBy, limit, startAfter } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, startAfter, getDoc, doc, updateDoc,arrayUnion } from 'firebase/firestore';
 import { db } from '@/configs/firebase';
 
 export const fetchUsersPaginated = async (lastVisibleDoc) => {
@@ -25,5 +25,18 @@ export const fetchUsersPaginated = async (lastVisibleDoc) => {
     } catch (error) {
         console.error('Error fetching paginated users:', error);
         throw error;
+    }
+};
+export const updateUserQuizzesTaken = async (userId, quizId) => {
+    const userRef = doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+        await updateDoc(userRef, {
+            quizzesTaken: arrayUnion(quizId), 
+        });
+        console.log(`Quiz ID ${quizId} added to quizzesTaken for user ${userId}`);
+    } else {
+        console.error(`User with ID ${userId} not found`);
     }
 };

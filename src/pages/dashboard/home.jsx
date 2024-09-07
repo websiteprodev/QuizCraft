@@ -18,7 +18,7 @@ import {
   PlayIcon,
 } from "@heroicons/react/24/outline";
 import { StatisticsCard } from "@/widgets/cards";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, getDoc, doc } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,7 @@ import {
 } from "@heroicons/react/24/solid";
 import RankProgress from "@/components/RankProgress";
 import { useAuth } from "@/pages/auth/AuthContext";
-import { fetchQuizzes, fetchUserRankAndProgress, fetchUserScores } from "@/services/quizService";
+import { fetchQuizzes, fetchUserRankAndProgress, } from "@/services/quizService";
 export function Home() {
   const { user } = useAuth();
   const [localStatsData, setLocalStatsData] = useState(statisticsCardsData);
@@ -45,6 +45,16 @@ export function Home() {
   const [quizzesTaken, setQuizzesTaken] = useState([]);
   const [userProgress, setUserProgress] = useState(null);
 
+  const fetchQuizzesTaken = async (userId) => {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      return userData.quizzesTaken || []; 
+    }
+    return [];
+  };
+
   useEffect(() => {
     const fetchQuizzes = async () => {
       const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
@@ -52,12 +62,9 @@ export function Home() {
         id: doc.id,
         ...doc.data(),
       }));
-
       setQuizzes(quizzesList);
       setQuizzesCount(quizzesList.length);
     };
-    
-
     fetchQuizzes();
   }, []);
 
@@ -107,8 +114,8 @@ export function Home() {
   useEffect(() => {
     const fetchMyResults = async () => {
       if (user && user.uid) {
-        const scores = await fetchUserScores(user.uid); 
-        setQuizzesTaken(scores);
+        const quizzesTakenData = await fetchQuizzesTaken(user.username); 
+        setQuizzesTaken(quizzesTakenData);
         const progress = await fetchUserRankAndProgress(user.username);
         setUserProgress(progress);
       }
@@ -313,7 +320,7 @@ export function Home() {
               <table className="w-full min-w-[640px] table-auto">
                 <thead>
                   <tr>
-                    {["Quiz Title", "Score", "Total Points"].map((header) => (
+                    {["Quiz Title", "Points"].map((header) => (
                       <th key={header} className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6 text-left">
                         <Typography
                           variant="small"
@@ -326,15 +333,15 @@ export function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {quizzesTaken.map((quiz) => (
-                    <tr key={quiz.quizId}>
+                  {quizzesTaken.map((quiz, index) => (
+                    <tr key={index}>
                       <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
                         <Typography
                           variant="small"
                           color="gray"
                           className="font-medium dark:text-blue-200"
                         >
-                          {quiz.title}
+                          {quiz.title}  
                         </Typography>
                       </td>
                       <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
@@ -343,16 +350,7 @@ export function Home() {
                           color="gray"
                           className="font-medium dark:text-blue-200"
                         >
-                          {quiz.score}
-                        </Typography>
-                      </td>
-                      <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
-                        <Typography
-                          variant="small"
-                          color="gray"
-                          className="font-medium dark:text-blue-200"
-                        >
-                          {quiz.totalPoints}
+                          {quiz.points}  
                         </Typography>
                       </td>
                     </tr>

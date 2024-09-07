@@ -12,6 +12,54 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/configs/firebase';
 
+  
+  export const subscribeToQuiz = async (userId, quizId) => {
+    try {
+        const userRef = db.collection('users').doc(userId);
+        const quizRef = db.collection('quizzes').doc(quizId);
+
+        // Fetch quiz data to ensure its public
+        const quizSnapshot = await quizRef.get(); 
+        if(quizSnapshot.exists && quizSnapshot.data().isPublic){
+            //add quiz to user's subscribedQuizzes
+            await userRef.update({
+                subscribedQuizzes: firebase.firestore.FieldValue.arrayUnion(quizId),
+            });
+        }else{
+            throw new Error ('Quiz is not public');
+        }
+    } catch (error) {
+        console.error('Error subscribing to quiz: ', error);
+    }
+  };
+
+//Generate .ics file for quiz schedule
+export const createICSFile = (quizData) => {
+    const icsContent = `
+    BEGIN: VCALENDAR
+    VERSION: 2.0
+    BEGIN: VEVENT
+    SUMMARY: ${quizData.title}
+    DESCRIPTION: Join this quiz titled "${quizData.title}"
+    DTSTART: ${convertToICSFormat(quizData.createdAt)}
+    DURATION: PT${quizData.timer}M
+    END: VEVENT
+    END: VCALENDAR
+    `;
+
+    //Create blob and download file
+    const blob = new Blob([icsContent], {type: 'text/calendar'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${quizData.title}.ics`;
+    link.click();
+};
+
+//Convert Firestore timestamp to ics. format
+const convertToICSFormat = (timestamp) => {
+    const date = timestamp.toDate();
+    return date.toISOString().replace(/[-:]/g, '').split('.')[0];
+};
 export const fetchQuizzes = async () => {
     const quizzesSnapshot = await getDocs(collection(db, 'quizzes'));
     return quizzesSnapshot.docs.map(doc => ({
@@ -19,6 +67,7 @@ export const fetchQuizzes = async () => {
         ...doc.data(),
     }));
 };
+
 
 export const fetchQuizById = async (id) => {
     const quizDoc = await getDoc(doc(db, 'quizzes', id));
@@ -217,4 +266,6 @@ export const fetchUserScores = async (userId) => {
     console.error("Error fetching user scores:", error);
     return [];
   }
+
+
 };

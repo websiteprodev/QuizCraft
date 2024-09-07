@@ -414,17 +414,19 @@ export function CreateQuiz() {
                             />
                         ))}
                     </div>
-                    <Select
+                    <div className='w-1/2'>
+                        <Select
                         label="Correct Answer"
                         value={newCorrectAnswer}
                         onChange={(value) => setNewCorrectAnswer(value)}
-                        className="md-4 w-1/2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
-                    >
+                        className="md-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
+                        >
                         <Option value="1">1</Option>
                         <Option value="2">2</Option>
                         <Option value="3">3</Option>
                         <Option value="4">4</Option>
                     </Select>
+                    </div>
                     <Button
                         onClick={addToQuestionBank}
                         className="bg-yellow-500 hover:bg-yellow-600 text-blue-gray-900 rounded-lg mt-3"

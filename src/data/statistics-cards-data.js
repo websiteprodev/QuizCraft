@@ -14,16 +14,14 @@ export const statisticsCardsData = [
     title: "Total Users",
     value: "53",
     footer: {
-      color: "text-green-500",
-      value: "3",
-      label: "new users today",
+     
     },
   },
   {
     color: "gray",
     icon: CheckCircleIcon,
     title: "Online Users",
-    value: "1",
+    value: "2",
     footer: {
      
     },
@@ -34,9 +32,7 @@ export const statisticsCardsData = [
     title: "Total Quizzes",
     value: "",
     footer: {
-      color: "text-green-500",
-      value: "2",
-      label: "new quizzes",
+     
     },
   },
   {
@@ -45,9 +41,7 @@ export const statisticsCardsData = [
     title: "My quizzes",
     value: "",
     footer: {
-      color: "text-green-500",
-      value: "40",
-      label: "points.",
+     
     },
   },
 ];

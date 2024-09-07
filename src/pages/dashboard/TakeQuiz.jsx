@@ -99,7 +99,7 @@ export function TakeQuiz() {
     useEffect(() => {
         if (isQuizFinished) {
             saveScore();
-            updateUserQuizzesTaken(user.username, id)
+            updateUserQuizzesTaken(user.username, id, score)
         }
     }, [isQuizFinished]);
 

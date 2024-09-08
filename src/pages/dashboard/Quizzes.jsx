@@ -5,16 +5,18 @@ import {
     query,
     where,
     getDocs,
+    getDoc,
     doc,
     deleteDoc,
-    onSnapshot
+    onSnapshot,
 } from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
 import { Link } from 'react-router-dom';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
-
+import { useAuth } from '@/pages/auth/AuthContext.jsx';
 
 export function Quizzes() {
+    const { user } = useAuth();
     const [createdQuizzes, setCreatedQuizzes] = useState([]);
     const [takenQuizzes, setTakenQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -23,33 +25,50 @@ export function Quizzes() {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const user = auth.currentUser;
                 if (!user) {
                     console.error('User not logged in');
                     return;
                 }
-               
-            
-                const createdQuizzesRef = query(collection(db, "quizzes"), where("createdBy", "==", user.uid));
-                const createdQuizzesSnapshot = await getDocs(createdQuizzesRef); // Fetch the user's created quizzes
-                const createdQuizzesData = createdQuizzesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setCreatedQuizzes(createdQuizzesData);
-        
-     
-                // its not working looks like it can not access the user in 
-                const takenQuizzesRef = query(collection(db, "quizzes"), where("scores" + user.uid, "!=" , null ));
-                const takenQuizzesSnapshot = await getDocs(takenQuizzesRef); // Fetch quizzes the user has taken
-                const takenQuizzesData = takenQuizzesSnapshot.docs.map(doc => {
-                  const data = doc.data();
-                  const score = data.scores[user.uid] || 0; 
-                  return { id: doc.id, ...data, score };
-                });
-                setTakenQuizzes(takenQuizzesData);
-        
 
-                const publicQuizzesRef = query(collection(db, "quizzes"), where("isPublic", "==", true));
+                const createdQuizzesRef = query(
+                    collection(db, 'quizzes'),
+                    where('createdBy', '==', user.uid),
+                );
+
+                const createdQuizzesSnapshot = await getDocs(createdQuizzesRef); // Fetch the user's created quizzes
+                const createdQuizzesData = createdQuizzesSnapshot.docs.map(
+                    (doc) => ({ id: doc.id, ...doc.data() }),
+                );
+                setCreatedQuizzes(createdQuizzesData);
+
+                // its not working looks like it can not access the user in
+                // const takenQuizzesRef = query(
+                //     collection(db, 'users'),
+                //     where('user.quizzesTaken', '!=', null),
+                // );
+                const quizzesTaken = user.quizzesTaken || [];
+                if (quizzesTaken.length > 0) {
+                    const quizzesPromises = quizzesTaken.map((quizId) =>
+                        getDoc(doc(db, 'quizzes', quizId)),
+                    );
+                    const quizzesSnapshots = await Promise.all(quizzesPromises); // Fetch quizzes by IDs
+                    const takenQuizzesData = quizzesSnapshots.map((quizDoc) => {
+                        const data = quizDoc.data();
+                        return { id: quizDoc.id, ...data };
+                    });
+                    setTakenQuizzes(takenQuizzesData);
+                } else {
+                    setTakenQuizzes([]);
+                }
+
+                const publicQuizzesRef = query(
+                    collection(db, 'quizzes'),
+                    where('isPublic', '==', true),
+                );
                 const publicQuizzesSnapshot = await getDocs(publicQuizzesRef); // Fetch public quizzes
-                const publicQuizzesData = publicQuizzesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const publicQuizzesData = publicQuizzesSnapshot.docs.map(
+                    (doc) => ({ id: doc.id, ...doc.data() }),
+                );
                 setPublicQuizzes(publicQuizzesData);
             } catch (error) {
                 console.error('Error fetching quizzes:', error);
@@ -62,19 +81,19 @@ export function Quizzes() {
     }, []);
 
     useEffect(() => {
-      //real time listener for public quizzes
-      const unsubscribe = onSnapshot(
-        query(collection(db, "quizzes"), where("isPublic", "==", true)),
-        (snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            if(change.type === "added"){
-              const newQuiz = change.doc.data();
-              alert(`New public quiz available: ${newQuiz.title}`);
-             }
-          });
-        }
-      );
-      return () => unsubscribe(); // unsubscribe from listener when component unmounts
+        //real time listener for public quizzes
+        const unsubscribe = onSnapshot(
+            query(collection(db, 'quizzes'), where('isPublic', '==', true)),
+            (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added') {
+                        const newQuiz = change.doc.data();
+                        alert(`New public quiz available: ${newQuiz.title}`);
+                    }
+                });
+            },
+        );
+        return () => unsubscribe(); // unsubscribe from listener when component unmounts
     }, []);
 
     const handleDeleteQuiz = async (quizId) => {
@@ -90,17 +109,18 @@ export function Quizzes() {
     };
 
     const handleSubscribeToQuiz = async (quizId) => {
-      try {
-        const user = auth.currentUser;
-        if(!user){
-          alert('You need to log in to subscribe to a quiz.');
-          return;
+        try {
+            if (!user) {
+                alert('You need to log in to subscribe to a quiz.');
+                return;
+            }
+            await subscribeToQuiz(user.uid, quizId); //Subscribe and generate .ics file
+            alert(
+                'You have subscribed to the quiz and the .ics file is downloaded!',
+            );
+        } catch (error) {
+            console.error('Error subscribing to quiz: ', error);
         }
-        await subscribeToQuiz(user.uid, quizId); //Subscribe and generate .ics file
-        alert('You have subscribed to the quiz and the .ics file is downloaded!');
-      } catch (error) {
-        console.error('Error subscribing to quiz: ', error);
-      }
     };
 
     if (loading) {
@@ -153,24 +173,36 @@ export function Quizzes() {
                     </Typography>
                 )}
             </Card>
-              <Card className='p-6 mb-6'>
-                <Typography variant='h5' className='mb-4'>Public Quizzes</Typography>
+            <Card className="p-6 mb-6">
+                <Typography variant="h5" className="mb-4">
+                    Public Quizzes
+                </Typography>
                 {publicQuizzes.length > 0 ? (
-                  publicQuizzes.map(quiz => (
-                    <div key={quiz.id} className='mb-4'>
-                      <Typography variant='h6'>{quiz.title}</Typography>
-                      <Typography variant='paragraph'>Category: {quiz.category}</Typography>
-                      <Typography variant='paragraph'>Questions: {quiz.numberOfQuestions}</Typography>
-                      <Button variant='gradient' color='green' onClick={() => handleSubscribeToQuiz(quiz.id)}>
-                      Subscribe & Download .ics
-                      </Button>
-                    <hr className='my-4'/>
-                    </div>
-                  ))
+                    publicQuizzes.map((quiz) => (
+                        <div key={quiz.id} className="mb-4">
+                            <Typography variant="h6">{quiz.title}</Typography>
+                            <Typography variant="paragraph">
+                                Category: {quiz.category}
+                            </Typography>
+                            <Typography variant="paragraph">
+                                Questions: {quiz.numberOfQuestions}
+                            </Typography>
+                            <Button
+                                variant="gradient"
+                                color="green"
+                                onClick={() => handleSubscribeToQuiz(quiz.id)}
+                            >
+                                Subscribe & Download .ics
+                            </Button>
+                            <hr className="my-4" />
+                        </div>
+                    ))
                 ) : (
-                  <Typography variant='paragraph'>No public quizzes available.</Typography>
+                    <Typography variant="paragraph">
+                        No public quizzes available.
+                    </Typography>
                 )}
-              </Card> 
+            </Card>
             <Card className="p-6">
                 <Typography variant="h5" className="mb-4">
                     Taken Quizzes
@@ -185,9 +217,11 @@ export function Quizzes() {
                             <Typography variant="paragraph">
                                 Questions: {quiz.numberOfQuestions}
                             </Typography>
-                            <Typography variant="paragraph">
-                                Your Score: {quiz.score}
-                            </Typography>
+                            {/*can not print the score for each quiz. Need further investigation to make it work 
+                             <Typography variant="paragraph">
+                                Your Score: {quiz.scores.user.score}
+                                
+                            </Typography> */}
                             <hr className="my-4" />
                         </div>
                     ))

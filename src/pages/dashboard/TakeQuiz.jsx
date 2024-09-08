@@ -4,6 +4,7 @@ import { Card, Button, Typography } from "@material-tailwind/react";
 import { fetchQuizById, recordQuizScore } from "@/services/quizService";
 import { useAuth } from "../auth/AuthContext";
 import { updateUserQuizzesTaken } from "@/services/userService";
+import Confetti from "react-confetti";
 
 export function TakeQuiz() {
     const { id } = useParams();
@@ -12,19 +13,19 @@ export function TakeQuiz() {
     const [selectedAnswer, setSelectedAnswer] = useState("");
     const [score, setScore] = useState(0);
     const [isQuizFinished, setIsQuizFinished] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(null);
+    const [timeLeft, setTimeLeft] = useState(null); // Timer state
     const [answerResult, setAnswerResult] = useState(null);
-    const [showAnimation, setShowAnimation] = useState(false);
+    const [showConfetti, setShowConfetti] = useState(false); // Show confetti on correct answer
+    const [screenCracked, setScreenCracked] = useState(false); // Trigger screen crack on wrong answer
     const navigate = useNavigate();
     const { user } = useAuth();
-
 
     useEffect(() => {
         const loadQuiz = async () => {
             try {
                 const quizData = await fetchQuizById(id);
                 setQuiz(quizData);
-                setTimeLeft(quizData.timer);
+                setTimeLeft(quizData.timer); // Set initial timer from quiz data
             } catch (error) {
                 console.error("Error fetching quiz:", error);
             }
@@ -34,7 +35,7 @@ export function TakeQuiz() {
 
     useEffect(() => {
         if (timeLeft === 0) {
-            handleTimeExpired();
+            handleTimeExpired(); // Handle when time runs out
         }
 
         if (timeLeft > 0) {
@@ -46,50 +47,48 @@ export function TakeQuiz() {
         }
     }, [timeLeft]);
 
-
-
     const handleNextQuestion = () => {
         const currentQuestion = quiz.questions[currentQuestionIndex];
         const correctAnswerIndex = parseInt(currentQuestion.correctAnswer, 10) - 1;
 
         if (quiz.questions[currentQuestionIndex].answers[correctAnswerIndex] === selectedAnswer) {
             setScore((prevScore) => prevScore + quiz.questions[currentQuestionIndex].points);
-            setAnswerResult("Верен отговор!");
-            setShowAnimation(true);
+            setAnswerResult("Correct Answer!");
+            setShowConfetti(true); // Show confetti animation
+            setScreenCracked(false); // No screen crack
         } else {
-            setAnswerResult("Грешен отговор!");
-            setShowAnimation(true);
+            setAnswerResult("Wrong Answer!");
+            setShowConfetti(false);
+            setScreenCracked(true); // Trigger screen crack effect
         }
-
 
         setTimeout(() => {
             setSelectedAnswer("");
-            setShowAnimation(false);
+            setShowConfetti(false);
+            setScreenCracked(false); // Reset screen crack
             setAnswerResult(null);
 
             if (currentQuestionIndex < quiz.questions.length - 1) {
                 setCurrentQuestionIndex(currentQuestionIndex + 1);
-                setTimeLeft(quiz.timer);
+                setTimeLeft(quiz.timer); // Reset timer for the next question
             } else {
                 setIsQuizFinished(true);
-
             }
         }, 2000);
     };
 
     const handleTimeExpired = () => {
-        setAnswerResult("Времето изтече!");
-        setShowAnimation(true);
-
+        setAnswerResult("Time's up!");
+        setScreenCracked(true); // Trigger screen crack when time is up
 
         setTimeout(() => {
             setSelectedAnswer("");
-            setShowAnimation(false);
+            setScreenCracked(false);
             setAnswerResult(null);
 
             if (currentQuestionIndex < quiz.questions.length - 1) {
                 setCurrentQuestionIndex(currentQuestionIndex + 1);
-                setTimeLeft(quiz.timer);
+                setTimeLeft(quiz.timer); // Reset timer for the next question
             } else {
                 setIsQuizFinished(true);
             }
@@ -99,10 +98,9 @@ export function TakeQuiz() {
     useEffect(() => {
         if (isQuizFinished) {
             saveScore();
-            updateUserQuizzesTaken(user.username, id, score)
+            updateUserQuizzesTaken(user.username, id, score);
         }
     }, [isQuizFinished]);
-
 
     const saveScore = async () => {
         if (user) {
@@ -116,7 +114,6 @@ export function TakeQuiz() {
         }
     };
 
-
     const handleTakeAnotherQuiz = () => {
         navigate("/dashboard/browse-quizzes");
     };
@@ -129,11 +126,11 @@ export function TakeQuiz() {
     };
 
     return (
-        <div className="p-6 dark:text-gray-100">
+        <div className={`p-6 dark:text-gray-100 ${screenCracked ? "cracked-screen" : ""}`}>
             {quiz ? (
                 isQuizFinished ? (
-                    <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg">
-                        <Typography variant="h5" className="mb-4 text-gray-900 dark:text-gray-100">
+                    <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg animate__animated animate__fadeIn">
+                        <Typography variant="h5" className="mb-4 text-center text-gray-900 dark:text-gray-100">
                             Quiz Finished! Your Score: {score}/{quiz.totalPoints}
                         </Typography>
                         <Button
@@ -146,26 +143,32 @@ export function TakeQuiz() {
                         </Button>
                     </Card>
                 ) : (
-                    <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg">
-                        <Typography variant="h5" className="mb-4 text-gray-900 dark:text-gray-100">
+                    <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg animate__animated animate__fadeIn">
+                        <Typography variant="h4" className="mb-4 text-left text-gray-900 dark:text-gray-100">
                             Question {currentQuestionIndex + 1}
                         </Typography>
-                        <Typography variant="paragraph" className="mb-4 text-gray-700 dark:text-gray-300">
+                        <Typography variant="h6" className="mb-4 text-left text-gray-700 dark:text-gray-300">
                             {quiz.questions[currentQuestionIndex].text}
                         </Typography>
-                        {quiz.questions[currentQuestionIndex].answers.map((answer, index) => (
-                            <label key={index} className="flex items-center mb-2 text-gray-700 dark:text-gray-300">
-                                <input
-                                    type="radio"
-                                    value={answer}
-                                    checked={selectedAnswer === answer}
-                                    onChange={() => setSelectedAnswer(answer)}
-                                    className="mr-2 h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
-                                />
-                                <span className="ml-2">{answer}</span>
-                            </label>
-                        ))}
+                        <div className="flex flex-col items-start space-y-4">
+                            {quiz.questions[currentQuestionIndex].answers.map((answer, index) => (
+                                <label key={index} className="flex items-center justify-start mb-2 text-gray-700 dark:text-gray-300">
+                                    <input
+                                        type="radio"
+                                        value={answer}
+                                        checked={selectedAnswer === answer}
+                                        onChange={() => setSelectedAnswer(answer)}
+                                        className="mr-2 h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
+                                    />
+                                    <span className="ml-2">{answer}</span>
+                                </label>
+                            ))}
+                        </div>
 
+                        {/* Confetti animation on correct answer */}
+                        {showConfetti && <Confetti />}
+
+                        {/* Countdown Timer */}
                         <div className="mt-4 mb-4 flex flex-col items-center relative">
                             <svg width="100" height="100" className="countdown-timer">
                                 <circle
@@ -181,26 +184,27 @@ export function TakeQuiz() {
                             </div>
                         </div>
 
-
-                        {showAnimation && (
-                            <div className="mt-4 mb-4 text-lg font-semibold animate-bounce">
+                        {/* Answer Result Animation */}
+                        {answerResult && (
+                            <div className={`mt-4 mb-4 text-lg font-semibold animate__animated ${answerResult === "Correct Answer!" ? "text-green-500 animate__bounceIn" : "text-red-500 animate__shakeX"}`}>
                                 {answerResult}
                             </div>
                         )}
 
-                        <Button
-                            variant="gradient"
-                            color="blue"
-                            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-700 dark:hover:bg-blue-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                            onClick={handleNextQuestion}
-                        >
-                            {currentQuestionIndex < quiz.questions.length - 1 ? "Next" : "Finish"}
-                        </Button>
+                        <div className="mt-4">
+                            <Button
+                                variant="gradient"
+                                color="blue"
+                                className="bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-700 dark:hover:bg-blue-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                                onClick={handleNextQuestion}
+                            >
+                                {currentQuestionIndex < quiz.questions.length - 1 ? "Next" : "Finish"}
+                            </Button>
+                        </div>
                     </Card>
                 )
             ) : (
-                <Typography
-                    className="dark:text-gray-400">Loading...</Typography>
+                <Typography className="dark:text-gray-400">Loading...</Typography>
             )}
         </div>
     );

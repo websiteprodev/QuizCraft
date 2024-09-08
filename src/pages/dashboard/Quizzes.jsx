@@ -13,7 +13,6 @@ import { db, auth } from '@/configs/firebase';
 import { Link } from 'react-router-dom';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
 
-
 export function Quizzes() {
     const [createdQuizzes, setCreatedQuizzes] = useState([]);
     const [takenQuizzes, setTakenQuizzes] = useState([]);
@@ -28,27 +27,23 @@ export function Quizzes() {
                     console.error('User not logged in');
                     return;
                 }
-               
-            
+
                 const createdQuizzesRef = query(collection(db, "quizzes"), where("createdBy", "==", user.uid));
-                const createdQuizzesSnapshot = await getDocs(createdQuizzesRef); // Fetch the user's created quizzes
+                const createdQuizzesSnapshot = await getDocs(createdQuizzesRef);
                 const createdQuizzesData = createdQuizzesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setCreatedQuizzes(createdQuizzesData);
-        
-     
-                // its not working looks like it can not access the user in 
-                const takenQuizzesRef = query(collection(db, "quizzes"), where("scores" + user.uid, "!=" , null ));
-                const takenQuizzesSnapshot = await getDocs(takenQuizzesRef); // Fetch quizzes the user has taken
+
+                const takenQuizzesRef = query(collection(db, "quizzes"), where("scores" + user.uid, "!=", null));
+                const takenQuizzesSnapshot = await getDocs(takenQuizzesRef);
                 const takenQuizzesData = takenQuizzesSnapshot.docs.map(doc => {
-                  const data = doc.data();
-                  const score = data.scores[user.uid] || 0; 
-                  return { id: doc.id, ...data, score };
+                    const data = doc.data();
+                    const score = data.scores[user.uid] || 0;
+                    return { id: doc.id, ...data, score };
                 });
                 setTakenQuizzes(takenQuizzesData);
-        
 
                 const publicQuizzesRef = query(collection(db, "quizzes"), where("isPublic", "==", true));
-                const publicQuizzesSnapshot = await getDocs(publicQuizzesRef); // Fetch public quizzes
+                const publicQuizzesSnapshot = await getDocs(publicQuizzesRef);
                 const publicQuizzesData = publicQuizzesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setPublicQuizzes(publicQuizzesData);
             } catch (error) {
@@ -62,19 +57,18 @@ export function Quizzes() {
     }, []);
 
     useEffect(() => {
-      //real time listener for public quizzes
-      const unsubscribe = onSnapshot(
-        query(collection(db, "quizzes"), where("isPublic", "==", true)),
-        (snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            if(change.type === "added"){
-              const newQuiz = change.doc.data();
-              alert(`New public quiz available: ${newQuiz.title}`);
-             }
-          });
-        }
-      );
-      return () => unsubscribe(); // unsubscribe from listener when component unmounts
+        const unsubscribe = onSnapshot(
+            query(collection(db, "quizzes"), where("isPublic", "==", true)),
+            (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const newQuiz = change.doc.data();
+                        alert(`New public quiz available: ${newQuiz.title}`);
+                    }
+                });
+            }
+        );
+        return () => unsubscribe();
     }, []);
 
     const handleDeleteQuiz = async (quizId) => {
@@ -90,17 +84,17 @@ export function Quizzes() {
     };
 
     const handleSubscribeToQuiz = async (quizId) => {
-      try {
-        const user = auth.currentUser;
-        if(!user){
-          alert('You need to log in to subscribe to a quiz.');
-          return;
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                alert('You need to log in to subscribe to a quiz.');
+                return;
+            }
+            await subscribeToQuiz(user.uid, quizId);
+            alert('You have subscribed to the quiz and the .ics file is downloaded!');
+        } catch (error) {
+            console.error('Error subscribing to quiz: ', error);
         }
-        await subscribeToQuiz(user.uid, quizId); //Subscribe and generate .ics file
-        alert('You have subscribed to the quiz and the .ics file is downloaded!');
-      } catch (error) {
-        console.error('Error subscribing to quiz: ', error);
-      }
     };
 
     if (loading) {
@@ -108,19 +102,19 @@ export function Quizzes() {
     }
 
     return (
-        <div className="p-6">
-            <Typography variant="h4" className="mb-4">
+        <div className="p-6 dark:bg-gray-900">
+            <Typography variant="h4" className="mb-4 dark:text-gray-100">
                 Your Quizzes
             </Typography>
 
-            <Card className="p-6 mb-6">
-                <Typography variant="h5" className="mb-4">
+            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-gray-100">
+                <Typography variant="h5" className="mb-4 dark:text-gray-100">
                     Created Quizzes
                 </Typography>
                 {createdQuizzes.length > 0 ? (
                     createdQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6">{quiz.title}</Typography>
+                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
                             <Typography variant="paragraph">
                                 Category: {quiz.category}
                             </Typography>
@@ -129,7 +123,6 @@ export function Quizzes() {
                             </Typography>
 
                             <div className="flex gap-2 mt-4">
-                                {/* Препращане към AdminEditQuiz.jsx с правилния quizId */}
                                 <Link to={`/quizzes/edit/${quiz.id}`}>
                                     <Button variant="gradient" color="blue">
                                         Edit
@@ -144,55 +137,55 @@ export function Quizzes() {
                                 </Button>
                             </div>
 
-                            <hr className="my-4" />
+                            <hr className="my-4 dark:border-gray-600" />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph">
+                    <Typography variant="paragraph" className="dark:text-gray-300">
                         No quizzes created.
                     </Typography>
                 )}
             </Card>
-              <Card className='p-6 mb-6'>
-                <Typography variant='h5' className='mb-4'>Public Quizzes</Typography>
+            
+            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-gray-100">
+                <Typography variant="h5" className="mb-4 dark:text-gray-100">
+                    Public Quizzes
+                </Typography>
                 {publicQuizzes.length > 0 ? (
-                  publicQuizzes.map(quiz => (
-                    <div key={quiz.id} className='mb-4'>
-                      <Typography variant='h6'>{quiz.title}</Typography>
-                      <Typography variant='paragraph'>Category: {quiz.category}</Typography>
-                      <Typography variant='paragraph'>Questions: {quiz.numberOfQuestions}</Typography>
-                      <Button variant='gradient' color='green' onClick={() => handleSubscribeToQuiz(quiz.id)}>
-                      Subscribe & Download .ics
-                      </Button>
-                    <hr className='my-4'/>
-                    </div>
-                  ))
+                    publicQuizzes.map((quiz) => (
+                        <div key={quiz.id} className="mb-4">
+                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
+                            <Typography variant="paragraph">Category: {quiz.category}</Typography>
+                            <Typography variant="paragraph">Questions: {quiz.numberOfQuestions}</Typography>
+                            <Button variant="gradient" color="green" onClick={() => handleSubscribeToQuiz(quiz.id)}>
+                                Subscribe & Download .ics
+                            </Button>
+                            <hr className="my-4 dark:border-gray-600" />
+                        </div>
+                    ))
                 ) : (
-                  <Typography variant='paragraph'>No public quizzes available.</Typography>
+                    <Typography variant="paragraph" className="dark:text-gray-300">
+                        No public quizzes available.
+                    </Typography>
                 )}
-              </Card> 
-            <Card className="p-6">
-                <Typography variant="h5" className="mb-4">
+            </Card>
+
+            <Card className="p-6 dark:bg-gray-800 dark:text-gray-100">
+                <Typography variant="h5" className="mb-4 dark:text-gray-100">
                     Taken Quizzes
                 </Typography>
                 {takenQuizzes.length > 0 ? (
                     takenQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6">{quiz.title}</Typography>
-                            <Typography variant="paragraph">
-                                Category: {quiz.category}
-                            </Typography>
-                            <Typography variant="paragraph">
-                                Questions: {quiz.numberOfQuestions}
-                            </Typography>
-                            <Typography variant="paragraph">
-                                Your Score: {quiz.score}
-                            </Typography>
-                            <hr className="my-4" />
+                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
+                            <Typography variant="paragraph">Category: {quiz.category}</Typography>
+                            <Typography variant="paragraph">Questions: {quiz.numberOfQuestions}</Typography>
+                            <Typography variant="paragraph">Your Score: {quiz.score}</Typography>
+                            <hr className="my-4 dark:border-gray-600" />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph">
+                    <Typography variant="paragraph" className="dark:text-gray-300">
                         No quizzes taken.
                     </Typography>
                 )}

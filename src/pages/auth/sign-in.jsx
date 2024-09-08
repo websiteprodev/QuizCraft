@@ -42,10 +42,8 @@ export function SignIn() {
                 'Failed to sign in. Please check your credentials and try again.',
             );
 
-            
             console.log('Full error object:', error);
 
-            
             switch (error.code) {
                 case 'auth/invalid-credential':
                     setErrorMessage('Invalid credentials. Please try again.');
@@ -57,16 +55,16 @@ export function SignIn() {
     };
 
     return (
-        <section className="m-8 flex">
+        <section className="m-8 flex dark:bg-gray-900 min-h-screen">
             <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
                 <div className="text-center">
-                    <Typography variant="h2" className="font-bold mb-4">
+                    <Typography variant="h2" className="font-bold mb-4 dark:text-gray-100">
                         Sign In
                     </Typography>
                     <Typography
                         variant="paragraph"
                         color="blue-gray"
-                        className="text-lg font-normal"
+                        className="text-lg font-normal dark:text-gray-300"
                     >
                         Enter your Username and Password to sign in.
                     </Typography>
@@ -88,7 +86,7 @@ export function SignIn() {
                         <Typography
                             variant="small"
                             color="blue-gray"
-                            className="-mb-3 font-medium"
+                            className="-mb-3 font-medium dark:text-gray-200"
                         >
                             Username
                         </Typography>
@@ -97,7 +95,7 @@ export function SignIn() {
                             placeholder="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                            className="!border-t-blue-gray-200 focus:!border-t-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
                             labelProps={{
                                 className:
                                     'before:content-none after:content-none',
@@ -106,7 +104,7 @@ export function SignIn() {
                         <Typography
                             variant="small"
                             color="blue-gray"
-                            className="-mb-3 font-medium"
+                            className="-mb-3 font-medium dark:text-gray-200"
                         >
                             Password
                         </Typography>
@@ -116,7 +114,7 @@ export function SignIn() {
                             placeholder="********"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                            className="!border-t-blue-gray-200 focus:!border-t-gray-900 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
                             labelProps={{
                                 className:
                                     'before:content-none after:content-none',
@@ -124,16 +122,16 @@ export function SignIn() {
                         />
                     </div>
                     {error && <Typography color="red">{error}</Typography>}
-                    <Button className="mt-6" fullWidth type="submit">
+                    <Button className="mt-6 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-400 text-white" fullWidth type="submit">
                         Sign In
                     </Button>
                 </form>
                 <Typography
                     variant="paragraph"
-                    className="text-center text-blue-gray-500 font-medium mt-4"
+                    className="text-center text-blue-gray-500 font-medium mt-4 dark:text-gray-200"
                 >
                     Do not have an account?
-                    <Link to="/auth/sign-up" className="text-gray-900 ml-1">
+                    <Link to="/auth/sign-up" className="text-gray-900 dark:text-gray-200 ml-1">
                         Register
                     </Link>
                 </Typography>

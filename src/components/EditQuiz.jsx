@@ -65,7 +65,6 @@ const EditQuiz = () => {
                 questions,
             };
             
-            
             if (typeof isRandomized !== "undefined") {
                 updatedQuizData.isRandomized = isRandomized;
             }
@@ -79,34 +78,36 @@ const EditQuiz = () => {
     };
 
     if (!quiz) {
-        return <Typography>Loading quiz data...</Typography>;
+        return <Typography className="dark:text-gray-100">Loading quiz data...</Typography>;
     }
 
     return (
-        <div className="p-6">
-            <Typography variant="h4" className="mb-6">Edit Quiz</Typography>
-            <Card className="p-6 space-y-6">
+        <div className="p-6 dark:bg-gray-900">
+            <Typography variant="h4" className="mb-6 dark:text-gray-100">Edit Quiz</Typography>
+            <Card className="p-6 space-y-6 dark:bg-gray-800 dark:text-gray-100">
                 <div className="space-y-4">
                     <Input 
                         label="Title" 
                         value={title} 
                         onChange={(e) => setTitle(e.target.value)} 
+                        className="dark:text-gray-100 dark:bg-gray-700"
                     />
                     <Input 
                         label="Category" 
                         value={category} 
                         onChange={(e) => setCategory(e.target.value)} 
+                        className="dark:text-gray-100 dark:bg-gray-700"
                     />
                 </div>
 
                 <div className="space-y-6">
                     {questions.map((question, questionIndex) => (
-                        <div key={questionIndex} className="border-b pb-6">
+                        <div key={questionIndex} className="border-b pb-6 dark:border-gray-600">
                             <Input
                                 label={`Question ${questionIndex + 1}`}
                                 value={question.text}
                                 onChange={(e) => handleQuestionChange(questionIndex, "text", e.target.value)}
-                                className="mb-4"
+                                className="mb-4 dark:text-gray-100 dark:bg-gray-700"
                             />
                             {question.answers.map((answer, answerIndex) => (
                                 <Input
@@ -114,14 +115,14 @@ const EditQuiz = () => {
                                     label={`Answer ${answerIndex + 1}`}
                                     value={answer}
                                     onChange={(e) => handleAnswerChange(questionIndex, answerIndex, e.target.value)}
-                                    className="mb-2"
+                                    className="mb-2 dark:text-gray-100 dark:bg-gray-700"
                                 />
                             ))}
                             <Input
                                 label="Correct Answer"
                                 value={question.correctAnswer}
                                 onChange={(e) => handleQuestionChange(questionIndex, "correctAnswer", e.target.value)}
-                                className="mt-2"
+                                className="mt-2 dark:text-gray-100 dark:bg-gray-700"
                             />
                         </div>
                     ))}
@@ -137,7 +138,7 @@ const EditQuiz = () => {
                         checked={isRandomized}
                         onChange={(e) => setIsRandomized(e.target.checked)}
                     />
-                    <Typography>Randomize Questions</Typography>
+                    <Typography className="dark:text-gray-100">Randomize Questions</Typography>
                 </div>
 
                 <Button onClick={handleSave} className="mt-6" color="green">

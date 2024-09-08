@@ -65,7 +65,6 @@ const AdminEditQuiz = () => {
                 questions,
             };
             
-            
             if (typeof isRandomized !== "undefined") {
                 updatedQuizData.isRandomized = isRandomized;
             }
@@ -83,30 +82,32 @@ const AdminEditQuiz = () => {
     }
 
     return (
-        <div className="p-6">
-            <Typography variant="h4" className="mb-6">Edit Quiz</Typography>
-            <Card className="p-6 space-y-6">
+        <div className="p-6 dark:bg-gray-900">
+            <Typography variant="h4" className="mb-6 dark:text-white">Edit Quiz</Typography>
+            <Card className="p-6 space-y-6 dark:bg-gray-800 dark:text-white">
                 <div className="space-y-4">
                     <Input 
                         label="Title" 
                         value={title} 
                         onChange={(e) => setTitle(e.target.value)} 
+                        className="dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                     />
                     <Input 
                         label="Category" 
                         value={category} 
                         onChange={(e) => setCategory(e.target.value)} 
+                        className="dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                     />
                 </div>
 
                 <div className="space-y-6">
                     {questions.map((question, questionIndex) => (
-                        <div key={questionIndex} className="border-b pb-6">
+                        <div key={questionIndex} className="border-b pb-6 dark:border-gray-600">
                             <Input
                                 label={`Question ${questionIndex + 1}`}
                                 value={question.text}
                                 onChange={(e) => handleQuestionChange(questionIndex, "text", e.target.value)}
-                                className="mb-4"
+                                className="mb-4 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                             />
                             {question.answers.map((answer, answerIndex) => (
                                 <Input
@@ -114,20 +115,20 @@ const AdminEditQuiz = () => {
                                     label={`Answer ${answerIndex + 1}`}
                                     value={answer}
                                     onChange={(e) => handleAnswerChange(questionIndex, answerIndex, e.target.value)}
-                                    className="mb-2"
+                                    className="mb-2 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                                 />
                             ))}
                             <Input
                                 label="Correct Answer"
                                 value={question.correctAnswer}
                                 onChange={(e) => handleQuestionChange(questionIndex, "correctAnswer", e.target.value)}
-                                className="mt-2"
+                                className="mt-2 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                             />
                         </div>
                     ))}
                 </div>
 
-                <Button onClick={addQuestion} className="mt-6" variant="gradient" color="blue">
+                <Button onClick={addQuestion} className="mt-6 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-400 text-white">
                     Add Another Question
                 </Button>
 
@@ -136,11 +137,12 @@ const AdminEditQuiz = () => {
                         label="Randomize Questions"
                         checked={isRandomized}
                         onChange={(e) => setIsRandomized(e.target.checked)}
+                        className="dark:bg-gray-800"
                     />
-                    <Typography>Randomize Questions</Typography>
+                    <Typography className="dark:text-gray-200">Randomize Questions</Typography>
                 </div>
 
-                <Button onClick={handleSave} className="mt-6" color="green">
+                <Button onClick={handleSave} className="mt-6 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-400 text-white">
                     Save Changes
                 </Button>
             </Card>

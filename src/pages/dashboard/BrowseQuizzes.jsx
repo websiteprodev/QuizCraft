@@ -14,17 +14,18 @@ export function BrowseQuizzes() {
     const [topScores, setTopScores] = useState([]);
     const [selectedQuizId, setSelectedQuizId] = useState(null);
     const [completedQuizzes, setCompletedQuizzes] = useState([]); // Store completed quizzes
+    const [userPoints, setUserPoints] = useState(0); // Store user points
     const navigate = useNavigate();
     const { user } = useAuth(); // Get user info from AuthContext
 
     useEffect(() => {
-        const loadQuizzes = async () => {
+        const loadQuizzesAndUserData = async () => {
             try {
                 // Fetch all quizzes
                 const quizzesData = await fetchQuizzes();
                 setQuizzes(quizzesData);
 
-                // Fetch completed quizzes for the current user from Firestore
+                // Fetch completed quizzes and user points for the current user from Firestore
                 const db = getFirestore();
                 const userDoc = doc(db, "users", user?.uid); // Reference to the user's document
                 const userSnap = await getDoc(userDoc);
@@ -32,6 +33,7 @@ export function BrowseQuizzes() {
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
                     setCompletedQuizzes(userData.completedQuizzes || []); // Save completed quizzes array
+                    setUserPoints(userData.points || 0); // Save user points
                 } else {
                     console.log("No such user document!");
                 }
@@ -39,7 +41,7 @@ export function BrowseQuizzes() {
                 console.error("Error fetching quizzes or user data:", error);
             }
         };
-        loadQuizzes();
+        loadQuizzesAndUserData();
     }, [user]);
 
     const handleShowScoreboard = async (quizId) => {
@@ -61,7 +63,8 @@ export function BrowseQuizzes() {
 
     return (
         <div className="p-6 dark:text-gray-100">
-            <RankProgress />
+            {/* Pass the user's points to RankProgress */}
+            <RankProgress points={userPoints} />
 
             <Typography variant="h4" className="mb-4 dark:text-gray-100">Browse Quizzes</Typography>
             <Input

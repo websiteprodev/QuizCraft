@@ -128,24 +128,26 @@ export function Quizzes() {
     }
 
     return (
-        <div className="p-6">
-            <Typography variant="h4" className="mb-4">
+        <div className="p-6 dark:bg-gray-900 dark:text-gray-200">
+            <Typography variant="h4" className="mb-4 dark:text-white">
                 Your Quizzes
             </Typography>
 
             {/* Created Quizzes Section */}
-            <Card className="p-6 mb-6">
-                <Typography variant="h5" className="mb-4">
+            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-white">
+                <Typography variant="h5" className="mb-4 dark:text-white">
                     Created Quizzes
                 </Typography>
                 {createdQuizzes.length > 0 ? (
                     createdQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6">{quiz.title}</Typography>
-                            <Typography variant="paragraph">
+                            <Typography variant="h6" className="dark:text-white">
+                                {quiz.title}
+                            </Typography>
+                            <Typography variant="paragraph" className="dark:text-gray-300">
                                 Category: {quiz.category}
                             </Typography>
-                            <Typography variant="paragraph">
+                            <Typography variant="paragraph" className="dark:text-gray-300">
                                 Questions: {quiz.numberOfQuestions}
                             </Typography>
 
@@ -164,29 +166,31 @@ export function Quizzes() {
                                 </Button>
                             </div>
 
-                            <hr className="my-4" />
+                            <hr className="my-4 dark:border-gray-600" />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph">
+                    <Typography variant="paragraph" className="dark:text-gray-300">
                         No quizzes created.
                     </Typography>
                 )}
             </Card>
 
             {/* Public Quizzes Section */}
-            <Card className="p-6 mb-6">
-                <Typography variant="h5" className="mb-4">
+            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-white">
+                <Typography variant="h5" className="mb-4 dark:text-white">
                     Public Quizzes
                 </Typography>
                 {publicQuizzes.length > 0 ? (
                     publicQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6">{quiz.title}</Typography>
-                            <Typography variant="paragraph">
+                            <Typography variant="h6" className="dark:text-white">
+                                {quiz.title}
+                            </Typography>
+                            <Typography variant="paragraph" className="dark:text-gray-300">
                                 Category: {quiz.category}
                             </Typography>
-                            <Typography variant="paragraph">
+                            <Typography variant="paragraph" className="dark:text-gray-300">
                                 Questions: {quiz.numberOfQuestions}
                             </Typography>
                             <Button
@@ -196,40 +200,41 @@ export function Quizzes() {
                             >
                                 Subscribe & Download .ics
                             </Button>
-                            <hr className="my-4" />
+                            <hr className="my-4 dark:border-gray-600" />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph">
+                    <Typography variant="paragraph" className="dark:text-gray-300">
                         No public quizzes available.
                     </Typography>
                 )}
             </Card>
 
             {/* Taken Quizzes Section */}
-            <Card className="p-6">
-                <Typography variant="h5" className="mb-4">
+            <Card className="p-6 dark:bg-gray-800 dark:text-white">
+                <Typography variant="h5" className="mb-4 dark:text-white">
                     Taken Quizzes
                 </Typography>
                 {takenQuizzes.length > 0 ? (
                     takenQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6">{quiz.title}</Typography>
-                            <Typography variant="paragraph">
+                            <Typography variant="h6" className="dark:text-white">
+                                {quiz.title}
+                            </Typography>
+                            <Typography variant="paragraph" className="dark:text-gray-300">
                                 Category: {quiz.category}
                             </Typography>
-                            <Typography variant="paragraph">
+                            <Typography variant="paragraph" className="dark:text-gray-300">
                                 Questions: {quiz.numberOfQuestions}
                             </Typography>
-                            <Typography variant="paragraph">
-                                Your Score: {quiz.score}{' '}
-                                {/* Display user's score */}
+                            <Typography variant="paragraph" className="dark:text-gray-300">
+                                Your Score: {quiz.score}
                             </Typography>
-                            <hr className="my-4" />
+                            <hr className="my-4 dark:border-gray-600" />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph">
+                    <Typography variant="paragraph" className="dark:text-gray-300">
                         No quizzes taken.
                     </Typography>
                 )}
@@ -237,5 +242,4 @@ export function Quizzes() {
         </div>
     );
 }
-
 export default Quizzes;

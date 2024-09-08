@@ -36,7 +36,7 @@ const updateUserRankAndPoints = async (userId, pointsToAdd) => {
         const userData = userSnap.data();
         const updatedPoints = (userData.points || 0) + pointsToAdd;
 
-        console.log("Updated Points:", updatedPoints);  
+        console.log("Updated Points:", updatedPoints);
 
         const nextRankThreshold = calculateNextRankThreshold(userData.rank || 0);
         if (updatedPoints >= nextRankThreshold) {
@@ -50,7 +50,7 @@ const updateUserRankAndPoints = async (userId, pointsToAdd) => {
             });
         }
 
-        console.log("Updated user:", userId, "with points:", updatedPoints);  
+        console.log("Updated user:", userId, "with points:", updatedPoints);
     } else {
         console.error("User not found");
     }
@@ -171,7 +171,7 @@ export const fetchUsersWithScores = async () => {
 
     userSnapshot.forEach((doc) => {
         const userData = doc.data();
-        const points = userData.points || 0;  
+        const points = userData.points || 0;
         const rank = userData.rank || "Beginner";
 
         users.push({
@@ -179,11 +179,11 @@ export const fetchUsersWithScores = async () => {
             firstName: userData.firstName,
             lastName: userData.lastName,
             rank: rank,
-            points: points,  
+            points: points,
         });
     });
 
-    console.log("Users with Points:", users);  
+    console.log("Users with Points:", users);
     return users;
 };
 
@@ -196,25 +196,25 @@ const calculateNextRankThreshold = (currentRank) => {
 };
 
 export const fetchUserScores = async (userId) => {
-  try {
-    const scoresCollectionRef = collection(db, "quizzes");
-    const q = query(scoresCollectionRef, where("userId", "==", userId));
-    const querySnapshot = await getDocs(q);
+    try {
+        const scoresCollectionRef = collection(db, "quizzes");
+        const q = query(scoresCollectionRef, where("userId", "==", userId));
+        const querySnapshot = await getDocs(q);
 
-    const scores = [];
-    querySnapshot.forEach((doc) => {
-      const quizData = doc.data();
-      scores.push({
-        quizId: doc.id,
-        title: quizData.title,
-        score: quizData.score,
-        totalPoints: quizData.totalPoints,
-      });
-    });
+        const scores = [];
+        querySnapshot.forEach((doc) => {
+            const quizData = doc.data();
+            scores.push({
+                quizId: doc.id,
+                title: quizData.title,
+                score: quizData.score,
+                totalPoints: quizData.totalPoints,
+            });
+        });
 
-    return scores;
-  } catch (error) {
-    console.error("Error fetching user scores:", error);
-    return [];
-  }
+        return scores;
+    } catch (error) {
+        console.error("Error fetching user scores:", error);
+        return [];
+    }
 };

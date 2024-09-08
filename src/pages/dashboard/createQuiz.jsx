@@ -33,7 +33,7 @@ export function CreateQuiz() {
     const [newQuestionText, setNewQuestionText] = useState('');
     const [selectedBankQuestionId, setSelectedBankQuestionId] = useState('');
     const [newAnswers, setNewAnswers] = useState(['', '', '', '']);
-    const [newCorrectAnswer, setNewCorrectAnswer] = useState('1'); // Default to 1
+    const [newCorrectAnswer, setNewCorrectAnswer] = useState('1'); 
 
     useEffect(() => {
         const total = questions.reduce(
@@ -44,7 +44,6 @@ export function CreateQuiz() {
     }, [questions]);
 
     useEffect(() => {
-        // Fetch the question bank on component mount
         fetchQuestionBank();
     }, []);
 
@@ -194,7 +193,7 @@ export function CreateQuiz() {
             (q) => q.id === selectedBankQuestionId,
         );
         if (!questions[0].text.trim()) {
-            //If Question 1 is empty, populate it with the selected question from the question bank
+    
             const updatedQuestions = [...questions];
             updatedQuestions[0] = {
                 text: selectedQuestion.question,
@@ -205,7 +204,7 @@ export function CreateQuiz() {
             };
             setQuestions(updatedQuestions);
         } else {
-            //If Question 1 is already populated , add a new question
+
             setQuestions([
                 ...questions,
                 {

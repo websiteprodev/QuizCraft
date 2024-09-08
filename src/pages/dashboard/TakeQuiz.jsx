@@ -13,10 +13,10 @@ export function TakeQuiz() {
     const [selectedAnswer, setSelectedAnswer] = useState("");
     const [score, setScore] = useState(0);
     const [isQuizFinished, setIsQuizFinished] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(null); // Timer state
+    const [timeLeft, setTimeLeft] = useState(null); 
     const [answerResult, setAnswerResult] = useState(null);
-    const [showConfetti, setShowConfetti] = useState(false); // Show confetti on correct answer
-    const [screenCracked, setScreenCracked] = useState(false); // Trigger screen crack on wrong answer
+    const [showConfetti, setShowConfetti] = useState(false); 
+    const [screenCracked, setScreenCracked] = useState(false); 
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -24,8 +24,9 @@ export function TakeQuiz() {
         const loadQuiz = async () => {
             try {
                 const quizData = await fetchQuizById(id);
+                console.log("Fetched Quiz Data:", quizData); // Add this log to inspect the quiz data
                 setQuiz(quizData);
-                setTimeLeft(quizData.timer); // Set initial timer from quiz data
+                setTimeLeft(quizData.timer);
             } catch (error) {
                 console.error("Error fetching quiz:", error);
             }
@@ -35,7 +36,7 @@ export function TakeQuiz() {
 
     useEffect(() => {
         if (timeLeft === 0) {
-            handleTimeExpired(); // Handle when time runs out
+            handleTimeExpired(); 
         }
 
         if (timeLeft > 0) {
@@ -48,29 +49,39 @@ export function TakeQuiz() {
     }, [timeLeft]);
 
     const handleNextQuestion = () => {
+        if (!quiz || !quiz.questions || quiz.questions.length === 0) {
+            console.error("Quiz data is not loaded correctly.");
+            return;
+        }
+
         const currentQuestion = quiz.questions[currentQuestionIndex];
         const correctAnswerIndex = parseInt(currentQuestion.correctAnswer, 10) - 1;
 
-        if (quiz.questions[currentQuestionIndex].answers[correctAnswerIndex] === selectedAnswer) {
-            setScore((prevScore) => prevScore + quiz.questions[currentQuestionIndex].points);
+        console.log("Correct Answer Index:", correctAnswerIndex);
+        console.log("Selected Answer:", selectedAnswer);
+        console.log("Question Points:", currentQuestion.points);
+
+        if (currentQuestion.answers[correctAnswerIndex] === selectedAnswer) {
+            console.log("Answer is correct. Adding points:", currentQuestion.points);
+            setScore((prevScore) => prevScore + currentQuestion.points);  // Use functional update to avoid issues with async updates
             setAnswerResult("Correct Answer!");
-            setShowConfetti(true); // Show confetti animation
-            setScreenCracked(false); // No screen crack
+            setShowConfetti(true); 
+            setScreenCracked(false); 
         } else {
             setAnswerResult("Wrong Answer!");
             setShowConfetti(false);
-            setScreenCracked(true); // Trigger screen crack effect
+            setScreenCracked(true); 
         }
 
         setTimeout(() => {
             setSelectedAnswer("");
             setShowConfetti(false);
-            setScreenCracked(false); // Reset screen crack
+            setScreenCracked(false); 
             setAnswerResult(null);
 
             if (currentQuestionIndex < quiz.questions.length - 1) {
                 setCurrentQuestionIndex(currentQuestionIndex + 1);
-                setTimeLeft(quiz.timer); // Reset timer for the next question
+                setTimeLeft(quiz.timer); 
             } else {
                 setIsQuizFinished(true);
             }
@@ -79,7 +90,7 @@ export function TakeQuiz() {
 
     const handleTimeExpired = () => {
         setAnswerResult("Time's up!");
-        setScreenCracked(true); // Trigger screen crack when time is up
+        setScreenCracked(true); 
 
         setTimeout(() => {
             setSelectedAnswer("");
@@ -88,7 +99,7 @@ export function TakeQuiz() {
 
             if (currentQuestionIndex < quiz.questions.length - 1) {
                 setCurrentQuestionIndex(currentQuestionIndex + 1);
-                setTimeLeft(quiz.timer); // Reset timer for the next question
+                setTimeLeft(quiz.timer); 
             } else {
                 setIsQuizFinished(true);
             }
@@ -119,7 +130,7 @@ export function TakeQuiz() {
     };
 
     const calculateDashOffset = () => {
-        const maxTime = quiz.timer;
+        const maxTime = quiz ? quiz.timer : 1;  // Prevent division by 0
         const dashArray = 283;
         const dashOffset = (dashArray * timeLeft) / maxTime;
         return dashOffset;
@@ -127,7 +138,7 @@ export function TakeQuiz() {
 
     return (
         <div className={`p-6 dark:text-gray-100 ${screenCracked ? "cracked-screen" : ""}`}>
-            {quiz ? (
+            {quiz && quiz.questions && quiz.questions.length > 0 ? (
                 isQuizFinished ? (
                     <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg animate__animated animate__fadeIn">
                         <Typography variant="h5" className="mb-4 text-center text-gray-900 dark:text-gray-100">
@@ -164,11 +175,7 @@ export function TakeQuiz() {
                                 </label>
                             ))}
                         </div>
-
-                        {/* Confetti animation on correct answer */}
                         {showConfetti && <Confetti />}
-
-                        {/* Countdown Timer */}
                         <div className="mt-4 mb-4 flex flex-col items-center relative">
                             <svg width="100" height="100" className="countdown-timer">
                                 <circle
@@ -183,8 +190,6 @@ export function TakeQuiz() {
                                 {timeLeft}
                             </div>
                         </div>
-
-                        {/* Answer Result Animation */}
                         {answerResult && (
                             <div className={`mt-4 mb-4 text-lg font-semibold animate__animated ${answerResult === "Correct Answer!" ? "text-green-500 animate__bounceIn" : "text-red-500 animate__shakeX"}`}>
                                 {answerResult}

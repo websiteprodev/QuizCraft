@@ -6,14 +6,17 @@ import {
     where,
     getDocs,
     doc,
+    getDoc,
     deleteDoc,
-    onSnapshot
+    onSnapshot,
 } from 'firebase/firestore';
-import { db, auth } from '@/configs/firebase';
+import { db } from '@/configs/firebase';
 import { Link } from 'react-router-dom';
-import { subscribeToQuiz, createICSFile } from '@/services/quizService';
+import { subscribeToQuiz } from '@/services/quizService';
+import { useAuth } from '@/pages/auth/AuthContext.jsx';
 
 export function Quizzes() {
+    const { user } = useAuth(); // Access user from useAuth hook
     const [createdQuizzes, setCreatedQuizzes] = useState([]);
     const [takenQuizzes, setTakenQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -22,29 +25,50 @@ export function Quizzes() {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const user = auth.currentUser;
                 if (!user) {
                     console.error('User not logged in');
                     return;
                 }
 
-                const createdQuizzesRef = query(collection(db, "quizzes"), where("createdBy", "==", user.uid));
-                const createdQuizzesSnapshot = await getDocs(createdQuizzesRef);
-                const createdQuizzesData = createdQuizzesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Fetch quizzes created by the user
+                const createdQuizzesRef = query(
+                    collection(db, 'quizzes'),
+                    where('createdBy', '==', user.uid),
+                );
+                const createdQuizzesSnapshot = await getDocs(createdQuizzesRef); // Fetch the user's created quizzes
+                const createdQuizzesData = createdQuizzesSnapshot.docs.map(
+                    (doc) => ({ id: doc.id, ...doc.data() }),
+                );
                 setCreatedQuizzes(createdQuizzesData);
 
-                const takenQuizzesRef = query(collection(db, "quizzes"), where("scores" + user.uid, "!=", null));
-                const takenQuizzesSnapshot = await getDocs(takenQuizzesRef);
-                const takenQuizzesData = takenQuizzesSnapshot.docs.map(doc => {
-                    const data = doc.data();
-                    const score = data.scores[user.uid] || 0;
-                    return { id: doc.id, ...data, score };
-                });
-                setTakenQuizzes(takenQuizzesData);
+                // Fetch quizzes based on the taken quizzes IDs from user.quizzesTaken
+                const quizzesTaken = user.quizzesTaken || []; // Array of quiz IDs
+                if (quizzesTaken.length > 0) {
+                    const quizzesPromises = quizzesTaken.map((quizId) =>
+                        getDoc(doc(db, 'quizzes', quizId)),
+                    );
+                    const quizzesSnapshots = await Promise.all(quizzesPromises); // Fetch quizzes by IDs
+                    const takenQuizzesData = quizzesSnapshots.map((quizDoc) => {
+                        const data = quizDoc.data();
+                        const score = data.scores
+                            ? data.scores[user.uid] || 0
+                            : 0; // Get the user's score for each quiz
+                        return { id: quizDoc.id, ...data, score };
+                    });
+                    setTakenQuizzes(takenQuizzesData);
+                } else {
+                    setTakenQuizzes([]); // No quizzes taken
+                }
 
-                const publicQuizzesRef = query(collection(db, "quizzes"), where("isPublic", "==", true));
-                const publicQuizzesSnapshot = await getDocs(publicQuizzesRef);
-                const publicQuizzesData = publicQuizzesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Fetch public quizzes
+                const publicQuizzesRef = query(
+                    collection(db, 'quizzes'),
+                    where('isPublic', '==', true),
+                );
+                const publicQuizzesSnapshot = await getDocs(publicQuizzesRef); // Fetch public quizzes
+                const publicQuizzesData = publicQuizzesSnapshot.docs.map(
+                    (doc) => ({ id: doc.id, ...doc.data() }),
+                );
                 setPublicQuizzes(publicQuizzesData);
             } catch (error) {
                 console.error('Error fetching quizzes:', error);
@@ -54,21 +78,22 @@ export function Quizzes() {
         };
 
         fetchQuizzes();
-    }, []);
+    }, [user]);
 
     useEffect(() => {
+        // Real-time listener for public quizzes
         const unsubscribe = onSnapshot(
-            query(collection(db, "quizzes"), where("isPublic", "==", true)),
+            query(collection(db, 'quizzes'), where('isPublic', '==', true)),
             (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
+                    if (change.type === 'added') {
                         const newQuiz = change.doc.data();
                         alert(`New public quiz available: ${newQuiz.title}`);
                     }
                 });
-            }
+            },
         );
-        return () => unsubscribe();
+        return () => unsubscribe(); // Unsubscribe from listener when component unmounts
     }, []);
 
     const handleDeleteQuiz = async (quizId) => {
@@ -85,15 +110,16 @@ export function Quizzes() {
 
     const handleSubscribeToQuiz = async (quizId) => {
         try {
-            const user = auth.currentUser;
             if (!user) {
                 alert('You need to log in to subscribe to a quiz.');
                 return;
             }
-            await subscribeToQuiz(user.uid, quizId);
-            alert('You have subscribed to the quiz and the .ics file is downloaded!');
+            await subscribeToQuiz(user.uid, quizId); // Subscribe and generate .ics file
+            alert(
+                'You have subscribed to the quiz and the .ics file is downloaded!',
+            );
         } catch (error) {
-            console.error('Error subscribing to quiz: ', error);
+            console.error('Error subscribing to quiz:', error);
         }
     };
 
@@ -102,19 +128,20 @@ export function Quizzes() {
     }
 
     return (
-        <div className="p-6 dark:bg-gray-900">
-            <Typography variant="h4" className="mb-4 dark:text-gray-100">
+        <div className="p-6">
+            <Typography variant="h4" className="mb-4">
                 Your Quizzes
             </Typography>
 
-            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-gray-100">
-                <Typography variant="h5" className="mb-4 dark:text-gray-100">
+            {/* Created Quizzes Section */}
+            <Card className="p-6 mb-6">
+                <Typography variant="h5" className="mb-4">
                     Created Quizzes
                 </Typography>
                 {createdQuizzes.length > 0 ? (
                     createdQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
+                            <Typography variant="h6">{quiz.title}</Typography>
                             <Typography variant="paragraph">
                                 Category: {quiz.category}
                             </Typography>
@@ -137,55 +164,72 @@ export function Quizzes() {
                                 </Button>
                             </div>
 
-                            <hr className="my-4 dark:border-gray-600" />
+                            <hr className="my-4" />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph" className="dark:text-gray-300">
+                    <Typography variant="paragraph">
                         No quizzes created.
                     </Typography>
                 )}
             </Card>
-            
-            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-gray-100">
-                <Typography variant="h5" className="mb-4 dark:text-gray-100">
+
+            {/* Public Quizzes Section */}
+            <Card className="p-6 mb-6">
+                <Typography variant="h5" className="mb-4">
                     Public Quizzes
                 </Typography>
                 {publicQuizzes.length > 0 ? (
                     publicQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
-                            <Typography variant="paragraph">Category: {quiz.category}</Typography>
-                            <Typography variant="paragraph">Questions: {quiz.numberOfQuestions}</Typography>
-                            <Button variant="gradient" color="green" onClick={() => handleSubscribeToQuiz(quiz.id)}>
+                            <Typography variant="h6">{quiz.title}</Typography>
+                            <Typography variant="paragraph">
+                                Category: {quiz.category}
+                            </Typography>
+                            <Typography variant="paragraph">
+                                Questions: {quiz.numberOfQuestions}
+                            </Typography>
+                            <Button
+                                variant="gradient"
+                                color="green"
+                                onClick={() => handleSubscribeToQuiz(quiz.id)}
+                            >
                                 Subscribe & Download .ics
                             </Button>
-                            <hr className="my-4 dark:border-gray-600" />
+                            <hr className="my-4" />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph" className="dark:text-gray-300">
+                    <Typography variant="paragraph">
                         No public quizzes available.
                     </Typography>
                 )}
             </Card>
 
-            <Card className="p-6 dark:bg-gray-800 dark:text-gray-100">
-                <Typography variant="h5" className="mb-4 dark:text-gray-100">
+            {/* Taken Quizzes Section */}
+            <Card className="p-6">
+                <Typography variant="h5" className="mb-4">
                     Taken Quizzes
                 </Typography>
                 {takenQuizzes.length > 0 ? (
                     takenQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
-                            <Typography variant="paragraph">Category: {quiz.category}</Typography>
-                            <Typography variant="paragraph">Questions: {quiz.numberOfQuestions}</Typography>
-                            <Typography variant="paragraph">Your Score: {quiz.score}</Typography>
-                            <hr className="my-4 dark:border-gray-600" />
+                            <Typography variant="h6">{quiz.title}</Typography>
+                            <Typography variant="paragraph">
+                                Category: {quiz.category}
+                            </Typography>
+                            <Typography variant="paragraph">
+                                Questions: {quiz.numberOfQuestions}
+                            </Typography>
+                            <Typography variant="paragraph">
+                                Your Score: {quiz.score}{' '}
+                                {/* Display user's score */}
+                            </Typography>
+                            <hr className="my-4" />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph" className="dark:text-gray-300">
+                    <Typography variant="paragraph">
                         No quizzes taken.
                     </Typography>
                 )}

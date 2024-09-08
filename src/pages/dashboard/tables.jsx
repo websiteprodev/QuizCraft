@@ -7,7 +7,6 @@ import {
 } from "@material-tailwind/react";
 import { fetchUsersWithScores } from "@/services/quizService";
 
-// Enum for score ranges
 const ScoreRangeEnum = {
   BEGINNER: 1000,
   FLEDGLING: 2000,
@@ -20,8 +19,6 @@ const ScoreRangeEnum = {
   MASTER: 9000,
   GRAND_MASTER: 10000,
 };
-
-// Enum for rank titles
 const RankTitleEnum = {
   BEGINNER: "Beginner",
   FLEDGLING: "Fledgling",

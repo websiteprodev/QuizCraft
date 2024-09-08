@@ -128,20 +128,20 @@ export function Quizzes() {
     }
 
     return (
-        <div className="p-6">
-            <Typography variant="h4" className="mb-4">
+        <div className="p-6 dark:bg-gray-900">
+            <Typography variant="h4" className="mb-4 dark:text-gray-100">
                 Your Quizzes
             </Typography>
 
             {/* Created Quizzes Section */}
-            <Card className="p-6 mb-6">
-                <Typography variant="h5" className="mb-4">
+            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-gray-100">
+                <Typography variant="h5" className="mb-4 dark:text-gray-100">
                     Created Quizzes
                 </Typography>
                 {createdQuizzes.length > 0 ? (
                     createdQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6">{quiz.title}</Typography>
+                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
                             <Typography variant="paragraph">
                                 Category: {quiz.category}
                             </Typography>
@@ -175,14 +175,14 @@ export function Quizzes() {
             </Card>
 
             {/* Public Quizzes Section */}
-            <Card className="p-6 mb-6">
+            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-gray-100">
                 <Typography variant="h5" className="mb-4">
                     Public Quizzes
                 </Typography>
                 {publicQuizzes.length > 0 ? (
                     publicQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6">{quiz.title}</Typography>
+                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
                             <Typography variant="paragraph">
                                 Category: {quiz.category}
                             </Typography>
@@ -196,7 +196,7 @@ export function Quizzes() {
                             >
                                 Subscribe & Download .ics
                             </Button>
-                            <hr className="my-4" />
+                            <hr className="my-4 dark:border-gray-600" />
                         </div>
                     ))
                 ) : (
@@ -207,14 +207,14 @@ export function Quizzes() {
             </Card>
 
             {/* Taken Quizzes Section */}
-            <Card className="p-6">
-                <Typography variant="h5" className="mb-4">
+            <Card className="p-6 dark:bg-gray-800 dark:text-gray-100">
+                <Typography variant="h5" className="mb-4 dark:text-gray-100">
                     Taken Quizzes
                 </Typography>
                 {takenQuizzes.length > 0 ? (
                     takenQuizzes.map((quiz) => (
-                        <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6">{quiz.title}</Typography>
+                        <div key={quiz.id} className="mb-4 ">
+                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
                             <Typography variant="paragraph">
                                 Category: {quiz.category}
                             </Typography>

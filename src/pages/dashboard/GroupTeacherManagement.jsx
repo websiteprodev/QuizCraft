@@ -63,18 +63,19 @@ export function GroupTeacherManagement({ groupId }) {
     };
 
     return (
-        <Card>
-            <CardHeader>
-                <Typography variant="h5">Manage Group Teachers</Typography>
+        <Card className="dark:bg-gray-800 dark:text-gray-100">
+            <CardHeader className="dark:bg-gray-800 dark:text-gray-100">
+                <Typography variant="h5" className="dark:text-gray-100">Manage Group Teachers</Typography>
             </CardHeader>
-            <CardBody>
-                <List>
+            <CardBody className="dark:bg-gray-800 dark:text-gray-100">
+                <List className="dark:bg-gray-800">
                     {teachers.map((teacher) => (
-                        <ListItem key={teacher.id} className="flex justify-between items-center">
-                            <Typography variant="body1">{teacher.name}</Typography>
+                        <ListItem key={teacher.id} className="flex justify-between items-center dark:bg-gray-700 dark:text-gray-100">
+                            <Typography variant="body1" className="dark:text-gray-100">{teacher.name}</Typography>
                             <Checkbox
                                 checked={selectedTeachers.includes(teacher.id)}
                                 onChange={() => handleTeacherSelect(teacher.id)}
+                                className="dark:bg-gray-600 dark:border-gray-500"
                             />
                         </ListItem>
                     ))}

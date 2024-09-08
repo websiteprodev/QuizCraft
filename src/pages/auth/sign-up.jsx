@@ -4,7 +4,6 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import {
     Card,
     Input,
-    Checkbox,
     Button,
     Typography,
     Select,
@@ -29,11 +28,10 @@ export function SignUp() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [photoURL, setPhotoURL] = useState('');
     const [profileImage, setProfileImage] = useState(null); 
     const [address, setAddress] = useState('');
-    const [role, setRole] = React.useState('react'); 
-    const [errors, setErrors] = useState('react');
+    const [role, setRole] = useState('student'); 
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
     const validateInputs = () => {
@@ -139,7 +137,7 @@ export function SignUp() {
     };
 
     return (
-        <section className="m-8 flex">
+        <section className="m-8 flex dark:bg-gray-900">
             <div className="w-2/5 h-full hidden lg:block">
                 <img
                     src="/img/pattern.png"
@@ -148,13 +146,13 @@ export function SignUp() {
             </div>
             <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
                 <div className="text-center">
-                    <Typography variant="h2" className="font-bold mb-4">
+                    <Typography variant="h2" className="font-bold mb-4 dark:text-gray-100">
                         Join Us Today
                     </Typography>
                     <Typography
                         variant="paragraph"
                         color="blue-gray"
-                        className="text-lg font-normal"
+                        className="text-lg font-normal dark:text-gray-300"
                     >
                         Enter your information to register.
                     </Typography>
@@ -164,27 +162,16 @@ export function SignUp() {
                     className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2"
                 >
                     <div className="mb-1 flex flex-col gap-6">
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
-                        >
-                            Username
-                        </Typography>
                         <Input
                             size="lg"
-                            placeholder="Username"
+                            label="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className={
                                 errors.username
-                                    ? '!border-red-500'
-                                    : '!border-t-blue-gray-200 focus:!border-t-gray-900'
+                                    ? 'border-red-500'
+                                    : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
                             }
-                            labelProps={{
-                                className:
-                                    'before:content-none after:content-none',
-                            }}
                         />
                         {errors.username && (
                             <Typography
@@ -195,27 +182,17 @@ export function SignUp() {
                                 {errors.username}
                             </Typography>
                         )}
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
-                        >
-                            Your email
-                        </Typography>
+                        
                         <Input
                             size="lg"
-                            placeholder="name@mail.com"
+                            label="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className={
                                 errors.email
-                                    ? '!border-red-500'
-                                    : '!border-t-blue-gray-200 focus:!border-t-gray-900'
+                                    ? 'border-red-500'
+                                    : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
                             }
-                            labelProps={{
-                                className:
-                                    'before:content-none after:content-none',
-                            }}
                         />
                         {errors.email && (
                             <Typography
@@ -226,28 +203,18 @@ export function SignUp() {
                                 {errors.email}
                             </Typography>
                         )}
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
-                        >
-                            Password
-                        </Typography>
+                        
                         <Input
                             type="password"
                             size="lg"
-                            placeholder="********"
+                            label="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className={
                                 errors.password
-                                    ? '!border-red-500'
-                                    : '!border-t-blue-gray-200 focus:!border-t-gray-900'
+                                    ? 'border-red-500'
+                                    : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
                             }
-                            labelProps={{
-                                className:
-                                    'before:content-none after:content-none',
-                            }}
                         />
                         {errors.password && (
                             <Typography
@@ -258,27 +225,17 @@ export function SignUp() {
                                 {errors.password}
                             </Typography>
                         )}
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
-                        >
-                            First Name
-                        </Typography>
+                        
                         <Input
                             size="lg"
-                            placeholder="First Name"
+                            label="First Name"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             className={
                                 errors.firstName
-                                    ? '!border-red-500'
-                                    : '!border-t-blue-gray-200 focus:!border-t-gray-900'
+                                    ? 'border-red-500'
+                                    : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
                             }
-                            labelProps={{
-                                className:
-                                    'before:content-none after:content-none',
-                            }}
                         />
                         {errors.firstName && (
                             <Typography
@@ -289,27 +246,17 @@ export function SignUp() {
                                 {errors.firstName}
                             </Typography>
                         )}
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
-                        >
-                            Last Name
-                        </Typography>
+                        
                         <Input
                             size="lg"
-                            placeholder="Last Name"
+                            label="Last Name"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             className={
                                 errors.lastName
-                                    ? '!border-red-500'
-                                    : '!border-t-blue-gray-200 focus:!border-t-gray-900'
+                                    ? 'border-red-500'
+                                    : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
                             }
-                            labelProps={{
-                                className:
-                                    'before:content-none after:content-none',
-                            }}
                         />
                         {errors.lastName && (
                             <Typography
@@ -320,27 +267,17 @@ export function SignUp() {
                                 {errors.lastName}
                             </Typography>
                         )}
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
-                        >
-                            Phone Number
-                        </Typography>
+                        
                         <Input
                             size="lg"
-                            placeholder="10 digits only: ex. 0123456789"
+                            label="Phone Number"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             className={
                                 errors.phoneNumber
-                                    ? '!border-red-500'
-                                    : '!border-t-blue-gray-200 focus:!border-t-gray-900'
+                                    ? 'border-red-500'
+                                    : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
                             }
-                            labelProps={{
-                                className:
-                                    'before:content-none after:content-none',
-                            }}
                         />
                         {errors.phoneNumber && (
                             <Typography
@@ -351,67 +288,41 @@ export function SignUp() {
                                 {errors.phoneNumber}
                             </Typography>
                         )}
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
-                        >
-                            Photo
-                        </Typography>
+                        
                         <Input
                             type="file"
-                            onChange={(e) => setProfileImage(e.target.value[0])}
-                            className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                            labelProps={{
-                                className:
-                                    'before:content-none after:content-none',
-                            }}
+                            label="Photo"
+                            onChange={(e) => setProfileImage(e.target.files[0])}
+                            className="dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                         />
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
-                        >
-                            Address
-                        </Typography>
+                        
                         <Input
                             size="lg"
-                            placeholder="Address"
+                            label="Address"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
-                            className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                            labelProps={{
-                                className:
-                                    'before:content-none after:content-none',
-                            }}
+                            className="dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                         />
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="-mb-3 font-medium"
+                        
+                        <Select
+                            label="Role"
+                            value={role}
+                            onChange={(e) => setRole(e)}
+                            className="dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                         >
-                            Role
-                        </Typography>
-                        <div className="w-72">
-                            <Select
-                                label="Role"
-                                value={role}
-                                onChange={(e) => setRole(e)}
-                            >
-                                <Option value="student">Student</Option>
-                                <Option value="organizer">Organizer</Option>
-                            </Select>
-                        </div>
+                            <Option value="student">Student</Option>
+                            <Option value="organizer">Organizer</Option>
+                        </Select>
                     </div>
-                    <Button className="mt-6" fullWidth type="submit">
+                    <Button className="mt-6 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-400 text-white" fullWidth type="submit">
                         Register Now
                     </Button>
                     <Typography
                         variant="paragraph"
-                        className="text-center text-blue-gray-500 font-medium mt-4"
+                        className="text-center text-blue-gray-500 font-medium mt-4 dark:text-gray-200"
                     >
                         Already have an account?
-                        <Link to="/auth/sign-in" className="text-gray-900 ml-1">
+                        <Link to="/auth/sign-in" className="text-gray-900 dark:text-gray-200 ml-1">
                             Sign in
                         </Link>
                     </Typography>

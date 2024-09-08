@@ -22,7 +22,7 @@ export function RankProgress() {
         };
 
         fetchRankData();
-    }, [user]); // Добавяне на user като зависимост за useEffect
+    }, [user]); 
 
     if (!rankInfo) {
         return <Typography>Loading rank and progress...</Typography>;

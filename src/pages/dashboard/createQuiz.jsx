@@ -11,6 +11,7 @@ import {
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
 import { generateQuestion } from '@/services/gptService';
+import { subscribeToQuiz, createICSFile } from '@/services/quizService';
 
 export function CreateQuiz() {
     const [title, setTitle] = useState('');
@@ -28,7 +29,7 @@ export function CreateQuiz() {
     const [totalPoints, setTotalPoints] = useState(0);
     const [randomQuestions, setRandomQuestions] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-
+    const [isPublic, setIsPublic] = useState(false);
     const [questionBank, setQuestionBank] = useState([]);
     const [newQuestionText, setNewQuestionText] = useState('');
     const [selectedBankQuestionId, setSelectedBankQuestionId] = useState('');
@@ -129,6 +130,7 @@ export function CreateQuiz() {
                 timer,
                 totalPoints,
                 randomQuestions,
+                isPublic,
                 createdBy: user.uid,
                 createdAt: new Date(),
             });
@@ -218,6 +220,15 @@ export function CreateQuiz() {
         }
     };
 
+    const handleSubscribe = async (quizId) => {
+        try {
+            await subscribeToQuiz(auth.currentUser.uid, quizId);
+            alert('Subscribed and .ics file generated!'); 
+        }catch(e){
+            console.error('Error subscribing to quiz: ', e);
+        }
+    };
+
     return (
         <div className="p-6">
             {successMessage && (
@@ -252,13 +263,6 @@ export function CreateQuiz() {
                         />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Input
-                            label="Timer (in seconds)"
-                            type="number"
-                            value={timer}
-                            onChange={(e) => setTimer(Number(e.target.value))}
-                            className="mb-6 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
-                        />
                         <Switch
                             id="random-questions"
                             label="Random Questions"
@@ -267,6 +271,22 @@ export function CreateQuiz() {
                                 setRandomQuestions(e.target.checked)
                             }
                             className="mb-6 text-gray-900 dark:text-gray-200"
+                        />
+                        <Input
+                            label="Timer (in seconds)"
+                            type="number"
+                            value={timer}
+                            onChange={(e) => setTimer(Number(e.target.value))}
+                            className="mb-6 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
+                        />
+                    </div>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <Switch
+                            id='public-quiz'
+                            label = 'Make this quiz public'
+                            checked = {isPublic}
+                            onChange={(e) => setIsPublic(e.target.checked)}
+                            className='mb-6 text-gray-900 dark:text-gray-200'
                         />
                     </div>
 
@@ -413,17 +433,19 @@ export function CreateQuiz() {
                             />
                         ))}
                     </div>
-                    <Select
+                    <div className='w-1/2'>
+                        <Select
                         label="Correct Answer"
                         value={newCorrectAnswer}
                         onChange={(value) => setNewCorrectAnswer(value)}
-                        className="md-4 w-1/2 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
-                    >
+                        className="md-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
+                        >
                         <Option value="1">1</Option>
                         <Option value="2">2</Option>
                         <Option value="3">3</Option>
                         <Option value="4">4</Option>
                     </Select>
+                    </div>
                     <Button
                         onClick={addToQuestionBank}
                         className="bg-yellow-500 hover:bg-yellow-600 text-blue-gray-900 rounded-lg mt-3"

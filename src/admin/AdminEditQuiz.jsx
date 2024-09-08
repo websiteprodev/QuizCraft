@@ -27,7 +27,7 @@ const AdminEditQuiz = () => {
                     setTitle(quizData.title);
                     setCategory(quizData.category);
                     setQuestions(quizData.questions);
-                    setIsRandomized(quizData.isRandomized || false);  // Осигуряваме валидност за isRandomized
+                    setIsRandomized(quizData.isRandomized || false);  
                 } else {
                     console.error("Quiz not found!");
                 }
@@ -59,14 +59,13 @@ const AdminEditQuiz = () => {
         try {
             const quizRef = doc(db, "quizzes", id);
             
-            // Създаване на обект с обновените данни за викторината
             const updatedQuizData = {
                 title,
                 category,
                 questions,
             };
             
-            // Проверка дали isRandomized има валидна стойност преди да го добавим
+            
             if (typeof isRandomized !== "undefined") {
                 updatedQuizData.isRandomized = isRandomized;
             }

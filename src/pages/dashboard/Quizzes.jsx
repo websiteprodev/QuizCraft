@@ -5,15 +5,18 @@ import {
     query,
     where,
     getDocs,
+    getDoc,
     doc,
     deleteDoc,
-    onSnapshot
+    onSnapshot,
 } from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
 import { Link } from 'react-router-dom';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
 
+
 export function Quizzes() {
+    const { user } = useAuth();
     const [createdQuizzes, setCreatedQuizzes] = useState([]);
     const [takenQuizzes, setTakenQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -22,19 +25,21 @@ export function Quizzes() {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const user = auth.currentUser;
                 if (!user) {
                     console.error('User not logged in');
                     return;
                 }
 
+
                 const createdQuizzesRef = query(collection(db, "quizzes"), where("createdBy", "==", user.uid));
-                const createdQuizzesSnapshot = await getDocs(createdQuizzesRef);
+                const createdQuizzesSnapshot = await getDocs(createdQuizzesRef); 
                 const createdQuizzesData = createdQuizzesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setCreatedQuizzes(createdQuizzesData);
 
+
+        
                 const takenQuizzesRef = query(collection(db, "quizzes"), where("scores" + user.uid, "!=", null));
-                const takenQuizzesSnapshot = await getDocs(takenQuizzesRef);
+                const takenQuizzesSnapshot = await getDocs(takenQuizzesRef); 
                 const takenQuizzesData = takenQuizzesSnapshot.docs.map(doc => {
                     const data = doc.data();
                     const score = data.scores[user.uid] || 0;
@@ -42,8 +47,9 @@ export function Quizzes() {
                 });
                 setTakenQuizzes(takenQuizzesData);
 
+
                 const publicQuizzesRef = query(collection(db, "quizzes"), where("isPublic", "==", true));
-                const publicQuizzesSnapshot = await getDocs(publicQuizzesRef);
+                const publicQuizzesSnapshot = await getDocs(publicQuizzesRef); 
                 const publicQuizzesData = publicQuizzesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setPublicQuizzes(publicQuizzesData);
             } catch (error) {
@@ -57,6 +63,7 @@ export function Quizzes() {
     }, []);
 
     useEffect(() => {
+        
         const unsubscribe = onSnapshot(
             query(collection(db, "quizzes"), where("isPublic", "==", true)),
             (snapshot) => {
@@ -68,7 +75,7 @@ export function Quizzes() {
                 });
             }
         );
-        return () => unsubscribe();
+        return () => unsubscribe(); 
     }, []);
 
     const handleDeleteQuiz = async (quizId) => {
@@ -90,7 +97,7 @@ export function Quizzes() {
                 alert('You need to log in to subscribe to a quiz.');
                 return;
             }
-            await subscribeToQuiz(user.uid, quizId);
+            await subscribeToQuiz(user.uid, quizId); 
             alert('You have subscribed to the quiz and the .ics file is downloaded!');
         } catch (error) {
             console.error('Error subscribing to quiz: ', error);
@@ -146,42 +153,42 @@ export function Quizzes() {
                     </Typography>
                 )}
             </Card>
-            
-            <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-gray-100">
-                <Typography variant="h5" className="mb-4 dark:text-gray-100">
-                    Public Quizzes
-                </Typography>
+            <Card className='p-6 mb-6'>
+                <Typography variant='h5' className='mb-4'>Public Quizzes</Typography>
                 {publicQuizzes.length > 0 ? (
-                    publicQuizzes.map((quiz) => (
-                        <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
-                            <Typography variant="paragraph">Category: {quiz.category}</Typography>
-                            <Typography variant="paragraph">Questions: {quiz.numberOfQuestions}</Typography>
-                            <Button variant="gradient" color="green" onClick={() => handleSubscribeToQuiz(quiz.id)}>
+                    publicQuizzes.map(quiz => (
+                        <div key={quiz.id} className='mb-4'>
+                            <Typography variant='h6'>{quiz.title}</Typography>
+                            <Typography variant='paragraph'>Category: {quiz.category}</Typography>
+                            <Typography variant='paragraph'>Questions: {quiz.numberOfQuestions}</Typography>
+                            <Button variant='gradient' color='green' onClick={() => handleSubscribeToQuiz(quiz.id)}>
                                 Subscribe & Download .ics
                             </Button>
-                            <hr className="my-4 dark:border-gray-600" />
+                            <hr className='my-4' />
                         </div>
                     ))
                 ) : (
-                    <Typography variant="paragraph" className="dark:text-gray-300">
-                        No public quizzes available.
-                    </Typography>
+                    <Typography variant='paragraph'>No public quizzes available.</Typography>
                 )}
             </Card>
-
-            <Card className="p-6 dark:bg-gray-800 dark:text-gray-100">
-                <Typography variant="h5" className="mb-4 dark:text-gray-100">
+            <Card className="p-6">
+                <Typography variant="h5" className="mb-4">
                     Taken Quizzes
                 </Typography>
                 {takenQuizzes.length > 0 ? (
                     takenQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
-                            <Typography variant="paragraph">Category: {quiz.category}</Typography>
-                            <Typography variant="paragraph">Questions: {quiz.numberOfQuestions}</Typography>
-                            <Typography variant="paragraph">Your Score: {quiz.score}</Typography>
-                            <hr className="my-4 dark:border-gray-600" />
+                            <Typography variant="h6">{quiz.title}</Typography>
+                            <Typography variant="paragraph">
+                                Category: {quiz.category}
+                            </Typography>
+                            <Typography variant="paragraph">
+                                Questions: {quiz.numberOfQuestions}
+                            </Typography>
+                            <Typography variant="paragraph">
+                                Your Score: {quiz.score}
+                            </Typography>
+                            <hr className="my-4" />
                         </div>
                     ))
                 ) : (

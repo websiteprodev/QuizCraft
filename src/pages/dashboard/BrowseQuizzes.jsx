@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Input, Typography, Button } from '@material-tailwind/react';
-import { fetchQuizzes, fetchTopScores } from '@/services/quizService';
+import {
+    fetchQuizzes,
+    fetchTopScores,
+    subscribeToQuiz,
+} from '@/services/quizService';
 import { useNavigate } from 'react-router-dom';
 import { PlayIcon, ChartBarIcon, TrophyIcon } from '@heroicons/react/24/solid';
 import RankProgress from '@/components/RankProgress';
@@ -9,6 +13,7 @@ import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { createApi } from 'unsplash-js';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
 
 export function BrowseQuizzes() {
     const [quizzes, setQuizzes] = useState([]);
@@ -21,6 +26,7 @@ export function BrowseQuizzes() {
     const [categoryImages, setCategoryImages] = useState({});
     const [filterStartDate, setFilterStartDate] = useState(null);
     const [filterEndDate, setFilterEndDate] = useState(null);
+    const [enrolledQuizzes, setEnrolledQuizzes] = useState([]);
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -42,6 +48,7 @@ export function BrowseQuizzes() {
                     const userData = userSnap.data();
                     setCompletedQuizzes(userData.completedQuizzes || []);
                     setUserPoints(userData.points || 0);
+                    setEnrolledQuizzes(userData.subscribedQuizzes || []);
                 }
 
                 const fetchImages = async () => {
@@ -67,6 +74,27 @@ export function BrowseQuizzes() {
         loadQuizzesAndUserData();
     }, [user]);
 
+    // Calculate remaining time
+    const calculateRemainingTime = (endDate) => {
+        if (!endDate) {
+            return 'No end date set';
+        }
+        const now = moment();
+        const quizEnd = moment(endDate.toDate());
+        const duration = moment.duration(quizEnd.diff(now));
+        const days = Math.floor(duration.asDays());
+        const hours = duration.hours();
+        const minutes = duration.minutes();
+
+        if (days > 0) {
+            return `${days}d ${hours}h left`;
+        } else if (hours > 0) {
+            return `${hours}h ${minutes}m left`;
+        } else {
+            return `${minutes}m left`;
+        }
+    };
+
     const handleShowScoreboard = async (quizId) => {
         try {
             const scores = await fetchTopScores(quizId);
@@ -78,6 +106,16 @@ export function BrowseQuizzes() {
         }
     };
 
+    // Enroll user in quiz
+    const handleEnroll = async (quizId) => {
+        try {
+            await subscribeToQuiz(user.uid, quizId); // Call to subscribeToQuiz
+            setEnrolledQuizzes([...enrolledQuizzes, quizId]); // Update enrolled quizzes state
+        } catch (error) {
+            console.error('Error enrolling in quiz:', error);
+        }
+    };
+
     const filteredQuizzes = quizzes.filter((quiz) => {
         const quizStartDate = quiz.startDate?.toDate(); // Convert Firestore Timestamp to Date
         const quizEndDate = quiz.endDate?.toDate();
@@ -86,6 +124,7 @@ export function BrowseQuizzes() {
             quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             quiz.category.toLowerCase().includes(searchTerm.toLowerCase());
 
+        // Check if the quiz matches the search term and falls within the selected date range
         const withinDateRange =
             (!filterStartDate || quizStartDate >= filterStartDate) &&
             (!filterEndDate || quizEndDate <= filterEndDate);
@@ -149,7 +188,10 @@ export function BrowseQuizzes() {
                                 variant="h6"
                                 className="mb-2 text-blue-600 font-bold"
                             >
-                                {quiz.title}
+                                {quiz.title} {/* Remaining time */}
+                                <span className="text-gray-600 text-sm">
+                                    ({calculateRemainingTime(quiz.endDate)})
+                                </span>
                             </Typography>
                             <Typography
                                 variant="paragraph"
@@ -196,7 +238,21 @@ export function BrowseQuizzes() {
                                         ? 'Completed'
                                         : 'Start Quiz'}
                                 </Button>
-
+                                <Button
+                                    variant="gradient"
+                                    color={
+                                        enrolledQuizzes.includes(quiz.id)
+                                            ? 'gray'
+                                            : 'green'
+                                    }
+                                    className="bg-green-500 hover:bg-green-600 text-white rounded-full"
+                                    disabled={enrolledQuizzes.includes(quiz.id)}
+                                    onClick={() => handleEnroll(quiz.id)}
+                                >
+                                    {enrolledQuizzes.includes(quiz.id)
+                                        ? 'Participating'
+                                        : 'Enroll'}
+                                </Button>
                                 <Button
                                     variant="gradient"
                                     color="green"

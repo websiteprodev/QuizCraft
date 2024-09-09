@@ -35,7 +35,7 @@ export function TestManagement() {
 
     const handleSendInvitation = async (testId) => {
         try {
-            // Възможно е тук да добавите функция за изпращане на покани по имейл.
+        
             console.log(`Invitations for test ${testId} sent.`);
             alert(`Invitations sent for test ${testId}`);
         } catch (error) {

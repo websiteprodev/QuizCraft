@@ -12,62 +12,56 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/configs/firebase';
 
-  
-  export const subscribeToQuiz = async (userId, quizId) => {
+export const subscribeToQuiz = async (userId, quizId) => {
     try {
-        const userRef = db.collection('users').doc(userId);
-        const quizRef = db.collection('quizzes').doc(quizId);
+        const userRef = doc(db, 'users', userId);
+        const quizRef = doc(db, 'quizzes', quizId);
 
-        // Fetch quiz data to ensure its public
-        const quizSnapshot = await quizRef.get(); 
-        if(quizSnapshot.exists && quizSnapshot.data().isPublic){
-            //add quiz to user's subscribedQuizzes
-            await userRef.update({
+        const quizSnapshot = await getDoc(quizRef);
+        if (quizSnapshot.exists() && quizSnapshot.data().isPublic) {
+            await updateDoc(userRef, {
                 subscribedQuizzes: firebase.firestore.FieldValue.arrayUnion(quizId),
             });
-        }else{
-            throw new Error ('Quiz is not public');
+        } else {
+            throw new Error('Quiz is not public');
         }
     } catch (error) {
         console.error('Error subscribing to quiz: ', error);
     }
-  };
+};
 
-//Generate .ics file for quiz schedule
 export const createICSFile = (quizData) => {
     const icsContent = `
-    BEGIN: VCALENDAR
-    VERSION: 2.0
-    BEGIN: VEVENT
-    SUMMARY: ${quizData.title}
-    DESCRIPTION: Join this quiz titled "${quizData.title}"
-    DTSTART: ${convertToICSFormat(quizData.createdAt)}
-    DURATION: PT${quizData.timer}M
-    END: VEVENT
-    END: VCALENDAR
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    BEGIN:VEVENT
+    SUMMARY:${quizData.title}
+    DESCRIPTION:Join this quiz titled "${quizData.title}"
+    DTSTART:${convertToICSFormat(quizData.createdAt)}
+    DURATION:PT${quizData.timer}M
+    END:VEVENT
+    END:VCALENDAR
     `;
 
-    //Create blob and download file
-    const blob = new Blob([icsContent], {type: 'text/calendar'});
+    const blob = new Blob([icsContent], { type: 'text/calendar' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${quizData.title}.ics`;
     link.click();
 };
 
-//Convert Firestore timestamp to ics. format
 const convertToICSFormat = (timestamp) => {
     const date = timestamp.toDate();
     return date.toISOString().replace(/[-:]/g, '').split('.')[0];
 };
+
 export const fetchQuizzes = async () => {
     const quizzesSnapshot = await getDocs(collection(db, 'quizzes'));
-    return quizzesSnapshot.docs.map(doc => ({
+    return quizzesSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
     }));
 };
-
 
 export const fetchQuizById = async (id) => {
     const quizDoc = await getDoc(doc(db, 'quizzes', id));
@@ -77,6 +71,7 @@ export const fetchQuizById = async (id) => {
         throw new Error('No such quiz!');
     }
 };
+
 const updateUserRankAndPoints = async (userId, pointsToAdd) => {
     const userRef = doc(db, 'users', userId);
     const userSnap = await getDoc(userRef);
@@ -85,7 +80,10 @@ const updateUserRankAndPoints = async (userId, pointsToAdd) => {
         const userData = userSnap.data();
         const updatedPoints = (userData.points || 0) + pointsToAdd;
 
-        console.log("Updated Points:", updatedPoints);
+        if (updatedPoints === userData.points) {
+            console.log('Points are already up to date');
+            return;
+        }
 
         const nextRankThreshold = calculateNextRankThreshold(userData.rank || 0);
         if (updatedPoints >= nextRankThreshold) {
@@ -99,12 +97,11 @@ const updateUserRankAndPoints = async (userId, pointsToAdd) => {
             });
         }
 
-        console.log("Updated user:", userId, "with points:", updatedPoints);
+        console.log('Updated user:', userId, 'with points:', updatedPoints);
     } else {
-        console.error("User not found");
+        console.error('User not found');
     }
 };
-
 
 export const recordQuizScore = async (quizId, userId, score) => {
     try {
@@ -121,7 +118,7 @@ export const fetchTopScores = async (quizId) => {
         const scoresCollectionRef = collection(db, `quizzes/${quizId}/scores`);
         const scoresQuery = query(scoresCollectionRef, orderBy('score', 'desc'), limit(10));
         const querySnapshot = await getDocs(scoresQuery);
-        return querySnapshot.docs.map(doc => ({
+        return querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
         }));
@@ -146,7 +143,7 @@ export const fetchQuizzesByStatus = async (status) => {
         const quizzesRef = collection(db, 'quizzes');
         const q = query(quizzesRef, where('status', '==', status));
         const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => ({
+        return querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
         }));
@@ -172,48 +169,58 @@ export const fetchUserRankAndPoints = async (userId) => {
         throw error;
     }
 };
+
+let userRankCache = {}; 
 export const fetchUserRankAndProgress = async (username) => {
+    if (userRankCache[username]) {
+        return userRankCache[username];
+    }
+
     console.log(`Attempting to fetch rank for user username: ${username}`);
     try {
-        const userDocRef = doc(db, "users", username);
+        const userDocRef = doc(db, 'users', username);
         const userDoc = await getDoc(userDocRef);
         if (!userDoc.exists()) {
             console.log(`No document found for user username: ${username}`);
-            return { error: "User not found", username };
+            return { error: 'User not found', username };
         }
+
         const userData = userDoc.data();
-        const rank = userData.rank || "Beginner";
+        const rank = userData.rank || 'Beginner';
         const points = userData.points || 0;
         const nextRankProgress = (points % 100) / 100 * 100;
-        return {
+
+        const rankData = {
             rank,
             points,
             nextRankProgress,
         };
+
+        userRankCache[username] = rankData; 
+        return rankData;
     } catch (error) {
-        console.error("Error fetching user rank and progress:", error);
+        console.error('Error fetching user rank and progress:', error);
         throw error;
     }
 };
 
-
-
 export const fetchUsersData = async () => {
     try {
-        const usersCollectionRef = collection(db, "users");
+        const usersCollectionRef = collection(db, 'users');
         const querySnapshot = await getDocs(usersCollectionRef);
-        console.log(querySnapshot.docs.map(doc => doc.data()));
-        return querySnapshot.docs.map(doc => ({
+        console.log(querySnapshot.docs.map((doc) => doc.data()));
+        return querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
         }));
     } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error('Error fetching user data:', error);
         throw error;
     }
 };
+
 export const fetchUsersWithScores = async () => {
-    const usersRef = collection(db, "users");
+    const usersRef = collection(db, 'users');
     const userSnapshot = await getDocs(usersRef);
 
     let users = [];
@@ -221,7 +228,7 @@ export const fetchUsersWithScores = async () => {
     userSnapshot.forEach((doc) => {
         const userData = doc.data();
         const points = userData.points || 0;
-        const rank = userData.rank || "Beginner";
+        const rank = userData.rank || 'Beginner';
 
         users.push({
             id: doc.id,
@@ -232,12 +239,9 @@ export const fetchUsersWithScores = async () => {
         });
     });
 
-    console.log("Users with Points:", users);
+    console.log('Users with Points:', users);
     return users;
 };
-
-
-
 
 const calculateNextRankThreshold = (currentRank) => {
     const basePoints = 100;
@@ -246,8 +250,8 @@ const calculateNextRankThreshold = (currentRank) => {
 
 export const fetchUserScores = async (userId) => {
     try {
-        const scoresCollectionRef = collection(db, "quizzes");
-        const q = query(scoresCollectionRef, where("userId", "==", userId));
+        const scoresCollectionRef = collection(db, 'quizzes');
+        const q = query(scoresCollectionRef, where('userId', '==', userId));
         const querySnapshot = await getDocs(q);
 
         const scores = [];
@@ -261,9 +265,9 @@ export const fetchUserScores = async (userId) => {
             });
         });
 
-    return scores;
-  } catch (error) {
-    console.error("Error fetching user scores:", error);
-    return [];
-  }
+        return scores;
+    } catch (error) {
+        console.error('Error fetching user scores:', error);
+        return [];
+    }
 };

@@ -11,6 +11,7 @@ import {
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
+import { generateAIQuestion } from '@/services/gptService'; 
 
 export function CreateQuiz() {
 
@@ -156,36 +157,8 @@ export function CreateQuiz() {
             console.error('Error adding quiz: ', e);
         }
     };
-    const generateAIQuestion = async () => {
-        const topic = "MyTopic"; 
-        const url = 'https://api.openai.com/v1/chat/completions';
-        const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
-    
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}` 
-                },
-                body: JSON.stringify({
-                    model: 'gpt-4',
-                    messages: [{ role: 'user', content: `Generate a question about ${topic}` }],
-                    temperature: 0.7
-                })
-            });
-    
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error.message || 'Failed to generate question');
-            }
-    
-            console.log(data.choices[0].message.content); 
-        } catch (error) {
-            console.error('Error generating AI question:', error);
-        }
-    };
-    
+
+
 
     const addToQuestionBank = async () => {
         if (

@@ -11,7 +11,7 @@ import AdminEditQuiz from "./admin/AdminEditQuiz";
 import Quizzes from "./pages/dashboard/Quizzes";  
 import EditQuiz from "./components/EditQuiz";
 import Comments from './pages/dashboard/Comments'; 
-import { OrganizerRoute } from './routes'; 
+import { OrganizerRoute } from './routes'; // test
 
 function App() {
     return (

@@ -10,13 +10,14 @@ import {
 } from '@material-tailwind/react';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
-import { generateQuestion } from '@/services/gptService';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
 
 export function CreateQuiz() {
+
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [questions, setQuestions] = useState([
+
         {
             text: '',
             type: 'multiple-choice',
@@ -34,7 +35,8 @@ export function CreateQuiz() {
     const [newQuestionText, setNewQuestionText] = useState('');
     const [selectedBankQuestionId, setSelectedBankQuestionId] = useState('');
     const [newAnswers, setNewAnswers] = useState(['', '', '', '']);
-    const [newCorrectAnswer, setNewCorrectAnswer] = useState('1'); 
+    const [newCorrectAnswer, setNewCorrectAnswer] = useState('1');
+    const [topic, setTopic] = useState('');
 
     useEffect(() => {
         const total = questions.reduce(
@@ -154,16 +156,37 @@ export function CreateQuiz() {
             console.error('Error adding quiz: ', e);
         }
     };
-
     const generateAIQuestion = async () => {
+        const topic = "MyTopic"; 
+        const url = 'https://api.openai.com/v1/chat/completions';
+        const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+    
         try {
-            console.log(await generateQuestion('bulgarian'));
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}` 
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4',
+                    messages: [{ role: 'user', content: `Generate a question about ${topic}` }],
+                    temperature: 0.7
+                })
+            });
+    
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error.message || 'Failed to generate question');
+            }
+    
+            console.log(data.choices[0].message.content); 
         } catch (error) {
             console.error('Error generating AI question:', error);
         }
     };
+    
 
-  
     const addToQuestionBank = async () => {
         if (
             newQuestionText.trim() &&
@@ -176,11 +199,11 @@ export function CreateQuiz() {
                     answers: newAnswers,
                     correctAnswer: newCorrectAnswer,
                 });
-                
-                setNewQuestionText(''); 
-                setNewAnswers(['', '', '', '']); 
-                setNewCorrectAnswer('1'); 
-                fetchQuestionBank(); 
+
+                setNewQuestionText('');
+                setNewAnswers(['', '', '', '']);
+                setNewCorrectAnswer('1');
+                fetchQuestionBank();
             } catch (e) {
                 console.error('Error adding to question bank: ', e);
             }
@@ -189,13 +212,13 @@ export function CreateQuiz() {
         }
     };
 
-    
+
     const addQuestionFromBank = () => {
         const selectedQuestion = questionBank.find(
             (q) => q.id === selectedBankQuestionId,
         );
         if (!questions[0].text.trim()) {
-    
+
             const updatedQuestions = [...questions];
             updatedQuestions[0] = {
                 text: selectedQuestion.question,
@@ -223,8 +246,8 @@ export function CreateQuiz() {
     const handleSubscribe = async (quizId) => {
         try {
             await subscribeToQuiz(auth.currentUser.uid, quizId);
-            alert('Subscribed and .ics file generated!'); 
-        }catch(e){
+            alert('Subscribed and .ics file generated!');
+        } catch (e) {
             console.error('Error subscribing to quiz: ', e);
         }
     };
@@ -256,6 +279,13 @@ export function CreateQuiz() {
                             className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
                         />
                         <Input
+                            label="Topic for AI Question"
+                            value={topic}
+                            onChange={(e) => setTopic(e.target.value)}
+                            className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
+                        />
+
+                        <Input
                             label="Category"
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
@@ -283,8 +313,8 @@ export function CreateQuiz() {
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         <Switch
                             id='public-quiz'
-                            label = 'Make this quiz public'
-                            checked = {isPublic}
+                            label='Make this quiz public'
+                            checked={isPublic}
                             onChange={(e) => setIsPublic(e.target.checked)}
                             className='mb-6 text-gray-900 dark:text-gray-200'
                         />
@@ -435,16 +465,16 @@ export function CreateQuiz() {
                     </div>
                     <div className='w-1/2'>
                         <Select
-                        label="Correct Answer"
-                        value={newCorrectAnswer}
-                        onChange={(value) => setNewCorrectAnswer(value)}
-                        className="md-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
+                            label="Correct Answer"
+                            value={newCorrectAnswer}
+                            onChange={(value) => setNewCorrectAnswer(value)}
+                            className="md-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg "
                         >
-                        <Option value="1">1</Option>
-                        <Option value="2">2</Option>
-                        <Option value="3">3</Option>
-                        <Option value="4">4</Option>
-                    </Select>
+                            <Option value="1">1</Option>
+                            <Option value="2">2</Option>
+                            <Option value="3">3</Option>
+                            <Option value="4">4</Option>
+                        </Select>
                     </div>
                     <Button
                         onClick={addToQuestionBank}
@@ -454,7 +484,6 @@ export function CreateQuiz() {
                     </Button>
                 </div>
 
-                {/* Select question from the question bank */}
                 <div className="mt-8">
                     <Typography
                         variant="h6"
@@ -484,11 +513,10 @@ export function CreateQuiz() {
                             <Button
                                 onClick={addQuestionFromBank}
                                 disabled={!selectedBankQuestionId}
-                                className={`mt-3 ${
-                                    selectedBankQuestionId
-                                        ? 'bg-teal-500 hover:bg-teal-600'
-                                        : 'bg-gray-400 cursor-not-allowed'
-                                } text-white rounded-lg`}
+                                className={`mt-3 ${selectedBankQuestionId
+                                    ? 'bg-teal-500 hover:bg-teal-600'
+                                    : 'bg-gray-400 cursor-not-allowed'
+                                    } text-white rounded-lg`}
                             >
                                 Add Selected Question to Quiz
                             </Button>

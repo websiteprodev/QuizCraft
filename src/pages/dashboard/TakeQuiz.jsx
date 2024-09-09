@@ -137,39 +137,38 @@ export function TakeQuiz() {
     };
 
     return (
-        <div className={`p-6 dark:text-gray-100 ${screenCracked ? "cracked-screen" : ""}`}>
+        <div className={`p-6 text-gray-900 dark:text-gray-100 ${screenCracked ? "cracked-screen" : ""}`}>
             {quiz && quiz.questions && quiz.questions.length > 0 ? (
                 isQuizFinished ? (
-                    <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg animate__animated animate__fadeIn">
-                        <Typography variant="h5" className="mb-4 text-center text-gray-900 dark:text-gray-100">
-                            Quiz Finished! Your Score: {score}/{quiz.totalPoints}
+                    <Card className="p-6 bg-yellow-100 dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-xl border-4 border-red-500 animate__animated animate__fadeIn">
+                        <Typography variant="h5" className="mb-4 text-center text-blue-800 font-bold">
+                            🎉 Quiz Finished! Your Score: {score}/{quiz.totalPoints}
                         </Typography>
                         <Button
                             variant="gradient"
-                            color="blue"
-                            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-700 dark:hover:bg-blue-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            className="bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md text-lg"
                             onClick={handleTakeAnotherQuiz}
                         >
                             Take Another Quiz
                         </Button>
                     </Card>
                 ) : (
-                    <Card className="p-6 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-lg animate__animated animate__fadeIn">
-                        <Typography variant="h4" className="mb-4 text-left text-gray-900 dark:text-gray-100">
-                            Question {currentQuestionIndex + 1}
+                    <Card className="p-6 bg-yellow-100 dark:bg-gray-800 dark:text-gray-100 shadow-lg rounded-xl border-4 border-red-500 animate__animated animate__fadeIn">
+                        <Typography variant="h4" className="mb-4 text-left text-red-500 font-bold">
+                            🌟 Question {currentQuestionIndex + 1}
                         </Typography>
-                        <Typography variant="h6" className="mb-4 text-left text-gray-700 dark:text-gray-300">
+                        <Typography variant="h6" className="mb-4 text-left text-gray-700 dark:text-gray-300 font-bold">
                             {quiz.questions[currentQuestionIndex].text}
                         </Typography>
                         <div className="flex flex-col items-start space-y-4">
                             {quiz.questions[currentQuestionIndex].answers.map((answer, index) => (
-                                <label key={index} className="flex items-center justify-start mb-2 text-gray-700 dark:text-gray-300">
+                                <label key={index} className="flex items-center justify-start mb-2 text-blue-700 dark:text-gray-300 font-semibold">
                                     <input
                                         type="radio"
                                         value={answer}
                                         checked={selectedAnswer === answer}
                                         onChange={() => setSelectedAnswer(answer)}
-                                        className="mr-2 h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
+                                        className="mr-2 h-5 w-5 text-green-500 bg-yellow-100 border-red-500 focus:ring-green-500"
                                     />
                                     <span className="ml-2">{answer}</span>
                                 </label>
@@ -183,15 +182,15 @@ export function TakeQuiz() {
                                     cx="50"
                                     cy="50"
                                     className="circle"
-                                    style={{ strokeDashoffset: calculateDashOffset(), stroke: "#4FD1C5" }}
+                                    style={{ strokeDashoffset: calculateDashOffset(), stroke: "#F25C05" }}
                                 ></circle>
                             </svg>
-                            <div className="timer-text text-gray-900 dark:text-gray-100">
+                            <div className="timer-text text-red-600 font-bold">
                                 {timeLeft}
                             </div>
                         </div>
                         {answerResult && (
-                            <div className={`mt-4 mb-4 text-lg font-semibold animate__animated ${answerResult === "Correct Answer!" ? "text-green-500 animate__bounceIn" : "text-red-500 animate__shakeX"}`}>
+                            <div className={`mt-4 mb-4 text-lg font-bold animate__animated ${answerResult === "Correct Answer!" ? "text-green-500 animate__bounceIn" : "text-red-500 animate__shakeX"}`}>
                                 {answerResult}
                             </div>
                         )}
@@ -199,8 +198,7 @@ export function TakeQuiz() {
                         <div className="mt-4">
                             <Button
                                 variant="gradient"
-                                color="blue"
-                                className="bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-700 dark:hover:bg-blue-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow-md text-lg"
                                 onClick={handleNextQuestion}
                             >
                                 {currentQuestionIndex < quiz.questions.length - 1 ? "Next" : "Finish"}

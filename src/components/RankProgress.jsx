@@ -93,31 +93,46 @@ export function RankProgress() {
     }
 
     return (
-        <Card className="dark:bg-gray-800">
+        <Card className="bg-sky-200 dark:bg-gray-900 border-4 border-yellow-400 dark:border-gray-700 rounded-lg">
             <CardHeader
                 variant="gradient"
-                color="gray"
-                className="mb-8 p-6 dark:bg-gray-700"
+                className="mb-8 p-6 bg-gradient-to-r from-blue-400 to-green-400 dark:from-gray-700 dark:to-gray-800 text-white text-center"
             >
                 <Typography
                     variant="h6"
-                    color="white"
-                    className="dark:text-gray-100"
+                    className="text-white text-3xl font-extrabold"
+                    style={{ 
+                        fontFamily: "'Comic Sans MS', cursive, sans-serif",
+                        textShadow: "2px 2px 0 black, -2px 2px 0 black, 2px -2px 0 black, -2px -2px 0 black" 
+                    }}
                 >
-                    Rank and Progress
+                    Rank and Progress 🚀
                 </Typography>
             </CardHeader>
-            <CardBody className="p-4">
-                <Typography variant="h5" className="mb-4">
+            <CardBody className="p-4 text-center">
+                <Typography
+                    variant="h5"
+                    className="mb-4 text-yellow-600 dark:text-yellow-400 font-bold"
+                    style={{ 
+                        fontFamily: "'Comic Sans MS', cursive, sans-serif",
+                        textShadow: "2px 2px 0 black, -2px 2px 0 black, 2px -2px 0 black, -2px -2px 0 black"
+                    }}
+                >
                     Rank: {rankInfo.rank} ({rankInfo.points} points)
                 </Typography>
-                <Typography variant="paragraph" className="text-gray-500 dark:text-gray-400">
+                <Typography
+                    variant="paragraph"
+                    className="text-blue-700 dark:text-blue-300 font-medium mb-2"
+                >
                     Progress to next rank: {rankInfo.nextRankProgress}%
                 </Typography>
-                <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700 mb-4">
+                <div className="w-full bg-yellow-200 dark:bg-gray-700 rounded-full shadow-lg mb-4">
                     <div
-                        className="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-                        style={{ width: `${rankInfo.nextRankProgress}%` }}
+                        className="bg-red-500 text-xs font-bold text-white text-center p-1 leading-none rounded-full transition-all duration-300 ease-in-out"
+                        style={{
+                            width: `${rankInfo.nextRankProgress}%`,
+                            textShadow: "2px 2px 0 black, -2px 2px 0 black, 2px -2px 0 black, -2px -2px 0 black"
+                        }}
                     >
                         {rankInfo.nextRankProgress}%
                     </div>

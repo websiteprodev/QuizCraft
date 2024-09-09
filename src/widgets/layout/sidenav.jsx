@@ -1,41 +1,39 @@
 import PropTypes from 'prop-types';
 import { Link, NavLink } from 'react-router-dom';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import {
-    Avatar,
-    Button,
-    IconButton,
-    Typography,
-} from '@material-tailwind/react';
+import { Button, IconButton, Typography } from '@material-tailwind/react';
 import { useMaterialTailwindController, setOpenSidenav } from '@/context';
 
 export function Sidenav({ brandImg, brandName, routes }) {
     const [controller, dispatch] = useMaterialTailwindController();
-    const { sidenavColor, sidenavType, openSidenav } = controller;
+    const { sidenavType, openSidenav } = controller;
+
     const sidenavTypes = {
         dark: 'bg-gradient-to-br from-gray-800 to-gray-900',
         white: 'bg-white dark:bg-gray-800 shadow-sm',
         transparent: 'bg-transparent',
     };
+
     return (
         <aside
             className={`${sidenavTypes[sidenavType]} ${
                 openSidenav ? 'translate-x-0' : '-translate-x-80'
             } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl shadow-lg transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 dark:border-gray-700`}
         >
-            <div className={`relative`}>
+            <div className="relative">
                 <Link to="/" className="py-6 px-8 text-center">
                     <Typography
-                        variant="h6"
-                        color={sidenavType === 'dark' ? 'white' : 'blue-gray'}
-                        className="font-bold"
+                        variant="h5"
+                        color={sidenavType === 'dark' ? 'yellow' : 'blue-gray'}
+                        className="font-extrabold text-yellow-500 text-3xl flex items-center justify-center"
+                        style={{ fontFamily: 'Press Start 2P, cursive' }}
                     >
-                        {brandName}
+                        ToQuiz Story
                     </Typography>
                 </Link>
                 <IconButton
                     variant="text"
-                    color="white"
+                    color="yellow"
                     size="sm"
                     ripple={false}
                     className="absolute right-0 top-0 grid rounded-br-none rounded-tl-none xl:hidden"
@@ -43,13 +41,13 @@ export function Sidenav({ brandImg, brandName, routes }) {
                 >
                     <XMarkIcon
                         strokeWidth={2.5}
-                        className="h-5 w-5 text-white"
+                        className="h-5 w-5 text-yellow-500"
                     />
                 </IconButton>
             </div>
             <div className="m-4">
                 {routes.map(({ layout, title, pages }, key) => (
-                    <ul key={key} className="mb-4 flex flex-col gap-1">
+                    <ul key={key} className="mb-4 flex flex-col gap-2">
                         {title && (
                             <li
                                 key={`${key}-${title}`}
@@ -59,10 +57,10 @@ export function Sidenav({ brandImg, brandName, routes }) {
                                     variant="small"
                                     color={
                                         sidenavType === 'dark'
-                                            ? 'white'
+                                            ? 'yellow'
                                             : 'blue-gray'
                                     }
-                                    className="font-black uppercase opacity-75"
+                                    className="font-bold uppercase opacity-75"
                                 >
                                     {title}
                                 </Typography>
@@ -76,8 +74,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
                                             variant={
                                                 isActive ? 'gradient' : 'text'
                                             }
-                                            color="blue-gray"
-                                            className="flex items-center gap-4 px-4 capitalize"
+                                            color={isActive ? 'yellow' : 'blue-gray'}
+                                            className="flex items-center gap-4 px-4 py-2 rounded-lg transition-all duration-300 hover:bg-yellow-600 hover:text-white capitalize"
                                             fullWidth
                                         >
                                             {icon}
@@ -97,12 +95,11 @@ export function Sidenav({ brandImg, brandName, routes }) {
             </div>
         </aside>
     );
-    
 }
 
 Sidenav.defaultProps = {
     brandImg: '/img/logo-ct.png',
-    brandName: 'QuizCraft',
+    brandName: 'ToQuiz Story',
 };
 
 Sidenav.propTypes = {
@@ -111,6 +108,6 @@ Sidenav.propTypes = {
     routes: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-Sidenav.displayName = '/src/widgets/layout/sidnave.jsx';
+Sidenav.displayName = '/src/widgets/layout/sidenav.jsx';
 
 export default Sidenav;

@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Input, Typography, Button } from '@material-tailwind/react';
+import {
+    Card,
+    Input,
+    Typography,
+    Button,
+    Select,
+    Option,
+} from '@material-tailwind/react';
 import {
     fetchQuizzes,
     fetchTopScores,
@@ -27,6 +34,7 @@ export function BrowseQuizzes() {
     const [filterStartDate, setFilterStartDate] = useState(null);
     const [filterEndDate, setFilterEndDate] = useState(null);
     const [enrolledQuizzes, setEnrolledQuizzes] = useState([]);
+    const [statusFilter, setStatusFilter] = useState('Ongoing');
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -74,11 +82,34 @@ export function BrowseQuizzes() {
         loadQuizzesAndUserData();
     }, [user]);
 
-    // Calculate remaining time
+    // Determine quiz status (Finished, Ongoing, Future)
+    const getQuizStatus = (startDate, endDate) => {
+        const now = moment();
+
+        // Safely check if startDate and endDate exist and can be converted
+        const quizStart =
+            startDate && typeof startDate.toDate === 'function'
+                ? moment(startDate.toDate())
+                : null;
+        const quizEnd =
+            endDate && typeof endDate.toDate === 'function'
+                ? moment(endDate.toDate())
+                : null;
+
+        if (quizEnd && quizEnd.isBefore(now)) {
+            return 'Finished';
+        } else if (quizStart && quizStart.isAfter(now)) {
+            return 'Future';
+        } else {
+            return 'Ongoing';
+        }
+    };
+
     const calculateRemainingTime = (endDate) => {
-        if (!endDate) {
+        if (!endDate || typeof endDate.toDate !== 'function') {
             return 'No end date set';
         }
+
         const now = moment();
         const quizEnd = moment(endDate.toDate());
         const duration = moment.duration(quizEnd.diff(now));
@@ -94,7 +125,6 @@ export function BrowseQuizzes() {
             return `${minutes}m left`;
         }
     };
-
     const handleShowScoreboard = async (quizId) => {
         try {
             const scores = await fetchTopScores(quizId);
@@ -119,6 +149,7 @@ export function BrowseQuizzes() {
     const filteredQuizzes = quizzes.filter((quiz) => {
         const quizStartDate = quiz.startDate?.toDate(); // Convert Firestore Timestamp to Date
         const quizEndDate = quiz.endDate?.toDate();
+        const quizStatus = getQuizStatus(quizStartDate, quizEndDate);
 
         const matchesSearchTerm =
             quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -145,6 +176,16 @@ export function BrowseQuizzes() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="mb-6 dark:bg-gray-700 dark:text-gray-200 rounded-lg border-4 border-blue-400"
             />
+            <Select
+                label="Filter by Status"
+                value={statusFilter}
+                onChange={(value) => setStatusFilter(value)}
+                className="mb-6 dark:bg-gray-700 dark:text-gray-200"
+            >
+                <Option value="Finished">Finished</Option>
+                <Option value="Ongoing">Ongoing</Option>
+                <Option value="Future">Future</Option>
+            </Select>
             <div className="mb-6 flex gap-4">
                 <div>
                     <label className="block mb-2 text-gray-900 dark:text-white">

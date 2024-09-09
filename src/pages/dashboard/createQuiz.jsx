@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Card,
     Input,
@@ -12,13 +12,14 @@ import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
 import { useAuth } from '../auth/AuthContext';
-import { generateAIQuestion } from '@/services/gptService'; 
+import { generateAIQuestion } from '@/services/gptService';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export function CreateQuiz() {
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [questions, setQuestions] = useState([
-
         {
             text: '',
             type: 'multiple-choice',
@@ -39,6 +40,8 @@ export function CreateQuiz() {
     const [newCorrectAnswer, setNewCorrectAnswer] = useState('1');
     const [topic, setTopic] = useState('');
     const { user } = useAuth();
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     useEffect(() => {
         const total = questions.reduce(
@@ -111,6 +114,16 @@ export function CreateQuiz() {
             return;
         }
 
+        if (!startDate || !endDate) {
+            console.error('Please select both start and end dates');
+            return;
+        }
+
+        if (startDate >= endDate) {
+            console.error('The start date must be earlier than end date');
+            return;
+        }
+
         const querySnapshot = await getDocs(
             query(collection(db, 'quizzes'), where('title', '==', title)),
         );
@@ -134,7 +147,9 @@ export function CreateQuiz() {
                 totalPoints,
                 randomQuestions,
                 isPublic,
-                createdBy: user.firstName + " " + user.lastName,
+                startDate,
+                endDate,
+                createdBy: user.firstName + ' ' + user.lastName,
                 createdAt: new Date(),
             });
 
@@ -157,8 +172,6 @@ export function CreateQuiz() {
             console.error('Error adding quiz: ', e);
         }
     };
-
-
 
     const addToQuestionBank = async () => {
         if (
@@ -200,7 +213,6 @@ export function CreateQuiz() {
             };
             setQuestions(updatedQuestions);
         } else {
-
             setQuestions([
                 ...questions,
                 {
@@ -262,6 +274,39 @@ export function CreateQuiz() {
                             onChange={(e) => setCategory(e.target.value)}
                             className="mb-4 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-pink-500 dark:focus:border-pink-500 transition duration-300"
                         />
+                        <Input
+                            label="Timer (in seconds)"
+                            type="number"
+                            value={timer}
+                            onChange={(e) => setTimer(Number(e.target.value))}
+                            className="mb-6 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
+                        />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block mb-2 text-gray-900 dark:text-white">
+                                Start Date
+                            </label>
+                            <DatePicker
+                                selected={startDate}
+                                onChange={(date) => setStartDate(date)}
+                                showTimeSelect
+                                dateFormat="Pp"
+                                className="w-full bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600"
+                            />
+                        </div>
+                        <div>
+                            <label className="block mb-2 text-gray-900 dark:text-white">
+                                End Date
+                            </label>
+                            <DatePicker
+                                selected={endDate}
+                                onChange={(date) => setEndDate(date)}
+                                showTimeSelect
+                                dateFormat="Pp"
+                                className="w-full bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600"
+                            />
+                        </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Switch
@@ -273,21 +318,12 @@ export function CreateQuiz() {
                             }
                             className="mb-6 text-gray-900 dark:text-gray-200"
                         />
-                        <Input
-                            label="Timer (in seconds)"
-                            type="number"
-                            value={timer}
-                            onChange={(e) => setTimer(Number(e.target.value))}
-                            className="mb-6 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 transition duration-300"
-                        />
-                    </div>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         <Switch
-                            id='public-quiz'
-                            label='Make this quiz public'
+                            id="public-quiz"
+                            label="Make this quiz public"
                             checked={isPublic}
                             onChange={(e) => setIsPublic(e.target.checked)}
-                            className='mb-6 text-gray-900 dark:text-gray-200'
+                            className="mb-6 text-gray-900 dark:text-gray-200"
                         />
                     </div>
 
@@ -434,7 +470,7 @@ export function CreateQuiz() {
                             />
                         ))}
                     </div>
-                    <div className='w-1/2'>
+                    <div className="w-1/2">
                         <Select
                             label="Correct Answer"
                             value={newCorrectAnswer}
@@ -484,10 +520,11 @@ export function CreateQuiz() {
                             <Button
                                 onClick={addQuestionFromBank}
                                 disabled={!selectedBankQuestionId}
-                                className={`mt-3 ${selectedBankQuestionId
-                                    ? 'bg-teal-500 hover:bg-teal-600'
-                                    : 'bg-gray-400 cursor-not-allowed'
-                                    } text-white rounded-lg`}
+                                className={`mt-3 ${
+                                    selectedBankQuestionId
+                                        ? 'bg-teal-500 hover:bg-teal-600'
+                                        : 'bg-gray-400 cursor-not-allowed'
+                                } text-white rounded-lg`}
                             >
                                 Add Selected Question to Quiz
                             </Button>

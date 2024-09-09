@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Card, Input, Typography, Button } from "@material-tailwind/react";
 import { fetchQuizzes, fetchTopScores } from "@/services/quizService";
 import { useNavigate } from "react-router-dom";
-import { PlayIcon, ChartBarIcon } from "@heroicons/react/24/solid";
+import { PlayIcon, ChartBarIcon, TrophyIcon } from "@heroicons/react/24/solid";
 import RankProgress from "@/components/RankProgress";
 import { useAuth } from "../auth/AuthContext";
 import { getFirestore, doc, getDoc } from "firebase/firestore"; // Import Firestore functions
+import { createApi } from "unsplash-js"; 
 
 export function BrowseQuizzes() {
     const [quizzes, setQuizzes] = useState([]);
@@ -15,8 +16,13 @@ export function BrowseQuizzes() {
     const [selectedQuizId, setSelectedQuizId] = useState(null);
     const [completedQuizzes, setCompletedQuizzes] = useState([]); // Store completed quizzes
     const [userPoints, setUserPoints] = useState(0); // Store user points
+    const [categoryImages, setCategoryImages] = useState({}); // Store images per category
     const navigate = useNavigate();
     const { user } = useAuth(); // Get user info from AuthContext
+
+    const unsplash = createApi({
+        accessKey: "dHCJ5jtF9xvP_6VQq3XeqR5dPpHTuBwxiWbRGwAPLiE",
+    });
 
     useEffect(() => {
         const loadQuizzesAndUserData = async () => {
@@ -37,6 +43,22 @@ export function BrowseQuizzes() {
                 } else {
                     console.log("No such user document!");
                 }
+
+                const fetchImages = async () => {
+                    const images = {};
+                    for (const quiz of quizzesData) {
+                        if (!images[quiz.category]) {
+                            const result = await unsplash.search.getPhotos({
+                                query: quiz.category,
+                                perPage: 1,
+                            });
+                            images[quiz.category] = result.response.results[0]?.urls.small || null;
+                        }
+                    }
+                    setCategoryImages(images);
+                };
+
+                fetchImages();
             } catch (error) {
                 console.error("Error fetching quizzes or user data:", error);
             }
@@ -77,7 +99,12 @@ export function BrowseQuizzes() {
             {filteredQuizzes.length > 0 ? (
                 filteredQuizzes.map((quiz) => (
                     <Card key={quiz.id} className="p-6 mb-4 bg-white shadow-lg rounded-lg dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 transform transition-all hover:scale-105 hover:shadow-xl">
-                        <img src={quiz.imageUrl} alt={quiz.title} className="w-full h-48 object-cover mb-4 rounded-lg shadow-md" />
+                        <img
+                            src={categoryImages[quiz.category] || "/default-placeholder.png"}
+                            alt={quiz.title}
+                            style={{ height: "17rem" }} 
+                            className="w-full object-cover mb-4 rounded-lg shadow-md"
+                        />
                         <Typography variant="h6" className="mb-2 dark:text-gray-100 font-bold">{quiz.title}</Typography>
                         <Typography variant="paragraph" className={`text-${getColorForCategory(quiz.category)} mb-2`}>
                             Category: {quiz.category}

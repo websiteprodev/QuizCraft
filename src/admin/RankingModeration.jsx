@@ -83,15 +83,6 @@ export function RankingModeration() {
       }, 3000);
     };
   
-    // if (!isAdmin) {
-    //   return (
-    //     <div className="p-6">
-    //       <Typography variant="h5">Access Denied</Typography>
-    //       <Typography>You do not have permission to view this page.</Typography>
-    //     </div>
-    //   );
-    // }
-  
     if (loading) {
       return <div>Loading quizzes and scores...</div>;
     }
@@ -116,7 +107,7 @@ export function RankingModeration() {
         >
           {quizzes.map((quiz) => (
             <Option key={quiz.id} value={quiz.id}>
-              {quiz.title}
+              {quiz.title || "Untitled Quiz"} {/* Ensure title is not undefined */}
             </Option>
           ))}
         </Select>
@@ -126,8 +117,12 @@ export function RankingModeration() {
             {scoresByQuiz[selectedQuizId].map((score) => (
               <div key={score.id} className="flex justify-between items-center">
                 <div>
-                  <Typography variant="h6">{score.username}</Typography>
-                  <Typography variant="body2">Current Score: {score.score}</Typography>
+                  <Typography variant="h6">
+                    {score.username || "Anonymous"} {/* Fallback for undefined username */}
+                  </Typography>
+                  <Typography variant="paragraph">
+                    Current Score: {score.score !== undefined ? score.score : "N/A"} {/* Fallback for undefined score */}
+                  </Typography>
                 </div>
                 <div className="flex gap-2 items-center">
                   <Input
@@ -151,7 +146,7 @@ export function RankingModeration() {
             </Button>
           </div>
         ) : (
-          <Typography variant="body2">No scores available for this quiz.</Typography>
+          <Typography variant="paragraph">No scores available for this quiz.</Typography>
         )}
       </div>
     );

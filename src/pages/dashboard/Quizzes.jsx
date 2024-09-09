@@ -6,7 +6,6 @@ import {
     where,
     getDocs,
     doc,
-    getDoc,
     deleteDoc,
     onSnapshot,
 } from 'firebase/firestore';
@@ -41,25 +40,11 @@ export function Quizzes() {
                 );
                 setCreatedQuizzes(createdQuizzesData);
 
+
                 // Fetch quizzes based on the taken quizzes IDs from user.quizzesTaken
                 const quizzesTaken = user.quizzesTaken || []; // Array of quiz IDs
-                if (quizzesTaken.length > 0) {
-                    const quizzesPromises = quizzesTaken.map((quizId) =>
-                        getDoc(doc(db, 'quizzes', quizId)),
-                    );
-                    const quizzesSnapshots = await Promise.all(quizzesPromises); // Fetch quizzes by IDs
-                    const takenQuizzesData = quizzesSnapshots.map((quizDoc) => {
-                        const data = quizDoc.data();
-                        const score = data.scores
-                            ? data.scores[user.uid] || 0
-                            : 0; // Get the user's score for each quiz
-                        return { id: quizDoc.id, ...data, score };
-                    });
-                    setTakenQuizzes(takenQuizzesData);
-                } else {
-                    setTakenQuizzes([]); // No quizzes taken
-                }
-
+                setTakenQuizzes(quizzesTaken);
+            
                 // Fetch public quizzes
                 const publicQuizzesRef = query(
                     collection(db, 'quizzes'),
@@ -141,7 +126,12 @@ export function Quizzes() {
                 {createdQuizzes.length > 0 ? (
                     createdQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
+                            <Typography
+                                variant="h6"
+                                className="dark:text-gray-200"
+                            >
+                                {quiz.title}
+                            </Typography>
                             <Typography variant="paragraph">
                                 Category: {quiz.category}
                             </Typography>
@@ -182,7 +172,12 @@ export function Quizzes() {
                 {publicQuizzes.length > 0 ? (
                     publicQuizzes.map((quiz) => (
                         <div key={quiz.id} className="mb-4">
-                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
+                            <Typography
+                                variant="h6"
+                                className="dark:text-gray-200"
+                            >
+                                {quiz.title}
+                            </Typography>
                             <Typography variant="paragraph">
                                 Category: {quiz.category}
                             </Typography>
@@ -212,18 +207,16 @@ export function Quizzes() {
                     Taken Quizzes
                 </Typography>
                 {takenQuizzes.length > 0 ? (
-                    takenQuizzes.map((quiz) => (
-                        <div key={quiz.id} className="mb-4 ">
-                            <Typography variant="h6" className="dark:text-gray-200">{quiz.title}</Typography>
-                            <Typography variant="paragraph">
-                                Category: {quiz.category}
+                    takenQuizzes.map((quiz, index) => (
+                        <div key={index} className="mb-4 ">
+                            <Typography
+                                variant="h6"
+                                className="dark:text-gray-200"
+                            >
+                                {quiz.title}
                             </Typography>
                             <Typography variant="paragraph">
-                                Questions: {quiz.numberOfQuestions}
-                            </Typography>
-                            <Typography variant="paragraph">
-                                Your Score: {quiz.score}{' '}
-                                {/* Display user's score */}
+                                Points Scored: {quiz.points}
                             </Typography>
                             <hr className="my-4" />
                         </div>

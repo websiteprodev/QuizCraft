@@ -6,6 +6,7 @@ import { PlayIcon, ChartBarIcon, TrophyIcon } from "@heroicons/react/24/solid";
 import RankProgress from "@/components/RankProgress";
 import { useAuth } from "../auth/AuthContext";
 import { getFirestore, doc, getDoc } from "firebase/firestore"; // Import Firestore functions
+import { createApi } from "unsplash-js"; 
 
 export function BrowseQuizzes() {
     const [quizzes, setQuizzes] = useState([]);
@@ -15,22 +16,30 @@ export function BrowseQuizzes() {
     const [selectedQuizId, setSelectedQuizId] = useState(null);
     const [completedQuizzes, setCompletedQuizzes] = useState([]); // Store completed quizzes
     const [userPoints, setUserPoints] = useState(0); // Store user points
+    const [categoryImages, setCategoryImages] = useState({}); // Store images per category
     const navigate = useNavigate();
     const { user } = useAuth(); // Get user info from AuthContext
+
+    const unsplash = createApi({
+        accessKey: "dHCJ5jtF9xvP_6VQq3XeqR5dPpHTuBwxiWbRGwAPLiE",
+    });
 
     useEffect(() => {
         const loadQuizzesAndUserData = async () => {
             try {
+                // Fetch all quizzes
                 const quizzesData = await fetchQuizzes();
-                setQuizzes(quizzesData);              
+                setQuizzes(quizzesData);
+
+                // Fetch completed quizzes and user points for the current user from Firestore
                 const db = getFirestore();
-                const userDoc = doc(db, "users", user?.uid); 
+                const userDoc = doc(db, "users", user?.uid); // Reference to the user's document
                 const userSnap = await getDoc(userDoc);
 
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
-                    setCompletedQuizzes(userData.completedQuizzes || []);
-                    setUserPoints(userData.points || 0); 
+                    setCompletedQuizzes(userData.completedQuizzes || []); // Save completed quizzes array
+                    setUserPoints(userData.points || 0); // Save user points
                 } else {
                     console.log("No such user document!");
                 }
@@ -68,7 +77,7 @@ export function BrowseQuizzes() {
         }
     };
 
-    
+    // Filter quizzes based on search term
     const filteredQuizzes = quizzes.filter(quiz =>
         quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         quiz.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -76,6 +85,7 @@ export function BrowseQuizzes() {
 
     return (
         <div className="p-6 dark:text-gray-100">
+            {/* Pass the user's points to RankProgress */}
             <RankProgress points={userPoints} />
 
             <Typography variant="h4" className="mb-4 dark:text-gray-100">Browse Quizzes</Typography>
@@ -105,13 +115,13 @@ export function BrowseQuizzes() {
                         <div className="mt-4 flex gap-4">
                             <Button
                                 variant="gradient"
-                                color={completedQuizzes.includes(quiz.id) ? "gray" : "blue"} 
+                                color={completedQuizzes.includes(quiz.id) ? "gray" : "blue"} // Check if the quiz is completed
                                 className="dark:bg-blue-800 dark:text-gray-100 flex items-center"
-                                disabled={completedQuizzes.includes(quiz.id)} 
+                                disabled={completedQuizzes.includes(quiz.id)} // Disable if completed
                                 onClick={() => navigate(`/dashboard/quiz/${quiz.id}`)}
                             >
                                 <PlayIcon className="h-5 w-5 mr-2" />
-                                {completedQuizzes.includes(quiz.id) ? 'Completed' : 'Start Quiz'} 
+                                {completedQuizzes.includes(quiz.id) ? 'Completed' : 'Start Quiz'} {/* Display proper text */}
                             </Button>
 
                             <Button
@@ -129,6 +139,8 @@ export function BrowseQuizzes() {
             ) : (
                 <Typography className="dark:text-gray-400">No quizzes found.</Typography>
             )}
+
+            {/* Scoreboard Modal */}
             {showScoreboard && <ScoreboardModal topScores={topScores} setShowScoreboard={setShowScoreboard} />}
         </div>
     );

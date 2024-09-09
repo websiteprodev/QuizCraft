@@ -30,7 +30,7 @@ const RankTitleEnum = {
   GRAND_EXPERT: "Grand Expert",
   MASTER: "Master",
   GRAND_MASTER: "Grand Master",
-  LEGEND: "Legend", 
+  LEGEND: "Legend",
 };
 
 const getRankByPoints = (points) => {
@@ -82,33 +82,33 @@ export function Tables() {
   }, []);
 
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
-      <Card className="dark:bg-gray-800">
+    <div className="mt-12 mb-8 flex flex-col gap-12 p-4">
+      <Card className="bg-blue-100 dark:bg-gray-800 shadow-lg rounded-lg border border-blue-500">
         <CardHeader
           variant="gradient"
-          color="gray"
-          className="mb-8 p-6 dark:bg-gray-700"
+          color="blue"
+          className="p-6 bg-gradient-to-r from-blue-500 to-blue-300 dark:bg-gray-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-blue-400 rounded-t-lg"
         >
           <Typography
-            variant="h6"
+            variant="h4"
             color="white"
-            className="dark:text-gray-100"
+            className="text-3xl font-bold"
           >
-            User Table
+            Top Scorers
           </Typography>
         </CardHeader>
         <CardBody className="overflow-x-auto px-0 pt-0 pb-2">
           <table className="w-full min-w-max table-auto text-left">
             <thead>
-              <tr>
+              <tr className="bg-blue-300 dark:bg-gray-600 border-b-4 border-blue-500">
                 {["Name", "Rank", "Points"].map((header) => (
                   <th
                     key={header}
-                    className="border-b border-blue-gray-50 py-3 px-5 dark:border-gray-600"
+                    className="py-4 px-6 text-center text-xl font-bold text-gray-800 dark:text-gray-200"
                   >
                     <Typography
                       variant="small"
-                      className="text-[11px] font-bold uppercase text-blue-gray-400 dark:text-gray-300"
+                      className="uppercase"
                     >
                       {header}
                     </Typography>
@@ -119,23 +119,22 @@ export function Tables() {
             <tbody>
               {users.length > 0 ? (
                 users.map((user) => (
-                  <tr key={user.id} className="dark:bg-gray-800">
-                    <td className="py-3 px-5">
+                  <tr key={user.id} className={`hover:bg-blue-100 dark:hover:bg-gray-500 transition-colors`}>
+                    <td className="py-4 px-6">
                       <Typography
                         variant="small"
-                        color="blue-gray"
-                        className="font-semibold dark:text-gray-200"
+                        className="text-lg font-semibold text-gray-800 dark:text-gray-300"
                       >
                         {user.firstName} {user.lastName}
                       </Typography>
                     </td>
-                    <td className="py-3 px-5">
-                      <Typography className="text-xs font-semibold text-blue-gray-600 dark:text-gray-300">
+                    <td className="py-4 px-6 text-center">
+                      <Typography className="text-lg font-semibold text-blue-600 dark:text-blue-400">
                         {user.rank}
                       </Typography>
                     </td>
-                    <td className="py-3 px-5">
-                      <Typography className="text-xs font-semibold text-blue-gray-600 dark:text-gray-300">
+                    <td className="py-4 px-6 text-center">
+                      <Typography className="text-lg font-semibold text-blue-600 dark:text-blue-400">
                         {user.points}
                       </Typography>
                     </td>
@@ -143,7 +142,7 @@ export function Tables() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="3" className="py-3 px-5 text-center dark:text-gray-300">
+                  <td colSpan="3" className="py-4 px-6 text-center text-gray-500 dark:text-gray-300">
                     No users available.
                   </td>
                 </tr>

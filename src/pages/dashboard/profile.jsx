@@ -5,25 +5,17 @@ import {
     CardFooter,
     Avatar,
     Typography,
-    Tabs,
-    TabsHeader,
-    Tab,
-    Switch,
     Tooltip,
     Button,
     Input,
 } from '@material-tailwind/react';
 import {
-    HomeIcon,
-    ChatBubbleLeftEllipsisIcon,
-    Cog6ToothIcon,
     PencilIcon,
 } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
-import { ProfileInfoCard, MessageCard } from '@/widgets/cards';
-import { platformSettingsData, conversationsData, projectsData } from '@/data';
+import { ProfileInfoCard } from '@/widgets/cards';
+import { projectsData } from '@/data';
 import {
-    getDoc,
     doc,
     updateDoc,
     query,
@@ -33,11 +25,10 @@ import {
 } from 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import { db, storage } from '@/configs/firebase';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/authContext';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-export function Profile({}) {
+export function Profile() {
     const { user } = useAuth();
     const [userData, setUserData] = useState({
         firstName: '',
@@ -122,12 +113,13 @@ export function Profile({}) {
             setError('Failed to update profile. Please try again.');
         }
     };
+
     return (
         <>
             <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover bg-center">
                 <div className="absolute inset-0 h-full w-full bg-gray-900/75" />
             </div>
-            <Card className="mx-3 -mt-16 mb-6 lg:mx-4 border border-blue-gray-100 dark:border-gray-700">
+            <Card className="mx-3 -mt-16 mb-6 lg:mx-4 border border-blue-gray-100 dark:border-gray-700 bg-yellow-50 dark:bg-gray-800">
                 <CardBody className="p-4 dark:bg-gray-800">
                     <div className="mb-10 flex items-center gap-6">
                         <div className="flex items-center gap-6">
@@ -155,16 +147,16 @@ export function Profile({}) {
                             </div>
                         </div>
                     </div>
-                    <div className="gird-col-1 mb-12 grid gap-6 px-4 lg:grid-cols-3 xl:grid-cols-3">
+                    <div className="grid gap-6 px-4 lg:grid-cols-3 xl:grid-cols-3">
                         <ProfileInfoCard
                             title="Profile Information"
-                            description="Hi, I'm Alec Thompson, Decisions: If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
+                            description="Hi, I'm Alec Thompson. Decisions: If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
                             details={{
-                                'first name': `${user.firstName}`,
-                                mobile: `${user.phoneNumber}`,
-                                email: `${user.email}`,
-                                location: `${user.address}`,
-                                social: (
+                                'First Name': `${user.firstName}`,
+                                'Mobile': `${user.phoneNumber}`,
+                                'Email': `${user.email}`,
+                                'Location': `${user.address}`,
+                                'Social': (
                                     <div className="flex items-center gap-4">
                                         <i className="fa-brands fa-facebook text-blue-700 dark:text-blue-500" />
                                         <i className="fa-brands fa-twitter text-blue-400 dark:text-blue-300" />
@@ -174,13 +166,13 @@ export function Profile({}) {
                             }}
                             action={
                                 <Tooltip content="Edit Profile">
-                                    <PencilIcon className="h-4 w-4 cursor-pointer text-blue-gray-500 dark:text-gray-300 col-span-2" />
+                                    <PencilIcon className="h-5 w-5 cursor-pointer text-yellow-500 dark:text-yellow-300" />
                                 </Tooltip>
                             }
                         />
                         <section className="col-span-2">
                             <div className="text-center mb-6 ">
-                                <Typography variant="h2" className="font-bold">
+                                <Typography variant="h2" className="font-bold text-yellow-500 dark:text-yellow-300">
                                     Edit Profile
                                 </Typography>
                             </div>
@@ -191,7 +183,7 @@ export function Profile({}) {
                                             {error}
                                         </Typography>
                                     )}
-                                    <div className="w-1/2">
+                                    <div className="w-full">
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
@@ -204,10 +196,10 @@ export function Profile({}) {
                                             name="username"
                                             value={user.username}
                                             disabled
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                            className="!border-t-yellow-500 dark:border-yellow-300 dark:bg-gray-700 dark:text-gray-200 focus:!border-t-yellow-700"
                                         />
                                     </div>
-                                    <div className="w-1/2">
+                                    <div className="w-full">
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
@@ -220,10 +212,10 @@ export function Profile({}) {
                                             name="firstName"
                                             value={userData.firstName}
                                             onChange={handleChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                            className="!border-t-yellow-500 dark:border-yellow-300 dark:bg-gray-700 dark:text-gray-200 focus:!border-t-yellow-700"
                                         />
                                     </div>
-                                    <div className="w-1/2">
+                                    <div className="w-full">
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
@@ -236,10 +228,10 @@ export function Profile({}) {
                                             name="lastName"
                                             value={userData.lastName}
                                             onChange={handleChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                            className="!border-t-yellow-500 dark:border-yellow-300 dark:bg-gray-700 dark:text-gray-200 focus:!border-t-yellow-700"
                                         />
                                     </div>
-                                    <div className="w-1/2">
+                                    <div className="w-full">
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
@@ -252,10 +244,10 @@ export function Profile({}) {
                                             name="email"
                                             value={userData.email}
                                             disabled
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                            className="!border-t-yellow-500 dark:border-yellow-300 dark:bg-gray-700 dark:text-gray-200 focus:!border-t-yellow-700"
                                         />
                                     </div>
-                                    <div className="w-1/2">
+                                    <div className="w-full">
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
@@ -268,10 +260,10 @@ export function Profile({}) {
                                             name="address"
                                             value={userData.address}
                                             onChange={handleChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                            className="!border-t-yellow-500 dark:border-yellow-300 dark:bg-gray-700 dark:text-gray-200 focus:!border-t-yellow-700"
                                         />
                                     </div>
-                                    <div className="w-1/2">
+                                    <div className="w-full">
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
@@ -284,10 +276,10 @@ export function Profile({}) {
                                             name="phoneNumber"
                                             value={userData.phoneNumber}
                                             onChange={handleChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                            className="!border-t-yellow-500 dark:border-yellow-300 dark:bg-gray-700 dark:text-gray-200 focus:!border-t-yellow-700"
                                         />
                                     </div>
-                                    <div className="w-1/2">
+                                    <div className="w-full">
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
@@ -299,15 +291,14 @@ export function Profile({}) {
                                             size="lg"
                                             type="file"
                                             onChange={handleFileChange}
-                                            className="!border-t-blue-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 focus:!border-t-gray-900"
+                                            className="!border-t-yellow-500 dark:border-yellow-300 dark:bg-gray-700 dark:text-gray-200 focus:!border-t-yellow-700"
                                         />
                                     </div>
                                     {userData.photoURL && (
-                                        <div className="mt-4 place-self-left w-1/2">
+                                        <div className="mt-4 place-self-left w-full">
                                             <img
                                                 src={userData.photoURL}
                                                 alt="Profile"
-                                                variant="rounded"
                                                 className="rounded-lg shadow-lg shadow-blue-gray-500/40 max-h-48"
                                             />
                                         </div>
@@ -317,6 +308,8 @@ export function Profile({}) {
                                     className="mt-6"
                                     fullWidth
                                     type="submit"
+                                    variant="gradient"
+                                    color="yellow"
                                 >
                                     Save Changes
                                 </Button>
@@ -393,7 +386,7 @@ export function Profile({}) {
                                                     size="sm"
                                                     className="dark:text-gray-300"
                                                 >
-                                                    view project
+                                                    View Project
                                                 </Button>
                                             </Link>
                                             <div>
@@ -429,4 +422,5 @@ export function Profile({}) {
         </>
     );
 }
+
 export default Profile;

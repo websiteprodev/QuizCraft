@@ -11,6 +11,7 @@ import {
     RectangleStackIcon,
     UsersIcon,
     ShieldCheckIcon,
+    ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/solid';
 import { Home, Profile, Tables, Notifications } from '@/pages/dashboard';
 import { SignIn, SignUp } from '@/pages/auth';
@@ -26,9 +27,28 @@ import UserManagement from "@/admin/UserManagement";
 import RankingModeration from "@/admin/RankingModeration";
 import TestManagement from "@/admin/TestManagement";
 import AdminEditQuiz from "@/admin/AdminEditQuiz";
+import Comments from "@/pages/dashboard/Comments"; 
+import { useAuth } from '@/pages/auth/authContext';
+import { Navigate } from 'react-router-dom';
 
 const icon = {
     className: 'w-5 h-5 text-inherit',
+};
+
+const OrganizerRoute = ({ children }) => {
+    const { role, loading } = useAuth();
+
+    if (loading) {
+        return <div>Loading...</div>; 
+    }
+    if (!role || role !== 'organizer') {
+
+        return <Navigate to="/dashboard/home" replace />;
+    }
+
+
+
+    return children;
 };
 
 export const routes = [
@@ -98,6 +118,16 @@ export const routes = [
                 ),
             },
             {
+                icon: <ChatBubbleLeftRightIcon {...icon} />,
+                name: 'comments',
+                path: '/comments',
+                element: (
+                    <OrganizerRoute>
+                        <Comments /> 
+                    </OrganizerRoute>
+                ),
+            },
+            {
                 icon: <ShieldCheckIcon {...icon} />,
                 name: 'admin',
                 path: '/dashboard/admin/*', 
@@ -164,3 +194,4 @@ export const hiddenRoutes = [
 ];
 
 export default routes;
+export { OrganizerRoute };

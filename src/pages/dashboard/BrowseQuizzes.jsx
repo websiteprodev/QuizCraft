@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { PlayIcon, ChartBarIcon, TrophyIcon } from "@heroicons/react/24/solid";
 import RankProgress from "@/components/RankProgress";
 import { useAuth } from "../auth/AuthContext";
-import { getFirestore, doc, getDoc } from "firebase/firestore"; 
+import { getFirestore, doc, getDoc } from "firebase/firestore"; // Import Firestore functions
 import { createApi } from "unsplash-js"; 
 
 export function BrowseQuizzes() {

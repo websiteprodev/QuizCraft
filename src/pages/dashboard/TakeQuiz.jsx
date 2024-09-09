@@ -24,7 +24,7 @@ export function TakeQuiz() {
         const loadQuiz = async () => {
             try {
                 const quizData = await fetchQuizById(id);
-                console.log("Fetched Quiz Data:", quizData); // Add this log to inspect the quiz data
+                console.log("Fetched Quiz Data:", quizData); 
                 setQuiz(quizData);
                 setTimeLeft(quizData.timer);
             } catch (error) {
@@ -63,7 +63,7 @@ export function TakeQuiz() {
 
         if (currentQuestion.answers[correctAnswerIndex] === selectedAnswer) {
             console.log("Answer is correct. Adding points:", currentQuestion.points);
-            setScore((prevScore) => prevScore + currentQuestion.points);  // Use functional update to avoid issues with async updates
+            setScore((prevScore) => prevScore + currentQuestion.points);  
             setAnswerResult("Correct Answer!");
             setShowConfetti(true); 
             setScreenCracked(false); 
@@ -130,7 +130,7 @@ export function TakeQuiz() {
     };
 
     const calculateDashOffset = () => {
-        const maxTime = quiz ? quiz.timer : 1;  // Prevent division by 0
+        const maxTime = quiz ? quiz.timer : 1;  
         const dashArray = 283;
         const dashOffset = (dashArray * timeLeft) / maxTime;
         return dashOffset;

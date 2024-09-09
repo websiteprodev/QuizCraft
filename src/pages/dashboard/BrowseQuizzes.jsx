@@ -110,6 +110,9 @@ export function BrowseQuizzes() {
                             <Typography variant="paragraph" className="text-gray-700 dark:text-gray-400">
                                 Created By: {quiz.createdBy}
                             </Typography>
+                            <Typography variant="paragraph" className="text-gray-700 dark:text-gray-400">
+                                Total Points: {quiz.totalPoints}
+                            </Typography>
                             <div className="mt-4 flex justify-between">
                                 <Button
                                     variant="gradient"

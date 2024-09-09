@@ -11,6 +11,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [role, setRole] = useState(null); 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -29,6 +30,12 @@ export const AuthProvider = ({ children }) => {
                         const username = userDoc.id;
                         const userData = userDoc.data();
                         setUser({ ...userData, username });
+
+                        if (userData.role) {
+                            setRole(userData.role);
+                        } else {
+                            console.error('No role found for this user');
+                        }
                     } else {
                         console.error('No user document found for this UID');
                     }
@@ -37,6 +44,7 @@ export const AuthProvider = ({ children }) => {
                 }
             } else {
                 setUser(null);
+                setRole(null); 
             }
             setLoading(false);
         });
@@ -45,10 +53,8 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading }}>
+        <AuthContext.Provider value={{ user, role, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );
 };
-
-export { AuthContext };

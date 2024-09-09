@@ -112,6 +112,9 @@ export function BrowseQuizzes() {
                         <Typography variant="paragraph" color="gray" className="dark:text-gray-400">
                             Questions: {quiz.numberOfQuestions}
                         </Typography>
+                        <Typography variant="paragraph" color="gray" className="dark:text-gray-400">
+                            Created By: {quiz.createdBy}
+                        </Typography>
                         <div className="mt-4 flex gap-4">
                             <Button
                                 variant="gradient"

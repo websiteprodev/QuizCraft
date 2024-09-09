@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, } from 'react';
 import {
     Card,
     Input,
@@ -11,9 +11,9 @@ import {
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
+import { useAuth } from '../auth/AuthContext';
 
 export function CreateQuiz() {
-
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [questions, setQuestions] = useState([
@@ -37,6 +37,7 @@ export function CreateQuiz() {
     const [newAnswers, setNewAnswers] = useState(['', '', '', '']);
     const [newCorrectAnswer, setNewCorrectAnswer] = useState('1');
     const [topic, setTopic] = useState('');
+    const { user } = useAuth();
 
     useEffect(() => {
         const total = questions.reduce(
@@ -118,7 +119,6 @@ export function CreateQuiz() {
         }
 
         try {
-            const user = auth.currentUser;
             if (!user) {
                 console.error('User is not logged in');
                 return;
@@ -133,7 +133,7 @@ export function CreateQuiz() {
                 totalPoints,
                 randomQuestions,
                 isPublic,
-                createdBy: user.uid,
+                createdBy: user.firstName + " " + user.lastName,
                 createdAt: new Date(),
             });
 

@@ -65,8 +65,8 @@ const UserManagement = () => {
     };
 
     return (
-        <div className="p-6">
-            <Typography variant="h4" className="mb-4">User Management</Typography>
+        <div className="p-6 dark:bg-gray-800">
+            <Typography variant="h4" className="mb-4 text-gray-800 dark:text-white">User Management</Typography>
             <Input
                 type="text"
                 placeholder="Search by email, first name, or last name"
@@ -74,42 +74,46 @@ const UserManagement = () => {
                 onChange={handleSearch}
                 className="mb-4"
             />
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredUsers.map(user => (
-                        <tr key={user.id}>
-                            <td>{user.email}</td>
-                            <td>{user.firstName}</td>
-                            <td>{user.lastName}</td>
-                            <td>{user.blocked ? 'Blocked' : 'Active'}</td>
-                            <td>
-                                <Button
-                                    color={user.blocked ? 'green' : 'red'}
-                                    onClick={() => toggleBlockUser(user.id, user.blocked)}
-                                >
-                                    {user.blocked ? 'Unblock' : 'Block'}
-                                </Button>
-                            </td>
+            {filteredUsers.length > 0 ? (
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">First Name</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Last Name</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                            <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            {loading && <Typography>Loading...</Typography>}
+                    </thead>
+                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        {filteredUsers.map(user => (
+                            <tr key={user.id}>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{user.email}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.firstName}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.lastName}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.blocked ? 'Blocked' : 'Active'}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                    <Button
+                                        color={user.blocked ? 'green' : 'red'}
+                                        onClick={() => toggleBlockUser(user.id, user.blocked)}
+                                    >
+                                        {user.blocked ? 'Unblock' : 'Block'}
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <Typography className="text-gray-500 dark:text-gray-400">No users found.</Typography>
+            )}
+            {loading && <Typography className="text-gray-500 dark:text-gray-400">Loading...</Typography>}
             {!loading && hasMore && (
                 <Button onClick={() => fetchUsers(true)} className="mt-4">
                     Load More
                 </Button>
             )}
-            {!hasMore && <Typography>No more users to load.</Typography>}
+            {!hasMore && <Typography className="text-gray-500 dark:text-gray-400">No more users to load.</Typography>}
         </div>
     );
 };

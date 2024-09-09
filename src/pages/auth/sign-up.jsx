@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import {
     Card,
@@ -8,6 +7,7 @@ import {
     Typography,
     Select,
     Option,
+    Checkbox,
 } from '@material-tailwind/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth, db, storage } from '../../configs/firebase';
@@ -28,9 +28,13 @@ export function SignUp() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [profileImage, setProfileImage] = useState(null); 
+    const [profileImage, setProfileImage] = useState(null);
     const [address, setAddress] = useState('');
-    const [role, setRole] = useState('student'); 
+    const [role, setRole] = useState('student');
+    const [age, setAge] = useState('');
+    const [education, setEducation] = useState('');
+    const [isTeacher, setIsTeacher] = useState(false); 
+    const [schoolName, setSchoolName] = useState(''); 
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -40,16 +44,13 @@ export function SignUp() {
         const phoneRegex = /^[0-9]{10}$/;
 
         if (!nameRegex.test(firstName)) {
-            newErrors.firstName =
-                'First name must only contain letters and be between 1 and 30 characters ';
+            newErrors.firstName = 'First name must only contain letters and be between 1 and 30 characters.';
         }
         if (!nameRegex.test(lastName)) {
-            newErrors.lastName =
-                'Last names must only contain letters and be between 1 and 30 characters ';
+            newErrors.lastName = 'Last name must only contain letters and be between 1 and 30 characters.';
         }
         if (username.length < 3 || username.length > 30) {
-            newErrors.username =
-                'Username must be between 3 and 30 characters.';
+            newErrors.username = 'Username must be between 3 and 30 characters.';
         }
         if (!phoneRegex.test(phoneNumber)) {
             newErrors.phoneNumber = 'Phone number must be exactly 10 digits.';
@@ -63,6 +64,20 @@ export function SignUp() {
         if (password.length < 6) {
             newErrors.password = 'Password must be at least 6 characters long.';
         }
+
+        if (role === 'organizer') {
+            if (!age || isNaN(age) || age < 23) {
+                newErrors.age = 'To be an organizer, you need to be at least 23 years old.';
+            }
+            if (!education) {
+                newErrors.education = 'Education field is required for organizers.';
+            }
+        }
+
+        if (isTeacher && !schoolName) {
+            newErrors.schoolName = 'School name is required if you are a teacher.';
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -122,8 +137,11 @@ export function SignUp() {
                 photoURL: imageURL,
                 address,
                 role,
+                age: role === 'organizer' ? age : null, 
+                education: role === 'organizer' ? education : null, 
+                schoolName: isTeacher ? schoolName : null,
                 uid: user.uid,
-                isBlocked: false, 
+                isBlocked: false,
             });
 
             navigate('/auth/sign-in');
@@ -182,7 +200,7 @@ export function SignUp() {
                                 {errors.username}
                             </Typography>
                         )}
-                        
+
                         <Input
                             size="lg"
                             label="Email"
@@ -203,7 +221,7 @@ export function SignUp() {
                                 {errors.email}
                             </Typography>
                         )}
-                        
+
                         <Input
                             type="password"
                             size="lg"
@@ -225,7 +243,7 @@ export function SignUp() {
                                 {errors.password}
                             </Typography>
                         )}
-                        
+
                         <Input
                             size="lg"
                             label="First Name"
@@ -246,7 +264,7 @@ export function SignUp() {
                                 {errors.firstName}
                             </Typography>
                         )}
-                        
+
                         <Input
                             size="lg"
                             label="Last Name"
@@ -267,7 +285,7 @@ export function SignUp() {
                                 {errors.lastName}
                             </Typography>
                         )}
-                        
+
                         <Input
                             size="lg"
                             label="Phone Number"
@@ -288,14 +306,14 @@ export function SignUp() {
                                 {errors.phoneNumber}
                             </Typography>
                         )}
-                        
+
                         <Input
                             type="file"
                             label="Photo"
                             onChange={(e) => setProfileImage(e.target.files[0])}
                             className="dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                         />
-                        
+
                         <Input
                             size="lg"
                             label="Address"
@@ -303,7 +321,7 @@ export function SignUp() {
                             onChange={(e) => setAddress(e.target.value)}
                             className="dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                         />
-                        
+
                         <Select
                             label="Role"
                             value={role}
@@ -313,6 +331,82 @@ export function SignUp() {
                             <Option value="student">Student</Option>
                             <Option value="organizer">Organizer</Option>
                         </Select>
+
+                        {role === 'organizer' && (
+                            <>
+                                <Input
+                                    size="lg"
+                                    label="Age"
+                                    value={age}
+                                    onChange={(e) => setAge(e.target.value)}
+                                    className={
+                                        errors.age
+                                            ? 'border-red-500'
+                                            : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
+                                    }
+                                />
+                                {errors.age && (
+                                    <Typography
+                                        variant="small"
+                                        color="red"
+                                        className="mt-1"
+                                    >
+                                        {errors.age}
+                                    </Typography>
+                                )}
+
+                                <Input
+                                    size="lg"
+                                    label="Education"
+                                    value={education}
+                                    onChange={(e) => setEducation(e.target.value)}
+                                    className={
+                                        errors.education
+                                            ? 'border-red-500'
+                                            : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
+                                    }
+                                />
+                                {errors.education && (
+                                    <Typography
+                                        variant="small"
+                                        color="red"
+                                        className="mt-1"
+                                    >
+                                        {errors.education}
+                                    </Typography>
+                                )}
+                                <Checkbox
+                                    label="I am currently working as a teacher"
+                                    checked={isTeacher}
+                                    onChange={(e) => setIsTeacher(e.target.checked)}
+                                    className="dark:text-gray-100"
+                                />
+
+                                {isTeacher && (
+                                    <Input
+                                        size="lg"
+                                        label="School Name"
+                                        value={schoolName}
+                                        onChange={(e) => setSchoolName(e.target.value)}
+                                        className={
+                                            errors.schoolName
+                                                ? 'border-red-500'
+                                                : 'dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100'
+                                        }
+                                    />
+                                )}
+                                {errors.schoolName && (
+                                    <Typography
+                                        variant="small"
+                                        color="red"
+                                        className="mt-1"
+                                    >
+                                        {errors.schoolName}
+                                    </Typography>
+                                )}
+                            </>
+                        )}
+
                     </div>
                     <Button className="mt-6 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-400 text-white" fullWidth type="submit">
                         Register Now

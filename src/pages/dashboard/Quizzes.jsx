@@ -20,6 +20,7 @@ export function Quizzes() {
     const [takenQuizzes, setTakenQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [publicQuizzes, setPublicQuizzes] = useState([]);
+    const [newQuizNotification, setNewQuizNotification] = useState(null); // State for new quiz notifications
 
     useEffect(() => {
         const fetchQuizzes = async () => {
@@ -73,7 +74,8 @@ export function Quizzes() {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === 'added') {
                         const newQuiz = change.doc.data();
-                        alert(`New public quiz available: ${newQuiz.title}`);
+                        // Instead of alert, set the notification in state
+                        setNewQuizNotification(`New public quiz available: ${newQuiz.title}`);
                     }
                 });
             },
@@ -117,6 +119,19 @@ export function Quizzes() {
             <Typography variant="h4" className="mb-4 dark:text-gray-100">
                 Your Quizzes
             </Typography>
+
+            {/* Notification for new public quizzes */}
+            {newQuizNotification && (
+                <div className="p-4 bg-blue-100 text-blue-900 rounded-md mb-6">
+                    {newQuizNotification}
+                    <button
+                        className="ml-4 text-blue-500 hover:text-blue-700"
+                        onClick={() => setNewQuizNotification(null)} // Dismiss notification
+                    >
+                        Dismiss
+                    </button>
+                </div>
+            )}
 
             {/* Created Quizzes Section */}
             <Card className="p-6 mb-6 dark:bg-gray-800 dark:text-gray-100">

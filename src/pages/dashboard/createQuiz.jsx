@@ -8,7 +8,7 @@ import {
     Select,
     Option,
 } from '@material-tailwind/react';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
 import { useAuth } from '../auth/AuthContext';
@@ -109,22 +109,22 @@ export function CreateQuiz() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (title.length < 3 || title.length > 30) {
             console.error('The title must be between 3 and 30 characters');
             return;
         }
-    
+
         if (!startDate || !endDate) {
             console.error('Please select both start and end dates');
             return;
         }
-    
+
         if (startDate >= endDate) {
             console.error('The start date must be earlier than end date');
             return;
         }
-    
+
         const querySnapshot = await getDocs(
             query(collection(db, 'quizzes'), where('title', '==', title))
         );
@@ -132,13 +132,13 @@ export function CreateQuiz() {
             console.error('The title already exists');
             return;
         }
-    
+
         try {
             if (!user) {
                 console.error('User is not logged in');
                 return;
             }
-    
+
             const quizRef = await addDoc(collection(db, 'quizzes'), {
                 title,
                 category,
@@ -153,30 +153,31 @@ export function CreateQuiz() {
                 createdBy: user.firstName + ' ' + user.lastName,
                 createdAt: new Date(),
             });
-    
+
+            const userDocRef = doc(db, 'users', user.username);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const updatedQuizCount = (userData.quizCount || 0) + 1;
+                await updateDoc(userDocRef, { quizCount: updatedQuizCount });
+            }
+
             const usersSnapshot = await getDocs(collection(db, 'users'));
             usersSnapshot.forEach(async (userDoc) => {
-                const username = userDoc.id; 
+                const username = userDoc.id;
                 await addDoc(collection(db, `users/${username}/notifications`), {
                     type: 'quiz_created',
                     quizTitle: title,
                     createdBy: user.firstName + ' ' + user.lastName,
                     createdAt: new Date(),
-                    isRead: false, 
+                    isRead: false,
                 });
             });
-    
+
             setTitle('');
             setCategory('');
-            setQuestions([
-                {
-                    text: '',
-                    type: 'multiple-choice',
-                    answers: ['', '', '', ''],
-                    correctAnswer: '1',
-                    points: 0,
-                },
-            ]);
+            setQuestions([{ text: '', type: 'multiple-choice', answers: ['', '', '', ''], correctAnswer: '1', points: 0 }]);
             setTimer(0);
             setTotalPoints(0);
             setRandomQuestions(false);
@@ -533,11 +534,10 @@ export function CreateQuiz() {
                             <Button
                                 onClick={addQuestionFromBank}
                                 disabled={!selectedBankQuestionId}
-                                className={`mt-3 ${
-                                    selectedBankQuestionId
+                                className={`mt-3 ${selectedBankQuestionId
                                         ? 'bg-teal-500 hover:bg-teal-600'
                                         : 'bg-gray-400 cursor-not-allowed'
-                                } text-white rounded-lg`}
+                                    } text-white rounded-lg`}
                             >
                                 Add Selected Question to Quiz
                             </Button>

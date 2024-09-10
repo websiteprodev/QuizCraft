@@ -8,10 +8,11 @@ import {
     doc,
     deleteDoc,
     onSnapshot,
+    getDoc,
 } from 'firebase/firestore';
 import { db } from '@/configs/firebase';
 import { Link } from 'react-router-dom';
-import { subscribeToQuiz } from '@/services/quizService';
+import { subscribeToQuiz, createICSFile } from '@/services/quizService';
 import { useAuth } from '@/pages/auth/AuthContext.jsx';
 
 export function Quizzes() {
@@ -104,6 +105,21 @@ export function Quizzes() {
                 return;
             }
             await subscribeToQuiz(user.uid, quizId); // Subscribe and generate .ics file
+
+            // Fetch quiz data by quizId
+            const quizRef = doc(db, 'quizzes', quizId);
+            const quizSnapshot = await getDoc(quizRef);
+
+            if (!quizSnapshot.exists()) {
+                alert('Quiz not found.');
+                return;
+            }
+
+            const quizData = quizSnapshot.data();
+
+            // Call createICS and pass quizData
+            createICSFile(quizData);
+
             alert(
                 'You have subscribed to the quiz and the .ics file is downloaded!',
             );

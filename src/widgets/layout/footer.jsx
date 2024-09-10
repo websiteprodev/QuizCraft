@@ -44,12 +44,11 @@ export function Footer({ brandName, brandLink, routes }) {
 
 Footer.defaultProps = {
     brandName: 'VPST',
-    brandLink: 'https://www.creative-tim.com',
     routes: [
-        { name: 'VPST', path: 'https://www.creative-tim.com' },
-        { name: 'About Us', path: 'https://www.creative-tim.com/presentation' },
-        { name: 'Blog', path: 'https://www.creative-tim.com/blog' },
-        { name: 'License', path: 'https://www.creative-tim.com/license' },
+        { name: 'VPST', },
+        { name: 'About Us', },
+        { name: 'Blog',  },
+        { name: 'License',},
     ],
 };
 

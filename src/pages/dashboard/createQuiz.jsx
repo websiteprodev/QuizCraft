@@ -113,17 +113,17 @@ export function CreateQuiz() {
             console.error('The title must be between 3 and 30 characters');
             return;
         }
-
+    
         if (!startDate || !endDate) {
             console.error('Please select both start and end dates');
             return;
         }
-
+    
         if (startDate >= endDate) {
             console.error('The start date must be earlier than end date');
             return;
         }
-
+    
         const querySnapshot = await getDocs(
             query(collection(db, 'quizzes'), where('title', '==', title)),
         );
@@ -131,14 +131,14 @@ export function CreateQuiz() {
             console.error('The title already exists');
             return;
         }
-
+    
         try {
             if (!user) {
                 console.error('User is not logged in');
                 return;
             }
-
-            await addDoc(collection(db, 'quizzes'), {
+    
+            const quizRef = await addDoc(collection(db, 'quizzes'), {
                 title,
                 category,
                 numberOfQuestions: questions.length,
@@ -152,7 +152,16 @@ export function CreateQuiz() {
                 createdBy: user.firstName + ' ' + user.lastName,
                 createdAt: new Date(),
             });
-
+    
+            // Add a notification for the quiz creation
+            await addDoc(collection(db, 'notifications'), {
+                type: 'quiz_created',
+                quizTitle: title,
+                createdBy: user.firstName + ' ' + user.lastName,
+                createdAt: new Date(),
+                isRead: false,
+            });
+    
             setTitle('');
             setCategory('');
             setQuestions([

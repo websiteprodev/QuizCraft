@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
-import { db } from "@/configs/firebase";
-import { Card, Input, Button, Typography, Switch } from "@material-tailwind/react";
-import { useAuth } from '@/pages/auth/AuthContext'; 
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getDoc, doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/configs/firebase';
+import {
+    Card,
+    Input,
+    Button,
+    Typography,
+    Switch,
+} from '@material-tailwind/react';
+import { useAuth } from '@/pages/auth/AuthContext';
 
 const EditQuiz = () => {
-    const { id } = useParams();  
+    const { id } = useParams();
     const [quiz, setQuiz] = useState(null);
-    const [title, setTitle] = useState("");
-    const [category, setCategory] = useState("");
-    const [questions, setQuestions] = useState([{ text: "", answers: ["", "", "", ""], correctAnswer: "" }]);
+    const [title, setTitle] = useState('');
+    const [category, setCategory] = useState('');
+    const [questions, setQuestions] = useState([
+        { text: '', answers: ['', '', '', ''], correctAnswer: '' },
+    ]);
     const [isRandomized, setIsRandomized] = useState(false);
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -18,7 +26,7 @@ const EditQuiz = () => {
     useEffect(() => {
         const loadQuiz = async () => {
             try {
-                const quizRef = doc(db, "quizzes", id);
+                const quizRef = doc(db, 'quizzes', id);
                 const quizSnap = await getDoc(quizRef);
 
                 if (quizSnap.exists()) {
@@ -27,12 +35,12 @@ const EditQuiz = () => {
                     setTitle(quizData.title);
                     setCategory(quizData.category);
                     setQuestions(quizData.questions);
-                    setIsRandomized(quizData.isRandomized || false);  
+                    setIsRandomized(quizData.isRandomized || false);
                 } else {
-                    console.error("Quiz not found!");
+                    console.error('Quiz not found!');
                 }
             } catch (error) {
-                console.error("Error fetching quiz:", error);
+                console.error('Error fetching quiz:', error);
             }
         };
 
@@ -52,83 +60,122 @@ const EditQuiz = () => {
     };
 
     const addQuestion = () => {
-        setQuestions([...questions, { text: "", answers: ["", "", "", ""], correctAnswer: "" }]);
+        setQuestions([
+            ...questions,
+            { text: '', answers: ['', '', '', ''], correctAnswer: '' },
+        ]);
     };
 
     const handleSave = async () => {
         try {
-            const quizRef = doc(db, "quizzes", id);
-            
+            const quizRef = doc(db, 'quizzes', id);
+
             const updatedQuizData = {
                 title,
                 category,
                 questions,
             };
-            
-            if (typeof isRandomized !== "undefined") {
+
+            if (typeof isRandomized !== 'undefined') {
                 updatedQuizData.isRandomized = isRandomized;
             }
 
             await updateDoc(quizRef, updatedQuizData);
-            alert("Quiz updated successfully!");
-            navigate("/dashboard/admin");
+            alert('Quiz updated successfully!');
+            navigate('/dashboard/admin');
         } catch (error) {
-            console.error("Error updating quiz:", error);
+            console.error('Error updating quiz:', error);
         }
     };
 
     if (!quiz) {
-        return <Typography className="dark:text-gray-100">Loading quiz data...</Typography>;
+        return (
+            <Typography className="dark:text-gray-100">
+                Loading quiz data...
+            </Typography>
+        );
     }
 
     return (
         <div className="p-6 dark:bg-gray-900">
-            <Typography variant="h4" className="mb-6 dark:text-gray-100">Edit Quiz</Typography>
+            <Typography variant="h4" className="mb-6 dark:text-gray-100">
+                Edit Quiz
+            </Typography>
             <Card className="p-6 space-y-6 dark:bg-gray-800 dark:text-gray-100">
                 <div className="space-y-4">
-                    <Input 
-                        label="Title" 
-                        value={title} 
-                        onChange={(e) => setTitle(e.target.value)} 
+                    <Input
+                        label="Title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                         className="dark:text-gray-100 dark:bg-gray-700"
                     />
-                    <Input 
-                        label="Category" 
-                        value={category} 
-                        onChange={(e) => setCategory(e.target.value)} 
+                    <Input
+                        label="Category"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
                         className="dark:text-gray-100 dark:bg-gray-700"
                     />
                 </div>
 
                 <div className="space-y-6">
                     {questions.map((question, questionIndex) => (
-                        <div key={questionIndex} className="border-b pb-6 dark:border-gray-600">
-                            <Input
-                                label={`Question ${questionIndex + 1}`}
-                                value={question.text}
-                                onChange={(e) => handleQuestionChange(questionIndex, "text", e.target.value)}
-                                className="mb-4 dark:text-gray-100 dark:bg-gray-700"
-                            />
-                            {question.answers.map((answer, answerIndex) => (
+                        <div
+                            key={questionIndex}
+                            className="border-b pb-6 dark:border-gray-600 "
+                        >
+                            <div className="mb-3">
                                 <Input
-                                    key={answerIndex}
-                                    label={`Answer ${answerIndex + 1}`}
-                                    value={answer}
-                                    onChange={(e) => handleAnswerChange(questionIndex, answerIndex, e.target.value)}
-                                    className="mb-2 dark:text-gray-100 dark:bg-gray-700"
+                                    label={`Question ${questionIndex + 1}`}
+                                    value={question.text}
+                                    onChange={(e) =>
+                                        handleQuestionChange(
+                                            questionIndex,
+                                            'text',
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="mb-4 dark:text-gray-100 dark:bg-gray-700"
                                 />
+                            </div>
+                            {question.answers.map((answer, answerIndex) => (
+                                <div className="mb-3">
+                                    <Input
+                                        key={answerIndex}
+                                        label={`Answer ${answerIndex + 1}`}
+                                        value={answer}
+                                        onChange={(e) =>
+                                            handleAnswerChange(
+                                                questionIndex,
+                                                answerIndex,
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="mb-4  dark:text-gray-100 dark:bg-gray-700"
+                                    />
+                                </div>
                             ))}
                             <Input
                                 label="Correct Answer"
                                 value={question.correctAnswer}
-                                onChange={(e) => handleQuestionChange(questionIndex, "correctAnswer", e.target.value)}
+                                onChange={(e) =>
+                                    handleQuestionChange(
+                                        questionIndex,
+                                        'correctAnswer',
+                                        e.target.value,
+                                    )
+                                }
                                 className="mt-2 dark:text-gray-100 dark:bg-gray-700"
                             />
                         </div>
                     ))}
                 </div>
 
-                <Button onClick={addQuestion} className="mt-6" variant="gradient" color="blue">
+                <Button
+                    onClick={addQuestion}
+                    className="mt-6"
+                    variant="gradient"
+                    color="blue"
+                >
                     Add Another Question
                 </Button>
 
@@ -138,7 +185,9 @@ const EditQuiz = () => {
                         checked={isRandomized}
                         onChange={(e) => setIsRandomized(e.target.checked)}
                     />
-                    <Typography className="dark:text-gray-100">Randomize Questions</Typography>
+                    <Typography className="dark:text-gray-100">
+                        Randomize Questions
+                    </Typography>
                 </div>
 
                 <Button onClick={handleSave} className="mt-6" color="green">

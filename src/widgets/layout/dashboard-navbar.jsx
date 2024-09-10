@@ -64,22 +64,23 @@ export function DashboardNavbar() {
         localStorage.setItem('darkMode', darkMode);
     }, [darkMode]);
 
-
     return (
         <Navbar
             color={fixedNavbar ? 'white' : 'transparent'}
-            className={`rounded-xl transition-all ${fixedNavbar
+            className={`rounded-xl transition-all ${
+                fixedNavbar
                     ? 'sticky top-4 z-40 py-3 shadow-md shadow-blue-gray-500/5'
                     : 'px-0 py-1'
-                }`}
+            }`}
             fullWidth
             blurred={fixedNavbar}
         >
             <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
                 <div className="capitalize">
                     <Breadcrumbs
-                        className={`bg-transparent p-0 transition-all ${fixedNavbar ? 'mt-1' : ''
-                            }`}
+                        className={`bg-transparent p-0 transition-all ${
+                            fixedNavbar ? 'mt-1' : ''
+                        }`}
                     >
                         <Link to={`/${layout}`}>
                             <Typography
@@ -117,10 +118,10 @@ export function DashboardNavbar() {
                         </Typography>
                     )}
                     <div className="mr-auto md:mr-4 md:w-56">
-                        <Input
+                        {/* <Input
                             label="Search"
                             className="dark:text-gray-300 dark:bg-gray-800"
-                        />
+                        /> */}
                     </div>
 
                     <Button

@@ -69,7 +69,7 @@ export const routes = [
             },
             {
                 icon: <TableCellsIcon {...icon} />,
-                name: 'tables',
+                name: 'Top Scorers',
                 path: '/tables',
                 element: <Tables />,
             },

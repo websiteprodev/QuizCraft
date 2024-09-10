@@ -209,37 +209,23 @@ export function CreateQuiz() {
 
     const generateAIQuestion = async () => {
         try {
-            
-            // Assume `generateAIQuestion` returns the AI-generated question in the specified format
-            const aiQuestion = await fetchAiQuestion(topic);
-            console.log(aiQuestion);
+            const { answer, question, answerOne, answerTwo, answerThree, answerFour} = await fetchAiQuestion(topic);
+            const possibleAnswers = [answerOne, answerTwo, answerThree, answerFour];
 
-            const answers = [
-                aiQuestion["answerOne"],
-                aiQuestion["answerTwo"],
-                aiQuestion["answerThree"],
-                aiQuestion["answerFour"]];
-                Object.keys(aiQuestion).forEach(question => console.log(question));
-            console.log(answers);
-                setQuestions([
-                    ...questions,
-                    {
-                        text: aiQuestion.question, // Set question text
-                        type: 'multiple-choice',
-                        answers: possibleAnswers, // Set possible answers
-                        correctAnswer: (correctAnswerIndex + 1).toString(), // Set the index of the correct answer
-                        points: 1, // Default points, this can be adjusted
-                    }]);
-               console.log(questions);
-                alert('AI Question successfully added to the first empty slot!');
-            // } else {
-            //     alert('All questions are populated, please add a new question first.');
-            // }
+            setQuestions([
+                ...questions,
+                {   
+                    text: question,
+                    type: 'multiple-choice',
+                    answers: possibleAnswers,
+                    correctAnswer: Number(possibleAnswers.indexOf(answer) + 1),
+                    points: 1,
+                }]);
+            alert('AI Question successfully added to the first empty slot!');
         } catch (error) {
             console.error('Error generating AI question:', error);
         }
     };
-    
 
     const addToQuestionBank = async () => {
         if (
@@ -400,7 +386,6 @@ export function CreateQuiz() {
                             key={qIndex}
                             className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 shadow-md"
                         >
-                            <h1>{question.answers}</h1>
                             <Typography
                                 variant="h6"
                                 className="mb-4 text-gray-900 dark:text-gray-200"

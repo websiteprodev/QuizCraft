@@ -12,7 +12,7 @@ export const fetchAiQuestion = async (topic) => {
             },
             body: JSON.stringify({
                 model: 'gpt-4',
-                messages: [{ role: 'user', content: `Generate a question about ${topic}. It should have four possible options. Structure it in a JSON format. The question should be "question", "answer", "answerOne", "answerTwo", "answerThree", "answerFour"` }],
+                messages: [{ role: 'user', content: `Generate a question about ${topic}. It should have four possible options. Structure it in a JSON format. The question should be question, answer, answerOne, answerTwo, answerThree, answerFour` }],
                 temperature: 0.7
             })
         });
@@ -22,9 +22,8 @@ export const fetchAiQuestion = async (topic) => {
             throw new Error(data.error.message || 'Failed to generate question');
         }
 
-        return data.choices[0].message.content; 
+        return JSON.parse(data.choices[0].message.content);
     } catch (error) {
         console.error('Error generating AI question:', error);
     }
 };
-

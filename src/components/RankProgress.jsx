@@ -93,7 +93,7 @@ export function RankProgress() {
     }
 
     return (
-        <Card className="bg-sky-200 dark:bg-gray-900 border-4 border-yellow-400 dark:border-gray-700 rounded-lg">
+        <Card className="bg-white dark:bg-gray-900 border-4 border-yellow-400 dark:border-gray-700 rounded-lg">
             <CardHeader
                 variant="gradient"
                 className="mb-8 p-6 bg-gradient-to-r from-blue-400 to-yellow-400 dark:from-gray-700 dark:to-gray-800 text-white text-center"

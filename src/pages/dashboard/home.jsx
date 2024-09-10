@@ -50,7 +50,7 @@ export function Home() {
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
       const userData = userSnap.data();
-      return userData.quizzesTaken || []; 
+      return userData.quizzesTaken || [];
     }
     return [];
   };
@@ -81,18 +81,18 @@ export function Home() {
 
   useEffect(() => {
     const fetchMyQuizCount = async () => {
-        if (user && user.username) {
-            const userDocRef = doc(db, 'users', user.username);
-            const userDocSnap = await getDoc(userDocRef);
-            if (userDocSnap.exists()) {
-                const userData = userDocSnap.data();
-                setMyQuizzesCount(userData.quizCount || 0); 
-            }
+      if (user && user.username) {
+        const userDocRef = doc(db, 'users', user.username);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          setMyQuizzesCount(userData.quizCount || 0);
         }
+      }
     };
 
     fetchMyQuizCount();
-}, [user]);
+  }, [user]);
 
   useEffect(() => {
     const updatedStats = localStatsData.map((card) => {
@@ -112,7 +112,7 @@ export function Home() {
   useEffect(() => {
     const fetchMyResults = async () => {
       if (user && user.uid) {
-        const quizzesTakenData = await fetchQuizzesTaken(user.username); 
+        const quizzesTakenData = await fetchQuizzesTaken(user.username);
         setQuizzesTaken(quizzesTakenData);
         const progress = await fetchUserRankAndProgress(user.username);
         setUserProgress(progress);
@@ -260,18 +260,23 @@ export function Home() {
                       </Typography>
                     </td>
                     <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
-                      <Button
-                        variant="gradient"
-                        color="yellow"
-                        onClick={() => navigate(`/dashboard/quiz/${quiz.id}`)}
-                      >
-                        <PlayIcon
-                          stroke="white"
-                          fill="white"
-                          strokeWidth={2}
-                          className="h-3 w-3"
-                        />
-                      </Button>
+                      {user ? (
+                        <Button
+                          variant="gradient"
+                          color="yellow"
+                          onClick={() => navigate(`/dashboard/quiz/${quiz.id}`)}
+                        >
+                          <PlayIcon stroke="white" fill="white" strokeWidth={2} className="h-3 w-3" />
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="filled"
+                          color="gray"
+                          onClick={() => alert('Please log in to take the quiz.')}
+                        >
+                          <PlayIcon stroke="white" fill="white" strokeWidth={2} className="h-3 w-3" />
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -339,7 +344,7 @@ export function Home() {
                           color="gray"
                           className="font-medium dark:text-blue-200"
                         >
-                          {quiz.title}  
+                          {quiz.title}
                         </Typography>
                       </td>
                       <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
@@ -348,7 +353,7 @@ export function Home() {
                           color="gray"
                           className="font-medium dark:text-blue-200"
                         >
-                          {quiz.points}  
+                          {quiz.points}
                         </Typography>
                       </td>
                     </tr>

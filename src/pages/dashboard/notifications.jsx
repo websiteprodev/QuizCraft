@@ -8,10 +8,10 @@ import {
 } from '@material-tailwind/react';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '@/configs/firebase';
-import { useAuth } from '@/pages/auth/AuthContext'; 
+import { useAuth } from '@/pages/auth/AuthContext';
 
 export function Notifications() {
-    const { user } = useAuth(); 
+    const { user } = useAuth();
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
@@ -32,7 +32,11 @@ export function Notifications() {
 
     const markAsRead = async (notificationId) => {
         if (user?.username) {
-            const notificationRef = doc(db, `users/${user.username}/notifications`, notificationId);
+            const notificationRef = doc(
+                db,
+                `users/${user.username}/notifications`,
+                notificationId
+            );
             await updateDoc(notificationRef, { isRead: true });
 
             setNotifications((prev) =>
@@ -62,7 +66,11 @@ export function Notifications() {
                             <Alert
                                 key={notification.id}
                                 color={notification.isRead ? "blue" : "red"}
-                                className="dark:bg-gray-700 dark:text-gray-100 cursor-pointer"
+                                className={`cursor-pointer ${
+                                    notification.isRead
+                                        ? 'dark:bg-gray-700 dark:text-gray-300'
+                                        : 'dark:bg-red-500 dark:text-white'
+                                }`}
                                 onClick={() => markAsRead(notification.id)}
                             >
                                 {notification.createdBy} created a new quiz: {notification.quizTitle}

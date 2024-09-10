@@ -1,5 +1,4 @@
 export const fetchAiQuestion = async (topic) => {
-    console.log(topic);
     const url = 'https://api.openai.com/v1/chat/completions';
     const apiKey = import.meta.env.VITE_REACT_APP_OPENAI_API_KEY; 
   

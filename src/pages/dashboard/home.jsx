@@ -80,21 +80,19 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-    const fetchMyQuizzesCount = async (uid) => {
-      const quizzesRef = collection(db, "quizzes");
-      const q = query(quizzesRef, where("createdBy", "==", uid));
-      const querySnapshot = await getDocs(q);
-      setMyQuizzesCount(querySnapshot.size);
+    const fetchMyQuizCount = async () => {
+        if (user && user.username) {
+            const userDocRef = doc(db, 'users', user.username);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                setMyQuizzesCount(userData.quizCount || 0); 
+            }
+        }
     };
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        fetchMyQuizzesCount(user.uid);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+    fetchMyQuizCount();
+}, [user]);
 
   useEffect(() => {
     const updatedStats = localStatsData.map((card) => {

@@ -35,6 +35,8 @@ export function BrowseQuizzes() {
     const [filterEndDate, setFilterEndDate] = useState(null);
     const [enrolledQuizzes, setEnrolledQuizzes] = useState([]);
     const [statusFilter, setStatusFilter] = useState('Ongoing');
+    const [currentPage, setCurrentPage] = useState(1); 
+    const quizzesPerPage = 9; 
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -82,11 +84,14 @@ export function BrowseQuizzes() {
         loadQuizzesAndUserData();
     }, [user]);
 
+    const indexOfLastQuiz = currentPage * quizzesPerPage;
+    const indexOfFirstQuiz = indexOfLastQuiz - quizzesPerPage;
+    const currentQuizzes = quizzes.slice(indexOfFirstQuiz, indexOfLastQuiz);
+    const totalPages = Math.ceil(quizzes.length / quizzesPerPage);
+
     // Determine quiz status (Finished, Ongoing, Future)
     const getQuizStatus = (startDate, endDate) => {
         const now = moment();
-
-        // Safely check if startDate and endDate exist and can be converted
         const quizStart =
             startDate && typeof startDate.toDate === 'function'
                 ? moment(startDate.toDate())
@@ -207,6 +212,20 @@ export function BrowseQuizzes() {
         return null;
     };
 
+    const paginationButtons = Array.from({ length: totalPages }, (_, i) => (
+        <Button
+            key={i + 1}
+            variant="gradient"
+            color={currentPage === i + 1 ? 'yellow' : 'green'}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`${
+                currentPage === i + 1 ? 'bg-yellow-500' : 'bg-green-500'
+            } hover:bg-yellow-500 mx-1 px-3 py-1 rounded-full`}
+        >
+            {i + 1}
+        </Button>
+    ));
+
     return (
         <div className="p-6 dark:text-gray-100">
             <RankProgress points={userPoints} />
@@ -255,7 +274,7 @@ export function BrowseQuizzes() {
 
             {filteredQuizzes.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {filteredQuizzes.map((quiz) => (
+                    {currentQuizzes.map((quiz) => (
                         <Card
                             key={quiz.id}
                             className="p-4 bg-yellow-100 shadow-xl rounded-lg border-4 border-red-500 hover:shadow-2xl transform transition-all hover:scale-105"
@@ -276,11 +295,9 @@ export function BrowseQuizzes() {
                                 {quiz.title}
                             </Typography>
                             <Typography>
-                                Status:{' '}
-                                {getQuizStatus(quiz.startDate, quiz.endDate)}
+                                Status: {getQuizStatus(quiz.startDate, quiz.endDate)}
                             </Typography>
-                            {getQuizStatus(quiz.startDate, quiz.endDate) ===
-                                'Ongoing' && (
+                            {getQuizStatus(quiz.startDate, quiz.endDate) === 'Ongoing' && (
                                 <Typography className="text-red-500">
                                     {calculateRemainingTime(quiz.endDate)}
                                 </Typography>
@@ -298,16 +315,10 @@ export function BrowseQuizzes() {
                             >
                                 Questions: {quiz.numberOfQuestions}
                             </Typography>
-                            <Typography
-                                variant="paragraph"
-                                className="text-gray-700 dark:text-gray-400"
-                            >
+                            <Typography className="text-gray-700 dark:text-gray-400">
                                 Created By: {quiz.createdBy}
                             </Typography>
-                            <Typography
-                                variant="paragraph"
-                                className="text-gray-700 dark:text-gray-400"
-                            >
+                            <Typography className="text-gray-700 dark:text-gray-400">
                                 Total Points: {quiz.totalPoints}
                             </Typography>
                             <div className="mt-4 flex justify-between">
@@ -366,6 +377,8 @@ export function BrowseQuizzes() {
                     No quizzes found.
                 </Typography>
             )}
+
+            <div className="mt-6 flex justify-center">{paginationButtons}</div>
 
             {showScoreboard && (
                 <ScoreboardModal

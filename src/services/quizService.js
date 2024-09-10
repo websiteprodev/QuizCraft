@@ -30,6 +30,10 @@ export const subscribeToQuiz = async (userId, quizId) => {
     }
 };
 
+const convertToICSFormat = (timestamp) => {
+    const date = timestamp.toDate();
+    return date.toISOString().replace(/[-:]/g, '').split('.')[0];
+};
 export const createICSFile = (quizData) => {
     const icsContent = `
     BEGIN:VCALENDAR
@@ -50,10 +54,7 @@ export const createICSFile = (quizData) => {
     link.click();
 };
 
-const convertToICSFormat = (timestamp) => {
-    const date = timestamp.toDate();
-    return date.toISOString().replace(/[-:]/g, '').split('.')[0];
-};
+
 
 export const fetchQuizzes = async () => {
     const quizzesSnapshot = await getDocs(collection(db, 'quizzes'));

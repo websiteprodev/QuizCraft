@@ -103,11 +103,11 @@ const updateUserRankAndPoints = async (userId, pointsToAdd) => {
     }
 };
 
-export const recordQuizScore = async (quizId, userId, score) => {
+export const recordQuizScore = async (quizId, username, score) => {
     try {
-        const scoreRef = doc(db, 'quizzes', quizId, 'scores', userId);
-        await setDoc(scoreRef, { score, userId }, { merge: true });
-        await updateUserRankAndPoints(userId, score);
+        const scoreRef = doc(db, 'quizzes', quizId, 'scores', username);
+        await setDoc(scoreRef, { score, username }, { merge: true });
+        await updateUserRankAndPoints(username, score);
     } catch (error) {
         console.error('Error recording score and updating user info:', error);
     }

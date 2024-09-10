@@ -1,7 +1,7 @@
-export const generateAIQuestion = async () => {
-    const topic = "Arts"; 
+export const fetchAiQuestion = async (topic) => {
+    console.log(topic);
     const url = 'https://api.openai.com/v1/chat/completions';
-    const apiKey = process.env.REACT_APP_OPENAI_API_KEY; 
+    const apiKey = import.meta.env.VITE_REACT_APP_OPENAI_API_KEY; 
   
 
     try {
@@ -23,7 +23,7 @@ export const generateAIQuestion = async () => {
             throw new Error(data.error.message || 'Failed to generate question');
         }
 
-        console.log(data.choices[0].message.content); 
+        return data.choices[0].message.content; 
     } catch (error) {
         console.error('Error generating AI question:', error);
     }

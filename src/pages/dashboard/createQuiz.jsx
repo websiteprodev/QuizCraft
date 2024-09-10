@@ -8,11 +8,20 @@ import {
     Select,
     Option,
 } from '@material-tailwind/react';
-import { collection, addDoc, getDocs, query, where, getDoc, doc, updateDoc } from 'firebase/firestore';
+import {
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    where,
+    getDoc,
+    doc,
+    updateDoc,
+} from 'firebase/firestore';
 import { db, auth } from '@/configs/firebase';
 import { subscribeToQuiz, createICSFile } from '@/services/quizService';
 import { useAuth } from '../auth/AuthContext';
-import { generateAIQuestion } from '@/services/gptService';
+import { fetchAiQuestion } from '@/services/gptService';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -126,7 +135,7 @@ export function CreateQuiz() {
         }
 
         const querySnapshot = await getDocs(
-            query(collection(db, 'quizzes'), where('title', '==', title))
+            query(collection(db, 'quizzes'), where('title', '==', title)),
         );
         if (!querySnapshot.empty) {
             console.error('The title already exists');
@@ -166,18 +175,29 @@ export function CreateQuiz() {
             const usersSnapshot = await getDocs(collection(db, 'users'));
             usersSnapshot.forEach(async (userDoc) => {
                 const username = userDoc.id;
-                await addDoc(collection(db, `users/${username}/notifications`), {
-                    type: 'quiz_created',
-                    quizTitle: title,
-                    createdBy: user.firstName + ' ' + user.lastName,
-                    createdAt: new Date(),
-                    isRead: false,
-                });
+                await addDoc(
+                    collection(db, `users/${username}/notifications`),
+                    {
+                        type: 'quiz_created',
+                        quizTitle: title,
+                        createdBy: user.firstName + ' ' + user.lastName,
+                        createdAt: new Date(),
+                        isRead: false,
+                    },
+                );
             });
 
             setTitle('');
             setCategory('');
-            setQuestions([{ text: '', type: 'multiple-choice', answers: ['', '', '', ''], correctAnswer: '1', points: 0 }]);
+            setQuestions([
+                {
+                    text: '',
+                    type: 'multiple-choice',
+                    answers: ['', '', '', ''],
+                    correctAnswer: '1',
+                    points: 0,
+                },
+            ]);
             setTimer(0);
             setTotalPoints(0);
             setRandomQuestions(false);
@@ -186,6 +206,40 @@ export function CreateQuiz() {
             console.error('Error adding quiz: ', e);
         }
     };
+
+    const generateAIQuestion = async () => {
+        try {
+            
+            // Assume `generateAIQuestion` returns the AI-generated question in the specified format
+            const aiQuestion = await fetchAiQuestion(topic);
+            console.log(aiQuestion);
+
+            const answers = [
+                aiQuestion["answerOne"],
+                aiQuestion["answerTwo"],
+                aiQuestion["answerThree"],
+                aiQuestion["answerFour"]];
+                Object.keys(aiQuestion).forEach(question => console.log(question));
+            console.log(answers);
+                setQuestions([
+                    ...questions,
+                    {
+                        text: aiQuestion.question, // Set question text
+                        type: 'multiple-choice',
+                        answers: possibleAnswers, // Set possible answers
+                        correctAnswer: (correctAnswerIndex + 1).toString(), // Set the index of the correct answer
+                        points: 1, // Default points, this can be adjusted
+                    }]);
+               console.log(questions);
+                alert('AI Question successfully added to the first empty slot!');
+            // } else {
+            //     alert('All questions are populated, please add a new question first.');
+            // }
+        } catch (error) {
+            console.error('Error generating AI question:', error);
+        }
+    };
+    
 
     const addToQuestionBank = async () => {
         if (
@@ -342,10 +396,11 @@ export function CreateQuiz() {
                     </div>
 
                     {questions.map((question, qIndex) => (
-                        <div
+                        <div 
                             key={qIndex}
                             className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 shadow-md"
                         >
+                            <h1>{question.answers}</h1>
                             <Typography
                                 variant="h6"
                                 className="mb-4 text-gray-900 dark:text-gray-200"
@@ -534,10 +589,11 @@ export function CreateQuiz() {
                             <Button
                                 onClick={addQuestionFromBank}
                                 disabled={!selectedBankQuestionId}
-                                className={`mt-3 ${selectedBankQuestionId
+                                className={`mt-3 ${
+                                    selectedBankQuestionId
                                         ? 'bg-teal-500 hover:bg-teal-600'
                                         : 'bg-gray-400 cursor-not-allowed'
-                                    } text-white rounded-lg`}
+                                } text-white rounded-lg`}
                             >
                                 Add Selected Question to Quiz
                             </Button>

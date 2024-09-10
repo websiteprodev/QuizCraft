@@ -78,13 +78,15 @@ const AdminEditQuiz = () => {
     };
 
     if (!quiz) {
-        return <Typography>Loading quiz data...</Typography>;
+        return <Typography className="text-gray-500 dark:text-gray-400">Loading quiz data...</Typography>;
     }
 
     return (
-        <div className="p-6 dark:bg-gray-900">
-            <Typography variant="h4" className="mb-6 dark:text-white">Edit Quiz</Typography>
-            <Card className="p-6 space-y-6 dark:bg-gray-800 dark:text-white">
+        <div className="p-6 bg-blue-50 dark:bg-gray-900 min-h-screen">
+            <Typography variant="h4" className="mb-6 text-blue-700 dark:text-yellow-300">
+                Edit Quiz
+            </Typography>
+            <Card className="p-6 space-y-6 bg-white dark:bg-gray-800 shadow-lg">
                 <div className="space-y-4">
                     <Input 
                         label="Title" 
@@ -128,7 +130,10 @@ const AdminEditQuiz = () => {
                     ))}
                 </div>
 
-                <Button onClick={addQuestion} className="mt-6 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-400 text-white">
+                <Button
+                    onClick={addQuestion}
+                    className="mt-6 bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-400 dark:hover:bg-yellow-300 text-gray-900 dark:text-gray-800"
+                >
                     Add Another Question
                 </Button>
 
@@ -142,7 +147,10 @@ const AdminEditQuiz = () => {
                     <Typography className="dark:text-gray-200">Randomize Questions</Typography>
                 </div>
 
-                <Button onClick={handleSave} className="mt-6 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-400 text-white">
+                <Button
+                    onClick={handleSave}
+                    className="mt-6 bg-green-500 hover:bg-green-600 dark:bg-green-400 dark:hover:bg-green-300 text-white"
+                >
                     Save Changes
                 </Button>
             </Card>

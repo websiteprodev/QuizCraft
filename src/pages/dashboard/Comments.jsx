@@ -112,12 +112,12 @@ function Comments() {
     }
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">Comments Section</h1>
+        <div className="container mx-auto p-6 bg-blue-50 dark:bg-gray-900 min-h-screen">
+            <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-yellow-300 mb-8">Comments Section</h1>
 
             <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md rounded-lg mb-8">
                 <thead>
-                    <tr className="bg-gray-100 dark:bg-gray-900 border-b dark:border-gray-700">
+                    <tr className="bg-blue-100 dark:bg-gray-900 border-b dark:border-gray-700">
                         <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-300 font-medium">Student Name</th>
                         <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-300 font-medium">Action</th>
                     </tr>
@@ -171,7 +171,7 @@ function Comments() {
                                                         <div key={qIndex} className="mb-4">
                                                             <p className="text-gray-800 dark:text-gray-300 mb-2">{question.text}</p>
                                                             <textarea
-                                                                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+                                                                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded mb-2 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
                                                                 value={comments[`${quiz.quizId}-${question.id}`] || ''}
                                                                 onChange={(e) => handleCommentChange(quiz.quizId, question.id, e.target.value)}
                                                                 placeholder="Add a comment on this question"

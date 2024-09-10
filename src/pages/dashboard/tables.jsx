@@ -82,17 +82,17 @@ export function Tables() {
   }, []);
 
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12 p-4">
-      <Card className="bg-blue-100 dark:bg-gray-800 shadow-lg rounded-lg border border-blue-500">
+    <div className="mt-12 mb-8 flex flex-col gap-12 p-4 dark:bg-gray-900">
+      <Card className="p-6 bg-blue-50 dark:bg-gray-800 shadow-lg border-2 border-yellow-400 dark:border-gray-400 rounded-lg">
         <CardHeader
           variant="gradient"
-          color="blue"
-          className="p-6 bg-gradient-to-r from-blue-500 to-blue-300 dark:bg-gray-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-blue-400 rounded-t-lg"
+          color="gray"
+          className="p-6 bg-gradient-to-r from-blue-400 to-yellow-200 dark:bg-gradient-to-r dark:from-yellow-600 dark:to-yellow-400 rounded-t-lg"
         >
           <Typography
             variant="h4"
-            color="white"
-            className="text-3xl font-bold"
+            color="black"
+            className="text-3xl font-bold dark:text-yellow-50"
           >
             Top Scorers
           </Typography>
@@ -100,11 +100,11 @@ export function Tables() {
         <CardBody className="overflow-x-auto px-0 pt-0 pb-2">
           <table className="w-full min-w-max table-auto text-left">
             <thead>
-              <tr className="bg-blue-300 dark:bg-gray-600 border-b-4 border-blue-500">
+              <tr className="bg-gray-200 dark:bg-gray-600 border-b-1 border-yellow-300 dark:border-yellow-400">
                 {["Name", "Rank", "Points"].map((header) => (
                   <th
                     key={header}
-                    className="py-4 px-6 text-center text-xl font-bold text-gray-800 dark:text-gray-200"
+                    className="py-4 px-6 text-center text-xl font-bold text-black dark:text-gray-200 border-b border-gray-400 dark:border-gray-600"
                   >
                     <Typography
                       variant="small"
@@ -119,22 +119,22 @@ export function Tables() {
             <tbody>
               {users.length > 0 ? (
                 users.map((user) => (
-                  <tr key={user.id} className={`hover:bg-blue-100 dark:hover:bg-gray-500 transition-colors`}>
-                    <td className="py-4 px-6">
+                  <tr key={user.id} className="hover:bg-yellow-100 dark:hover:bg-gray-100 transition-colors">
+                    <td className="py-4 px-6 border-b border-gray-400 dark:border-gray-600">
                       <Typography
                         variant="small"
-                        className="text-lg font-semibold text-gray-800 dark:text-gray-300"
+                        className="text-lg font-semibold text-black dark:text-gray-300"
                       >
                         {user.firstName} {user.lastName}
                       </Typography>
                     </td>
-                    <td className="py-4 px-6 text-center">
-                      <Typography className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                    <td className="py-4 px-6 text-center border-b border-gray-400 dark:border-gray-600">
+                      <Typography className="text-lg font-semibold text-gray-600 dark:text-yellow-400">
                         {user.rank}
                       </Typography>
                     </td>
-                    <td className="py-4 px-6 text-center">
-                      <Typography className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                    <td className="py-4 px-6 text-center border-b border-gray-400 dark:border-gray-600">
+                      <Typography className="text-lg font-semibold text-gray-600 dark:text-yellow-400">
                         {user.points}
                       </Typography>
                     </td>

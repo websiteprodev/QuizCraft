@@ -181,7 +181,7 @@ export function BrowseQuizzes() {
             ) : (
                 <Button
                     variant="gradient"
-                    color="green"
+                    color="blue"
                     onClick={() => handleEnroll(quiz.id)}
                 >
                     Enroll
@@ -216,7 +216,7 @@ export function BrowseQuizzes() {
         <Button
             key={i + 1}
             variant="gradient"
-            color={currentPage === i + 1 ? 'yellow' : 'green'}
+            color={currentPage === i + 1 ? 'yellow' : 'blue'}
             onClick={() => setCurrentPage(i + 1)}
             className={`${
                 currentPage === i + 1 ? 'bg-yellow-500' : 'bg-green-500'
@@ -230,7 +230,7 @@ export function BrowseQuizzes() {
         <div className="p-6 dark:text-gray-100">
             <RankProgress points={userPoints} />
 
-            <Typography variant="h4" className="mb-4 text-red-500 font-bold">
+            <Typography variant="h4" className="mb-4 text-grey-500 font-bold">
                 Browse Quizzes
             </Typography>
             <Input
@@ -348,7 +348,7 @@ export function BrowseQuizzes() {
                                     color={
                                         enrolledQuizzes.includes(quiz.id)
                                             ? 'gray'
-                                            : 'green'
+                                            : 'blue'
                                     }
                                     className="bg-green-500 hover:bg-green-600 text-white rounded-full"
                                     disabled={enrolledQuizzes.includes(quiz.id)}
@@ -360,7 +360,7 @@ export function BrowseQuizzes() {
                                 </Button>
                                 <Button
                                     variant="gradient"
-                                    color="green"
+                                    color="red"
                                     className="bg-green-500 hover:bg-green-600 text-white rounded-full"
                                     onClick={() =>
                                         handleShowScoreboard(quiz.id)

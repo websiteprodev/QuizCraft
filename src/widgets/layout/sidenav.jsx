@@ -22,14 +22,12 @@ export function Sidenav({ brandImg, brandName, routes }) {
         >
             <div className="relative">
                 <Link to="/" className="py-6 px-8 text-center">
-                    <Typography
-                        variant="h5"
-                        color={sidenavType === 'dark' ? 'yellow' : 'blue-gray'}
-                        className="font-extrabold text-yellow-500 text-3xl flex items-center justify-center"
-                        style={{ fontFamily: 'Press Start 2P, cursive' }}
-                    >
-                        ToQuiz Story
-                    </Typography>
+                    {/* Logo Image */}
+                    <img
+                        src={brandImg}
+                        alt={brandName}
+                        className="w-42 h-auto mx-auto" 
+                    />
                 </Link>
                 <IconButton
                     variant="text"
@@ -98,7 +96,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
 }
 
 Sidenav.defaultProps = {
-    brandImg: '/img/logo-ct.png',
+    brandImg: '/QuizCraft/public/img/pattern.png',  
     brandName: 'ToQuiz Story',
 };
 

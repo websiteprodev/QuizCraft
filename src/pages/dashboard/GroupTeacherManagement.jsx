@@ -63,24 +63,24 @@ export function GroupTeacherManagement({ groupId }) {
     };
 
     return (
-        <Card className="dark:bg-gray-800 dark:text-gray-100">
-            <CardHeader className="dark:bg-gray-800 dark:text-gray-100">
-                <Typography variant="h5" className="dark:text-gray-100">Manage Group Teachers</Typography>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md rounded-lg">
+            <CardHeader className="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-t-lg">
+                <Typography variant="h5">Manage Group Teachers</Typography>
             </CardHeader>
-            <CardBody className="dark:bg-gray-800 dark:text-gray-100">
-                <List className="dark:bg-gray-800">
+            <CardBody className="bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+                <List>
                     {teachers.map((teacher) => (
-                        <ListItem key={teacher.id} className="flex justify-between items-center dark:bg-gray-700 dark:text-gray-100">
-                            <Typography variant="body1" className="dark:text-gray-100">{teacher.name}</Typography>
+                        <ListItem key={teacher.id} className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 py-2 px-4">
+                            <Typography variant="body1" className="text-gray-800 dark:text-gray-200">{teacher.name}</Typography>
                             <Checkbox
                                 checked={selectedTeachers.includes(teacher.id)}
                                 onChange={() => handleTeacherSelect(teacher.id)}
-                                className="dark:bg-gray-600 dark:border-gray-500"
+                                className="text-blue-500 dark:bg-blue-600 dark:border-blue-500"
                             />
                         </ListItem>
                     ))}
                 </List>
-                <Button onClick={handleAddTeachersToGroup} className="mt-4" color="blue">
+                <Button onClick={handleAddTeachersToGroup} className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" color="blue">
                     Add Selected Teachers to Group
                 </Button>
             </CardBody>
@@ -90,3 +90,4 @@ export function GroupTeacherManagement({ groupId }) {
 }
 
 export default GroupTeacherManagement;
+

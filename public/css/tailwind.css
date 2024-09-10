@@ -12,7 +12,7 @@ body {
 /* Updated timer circle */
 .circle {
   fill: none;
-  stroke: #F5A623; /* A playful Toy Story yellow (Buzz Lightyear) */
+  stroke: #f2ee05; /* A playful Toy Story yellow (Buzz Lightyear) */
   stroke-width: 8;
   stroke-linecap: round;
   stroke-dasharray: 283;
@@ -29,7 +29,7 @@ body {
   transform: translate(-50%, -50%);
   font-size: 2rem; /* Slightly larger for playful, bold appearance */
   font-weight: 700; /* Bolder for emphasis */
-  color: #F5A623; /* Same yellow as the circle stroke */
+  color: #f2ee05; /* Same yellow as the circle stroke */
 }
 
 /* Modern select dropdown style with a Toy Story twist */
@@ -73,13 +73,19 @@ button {
 
 /* Playful, bouncy hover effect for buttons */
 button:hover {
-  transform: scale(1.05) rotate(-3deg);
+  transform: scale(1.05); /* Леко скалиране, но без завъртане */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Добавяне на по-дълбока сянка */
+  background-color: #ffdf00; /* Промяна на цвета на фона на ярко жълт при ховър */
+  color: #333; /* Промяна на цвета на текста за контраст */
 }
 
+button {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease; 
+}
 /* Card or container with a playful shadow and smooth transitions */
 .card {
   @apply bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 mb-6 transition-all duration-300;
-  border: 4px solid #F25C05; /* Woody's shirt red */
+  border: 4px solid #f2ee05; /* Woody's shirt red */
 }
 
 .card:hover {

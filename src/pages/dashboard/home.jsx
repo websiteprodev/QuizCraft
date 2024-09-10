@@ -264,7 +264,7 @@ export function Home() {
                     <td className="border-b border-blue-gray-50 dark:border-gray-700 py-3 px-6">
                       <Button
                         variant="gradient"
-                        color="green"
+                        color="yellow"
                         onClick={() => navigate(`/dashboard/quiz/${quiz.id}`)}
                       >
                         <PlayIcon

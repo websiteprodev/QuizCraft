@@ -34,18 +34,30 @@ export function SampleQuiz() {
     };
 
     return (
-        <div className="p-6 dark:text-gray-100">
-            <Card className="p-6 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700">
-                <Typography variant="h5" className="mb-4 dark:text-gray-100">Question {currentQuestionIndex + 1}</Typography>
-                <Typography variant="paragraph" className="mb-4 dark:text-gray-200">{sampleQuestions[currentQuestionIndex].text}</Typography>
+        <div className="p-8 dark:bg-gray-900 dark:text-yellow-100">
+            <Card className="p-8 bg-yellow-100 dark:bg-gray-800 dark:border-gray-700 border border-black rounded-lg shadow-lg">
+                <Typography
+                    variant="h5"
+                    className="mb-6 text-blue-800 dark:text-yellow-300 font-bold border-b border-gray-300 dark:border-gray-600 pb-2"
+                >
+                    Question {currentQuestionIndex + 1}
+                </Typography>
+                <Typography
+                    variant="paragraph"
+                    className="mb-6 text-gray-900 dark:text-gray-200"
+                >
+                    {sampleQuestions[currentQuestionIndex].text}
+                </Typography>
                 {sampleQuestions[currentQuestionIndex].answers.map((answer, index) => (
-                    <label key={index} className="flex items-center mb-2 dark:text-gray-200">
-                        <input
-                            type="radio"
+                    <label
+                        key={index}
+                        className="flex items-center mb-4 text-gray-900 dark:text-gray-200"
+                    >
+                        <Radio
                             value={answer}
                             checked={selectedAnswer === answer}
                             onChange={() => setSelectedAnswer(answer)}
-                            className="mr-2 h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
+                            className="mr-3 text-blue-600 dark:text-yellow-400"
                         />
                         <Typography>{answer}</Typography>
                     </label>
@@ -53,7 +65,7 @@ export function SampleQuiz() {
                 <Button
                     variant="gradient"
                     color="blue"
-                    className="mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-800 dark:text-gray-100"
+                    className="mt-6 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg border border-black dark:border-yellow-300"
                     onClick={handleNextQuestion}
                 >
                     {currentQuestionIndex < sampleQuestions.length - 1 ? "Next" : "Finish"}

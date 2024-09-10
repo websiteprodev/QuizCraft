@@ -26,8 +26,8 @@ export function Notifications() {
     }, []);
 
     return (
-        <div className="mx-auto my-20 flex max-w-screen-lg flex-col gap-8 dark:bg-gray-900">
-            <Card className="dark:bg-gray-800 dark:text-gray-100">
+        <div className="mx-auto my-12 flex max-w-screen-lg flex-col gap-8 dark:bg-gray-900">
+            <Card className="p-6 dark:bg-gray-800 dark:text-yellow-100 shadow-lg border-2 border-yellow-400 dark:border-yellow-300 rounded-lg">
                 <CardHeader
                     color="transparent"
                     floated={false}
@@ -64,3 +64,4 @@ export function Notifications() {
 }
 
 export default Notifications;
+

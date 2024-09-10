@@ -65,29 +65,29 @@ const UserManagement = () => {
     };
 
     return (
-        <div className="p-6 dark:bg-gray-800">
-            <Typography variant="h4" className="mb-4 text-gray-800 dark:text-white">User Management</Typography>
+        <div className="p-8 bg-blue-50 dark:bg-gray-900 min-h-screen">
+            <Typography variant="h4" className="mb-6 text-blue-700 dark:text-yellow-300 font-bold">User Management</Typography>
             <Input
                 type="text"
                 placeholder="Search by email, first name, or last name"
                 value={searchTerm}
                 onChange={handleSearch}
-                className="mb-4"
+                className="mb-4 rounded-lg border-2 border-yellow-400 dark:border-yellow-600"
             />
             {filteredUsers.length > 0 ? (
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-700">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
+                    <thead className="bg-yellow-200 dark:bg-yellow-800">
                         <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">First Name</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Last Name</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                            <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-700 dark:text-yellow-200 uppercase tracking-wider">Email</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-700 dark:text-yellow-200 uppercase tracking-wider">First Name</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-700 dark:text-yellow-200 uppercase tracking-wider">Last Name</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-700 dark:text-yellow-200 uppercase tracking-wider">Status</th>
+                            <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-blue-700 dark:text-yellow-200 uppercase tracking-wider">Action</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         {filteredUsers.map(user => (
-                            <tr key={user.id}>
+                            <tr key={user.id} className="hover:bg-blue-100 dark:hover:bg-gray-700">
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{user.email}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.firstName}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.lastName}</td>
@@ -95,6 +95,7 @@ const UserManagement = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                     <Button
                                         color={user.blocked ? 'green' : 'red'}
+                                        className="rounded-full"
                                         onClick={() => toggleBlockUser(user.id, user.blocked)}
                                     >
                                         {user.blocked ? 'Unblock' : 'Block'}
@@ -109,7 +110,7 @@ const UserManagement = () => {
             )}
             {loading && <Typography className="text-gray-500 dark:text-gray-400">Loading...</Typography>}
             {!loading && hasMore && (
-                <Button onClick={() => fetchUsers(true)} className="mt-4">
+                <Button onClick={() => fetchUsers(true)} className="mt-4 rounded-full bg-yellow-400 text-blue-900 dark:bg-yellow-600 dark:text-blue-100">
                     Load More
                 </Button>
             )}

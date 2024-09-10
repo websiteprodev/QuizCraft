@@ -274,7 +274,7 @@ export function BrowseQuizzes() {
 
             {filteredQuizzes.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {currentQuizzes.map((quiz) => (
+                    {filteredQuizzes.map((quiz) => (
                         <Card
                             key={quiz.id}
                             className="p-4 bg-yellow-100 shadow-xl rounded-lg border-4 border-red-500 hover:shadow-2xl transform transition-all hover:scale-105 dark:bg-gray-800 dark:border-yellow-500 dark:text-gray-200"

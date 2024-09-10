@@ -163,6 +163,50 @@ export function BrowseQuizzes() {
         return matchesSearchTerm && withinDateRange;
     });
 
+    // Handle showing review button for finished quizzes
+    const renderQuizActions = (quiz) => {
+        const status = getQuizStatus(quiz.startDate, quiz.endDate);
+        const isEnrolled = enrolledQuizzes.includes(quiz.id);
+
+        if (status === 'Ongoing') {
+            return isEnrolled ? (
+                <div className="alert alert-warning">
+                    Time remaining: {calculateRemainingTime(quiz.endDate)}
+                </div>
+            ) : (
+                <Button
+                    variant="gradient"
+                    color="green"
+                    onClick={() => handleEnroll(quiz.id)}
+                >
+                    Enroll
+                </Button>
+            );
+        }
+
+        if (status === 'Finished') {
+            return user.role === 'educator' ? (
+                <Button
+                    variant="gradient"
+                    color="blue"
+                    onClick={() => navigate(`/quizzes/review/${quiz.id}`)}
+                >
+                    Review Answers
+                </Button>
+            ) : (
+                <Button
+                    variant="gradient"
+                    color="blue"
+                    onClick={() => navigate(`/quizzes/results/${quiz.id}`)}
+                >
+                    View Results
+                </Button>
+            );
+        }
+
+        return null;
+    };
+
     return (
         <div className="p-6 dark:text-gray-100">
             <RankProgress points={userPoints} />
@@ -229,11 +273,19 @@ export function BrowseQuizzes() {
                                 variant="h6"
                                 className="mb-2 text-blue-600 font-bold"
                             >
-                                {quiz.title} {/* Remaining time */}
-                                <span className="text-gray-600 text-sm">
-                                    ({calculateRemainingTime(quiz.endDate)})
-                                </span>
+                                {quiz.title}
                             </Typography>
+                            <Typography>
+                                Status:{' '}
+                                {getQuizStatus(quiz.startDate, quiz.endDate)}
+                            </Typography>
+                            {getQuizStatus(quiz.startDate, quiz.endDate) ===
+                                'Ongoing' && (
+                                <Typography className="text-red-500">
+                                    {calculateRemainingTime(quiz.endDate)}
+                                </Typography>
+                            )}
+                            {renderQuizActions(quiz)}
                             <Typography
                                 variant="paragraph"
                                 className={`text-green-600 font-bold mb-2`}

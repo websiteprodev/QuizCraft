@@ -150,7 +150,6 @@ export function Profile() {
                     <div className="grid gap-6 px-4 lg:grid-cols-3 xl:grid-cols-3">
                         <ProfileInfoCard
                             title="Profile Information"
-                            description="Hi, I'm Alec Thompson. Decisions: If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
                             details={{
                                 'First Name': `${user.firstName}`,
                                 'Mobile': `${user.phoneNumber}`,

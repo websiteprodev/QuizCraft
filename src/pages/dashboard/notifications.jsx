@@ -6,28 +6,46 @@ import {
     CardHeader,
     CardBody,
 } from '@material-tailwind/react';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '@/configs/firebase';
+import { useAuth } from '@/pages/auth/AuthContext'; 
 
 export function Notifications() {
+    const { user } = useAuth(); 
     const [notifications, setNotifications] = useState([]);
-    
+
     useEffect(() => {
         const fetchNotifications = async () => {
-            const querySnapshot = await getDocs(collection(db, 'notifications'));
-            const fetchedNotifications = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setNotifications(fetchedNotifications);
+            if (user?.username) {
+                const querySnapshot = await getDocs(
+                    collection(db, `users/${user.username}/notifications`)
+                );
+                const fetchedNotifications = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setNotifications(fetchedNotifications);
+            }
         };
         fetchNotifications();
-    }, []);
+    }, [user]);
+
+    const markAsRead = async (notificationId) => {
+        if (user?.username) {
+            const notificationRef = doc(db, `users/${user.username}/notifications`, notificationId);
+            await updateDoc(notificationRef, { isRead: true });
+
+            setNotifications((prev) =>
+                prev.map((n) =>
+                    n.id === notificationId ? { ...n, isRead: true } : n
+                )
+            );
+        }
+    };
 
     return (
-        <div className="mx-auto my-12 flex max-w-screen-lg flex-col gap-8 dark:bg-gray-900">
-            <Card className="p-6 dark:bg-gray-800 dark:text-yellow-100 shadow-lg border-2 border-yellow-400 dark:border-yellow-300 rounded-lg">
+        <div className="mx-auto my-20 flex max-w-screen-lg flex-col gap-8 dark:bg-gray-900">
+            <Card className="dark:bg-gray-800 dark:text-gray-100">
                 <CardHeader
                     color="transparent"
                     floated={false}
@@ -43,8 +61,9 @@ export function Notifications() {
                         notifications.map((notification) => (
                             <Alert
                                 key={notification.id}
-                                color="blue"
-                                className="dark:bg-gray-700 dark:text-gray-100"
+                                color={notification.isRead ? "blue" : "red"}
+                                className="dark:bg-gray-700 dark:text-gray-100 cursor-pointer"
+                                onClick={() => markAsRead(notification.id)}
                             >
                                 {notification.createdBy} created a new quiz: {notification.quizTitle}
                             </Alert>
@@ -64,4 +83,3 @@ export function Notifications() {
 }
 
 export default Notifications;
-

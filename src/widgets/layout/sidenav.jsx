@@ -1,12 +1,18 @@
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link, NavLink } from 'react-router-dom';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Button, IconButton, Typography } from '@material-tailwind/react';
+import { Button, IconButton, Typography, Badge } from '@material-tailwind/react';
 import { useMaterialTailwindController, setOpenSidenav } from '@/context';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '@/configs/firebase';
+import { useAuth } from '@/pages/auth/AuthContext';
 
 export function Sidenav({ brandImg, brandName, routes }) {
     const [controller, dispatch] = useMaterialTailwindController();
     const { sidenavType, openSidenav } = controller;
+    const { user } = useAuth();
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const sidenavTypes = {
         dark: 'bg-gradient-to-br from-gray-800 to-gray-900',
@@ -14,11 +20,22 @@ export function Sidenav({ brandImg, brandName, routes }) {
         transparent: 'bg-transparent',
     };
 
+    useEffect(() => {
+        const fetchUnreadCount = async () => {
+            if (user?.username) {
+                const notificationsRef = collection(db, `users/${user.username}/notifications`);
+                const q = query(notificationsRef, where('isRead', '==', false));
+                const querySnapshot = await getDocs(q);
+                setUnreadCount(querySnapshot.size);
+            }
+        };
+        fetchUnreadCount();
+    }, [user]);
+
     return (
         <aside
-            className={`${sidenavTypes[sidenavType]} ${
-                openSidenav ? 'translate-x-0' : '-translate-x-80'
-            } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl shadow-lg transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 dark:border-gray-700`}
+            className={`${sidenavTypes[sidenavType]} ${openSidenav ? 'translate-x-0' : '-translate-x-80'
+                } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl shadow-lg transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 dark:border-gray-700`}
         >
             <div className="relative">
                 <Link to="/" className="py-6 px-8 text-center">
@@ -26,7 +43,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                     <img
                         src={brandImg}
                         alt={brandName}
-                        className="w-42 h-auto mx-auto" 
+                        className="w-42 h-auto mx-auto"
                     />
                 </Link>
                 <IconButton
@@ -83,6 +100,15 @@ export function Sidenav({ brandImg, brandName, routes }) {
                                             >
                                                 {name || 'Unnamed'}
                                             </Typography>
+                                            {name === 'notifications' && unreadCount > 0 && (
+                                                <Badge
+                                                    content={unreadCount}
+                                                    color="red"
+                                                    className="ml-auto"
+                                                >
+                                                    <></>
+                                                </Badge>
+                                            )}
                                         </Button>
                                     )}
                                 </NavLink>
@@ -96,7 +122,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
 }
 
 Sidenav.defaultProps = {
-    brandImg: '/QuizCraft/public/img/pattern.png',  
+    brandImg: '/QuizCraft/public/img/pattern.png',
     brandName: 'ToQuiz Story',
 };
 

@@ -109,6 +109,7 @@ export function CreateQuiz() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
         if (title.length < 3 || title.length > 30) {
             console.error('The title must be between 3 and 30 characters');
             return;
@@ -125,7 +126,7 @@ export function CreateQuiz() {
         }
     
         const querySnapshot = await getDocs(
-            query(collection(db, 'quizzes'), where('title', '==', title)),
+            query(collection(db, 'quizzes'), where('title', '==', title))
         );
         if (!querySnapshot.empty) {
             console.error('The title already exists');
@@ -153,13 +154,16 @@ export function CreateQuiz() {
                 createdAt: new Date(),
             });
     
-            // Add a notification for the quiz creation
-            await addDoc(collection(db, 'notifications'), {
-                type: 'quiz_created',
-                quizTitle: title,
-                createdBy: user.firstName + ' ' + user.lastName,
-                createdAt: new Date(),
-                isRead: false,
+            const usersSnapshot = await getDocs(collection(db, 'users'));
+            usersSnapshot.forEach(async (userDoc) => {
+                const username = userDoc.id; 
+                await addDoc(collection(db, `users/${username}/notifications`), {
+                    type: 'quiz_created',
+                    quizTitle: title,
+                    createdBy: user.firstName + ' ' + user.lastName,
+                    createdAt: new Date(),
+                    isRead: false, 
+                });
             });
     
             setTitle('');

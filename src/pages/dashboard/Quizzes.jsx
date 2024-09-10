@@ -31,9 +31,10 @@ export function Quizzes() {
                 }
 
                 // Fetch quizzes created by the user
+                const createdBy = `${user.firstName} ${user.lastName}`;
                 const createdQuizzesRef = query(
                     collection(db, 'quizzes'),
-                    where('createdBy', '==', user.uid),
+                    where('createdBy', '==', createdBy),
                 );
                 const createdQuizzesSnapshot = await getDocs(createdQuizzesRef); // Fetch the user's created quizzes
                 const createdQuizzesData = createdQuizzesSnapshot.docs.map(
@@ -41,11 +42,10 @@ export function Quizzes() {
                 );
                 setCreatedQuizzes(createdQuizzesData);
 
-
                 // Fetch quizzes based on the taken quizzes IDs from user.quizzesTaken
                 const quizzesTaken = user.quizzesTaken || []; // Array of quiz IDs
                 setTakenQuizzes(quizzesTaken);
-            
+
                 // Fetch public quizzes
                 const publicQuizzesRef = query(
                     collection(db, 'quizzes'),
@@ -75,7 +75,9 @@ export function Quizzes() {
                     if (change.type === 'added') {
                         const newQuiz = change.doc.data();
                         // Instead of alert, set the notification in state
-                        setNewQuizNotification(`New public quiz available: ${newQuiz.title}`);
+                        setNewQuizNotification(
+                            `New public quiz available: ${newQuiz.title}`,
+                        );
                     }
                 });
             },

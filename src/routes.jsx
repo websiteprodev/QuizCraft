@@ -108,16 +108,6 @@ export const routes = [
                 element: <SampleQuiz />,
             },
             {
-                icon: <UsersIcon {...icon} />,
-                name: 'groups',
-                path: '/groups',
-                element: (
-                    <ProtectedRoute>
-                        <GroupList />
-                    </ProtectedRoute>
-                ),
-            },
-            {
                 icon: <ChatBubbleLeftRightIcon {...icon} />,
                 name: 'comments',
                 path: '/comments',

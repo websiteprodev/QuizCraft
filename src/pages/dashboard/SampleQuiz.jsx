@@ -4,15 +4,55 @@ import Confetti from "react-confetti";
 
 const sampleQuestions = [
     {
+        text: "What is the capital of Bulgaria?",
+        answers: ["Pleven", "Pernik", "Plovdiv", "Sofia"],
+        correctAnswer: "Sofia",
+    },
+    {
         text: "What is the capital of France?",
-        answers: ["Berlin", "Madrid", "Paris", "Rome"],
+        answers: ["Marseille", "Lyon", "Paris", "Nice"],
         correctAnswer: "Paris",
     },
     {
-        text: "What is 2 + 2?",
-        answers: ["3", "4", "5", "6"],
-        correctAnswer: "4",
+        text: "What is the capital of Germany?",
+        answers: ["Berlin", "Munich", "Frankfurt", "Hamburg"],
+        correctAnswer: "Berlin",
     },
+    {
+        text: "What is the capital of Japan?",
+        answers: ["Osaka", "Tokyo", "Kyoto", "Hiroshima"],
+        correctAnswer: "Tokyo",
+    },
+    {
+        text: "What is the capital of Brazil?",
+        answers: ["Rio de Janeiro", "São Paulo", "Brasília", "Salvador"],
+        correctAnswer: "Brasília",
+    },
+    {
+        text: "What is the capital of Canada?",
+        answers: ["Toronto", "Vancouver", "Ottawa", "Montreal"],
+        correctAnswer: "Ottawa",
+    },
+    {
+        text: "What is the capital of Italy?",
+        answers: ["Milan", "Rome", "Naples", "Florence"],
+        correctAnswer: "Rome",
+    },
+    {
+        text: "What is the capital of Australia?",
+        answers: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
+        correctAnswer: "Canberra",
+    },
+    {
+        text: "What is the capital of Russia?",
+        answers: ["Saint Petersburg", "Moscow", "Novosibirsk", "Kazan"],
+        correctAnswer: "Moscow",
+    },
+    {
+        text: "What is the capital of Egypt?",
+        answers: ["Alexandria", "Cairo", "Giza", "Luxor"],
+        correctAnswer: "Cairo",
+    }
 ];
 
 export function SampleQuiz() {

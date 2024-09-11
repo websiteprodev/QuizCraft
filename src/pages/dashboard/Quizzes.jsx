@@ -19,9 +19,14 @@ export function Quizzes() {
     const { user } = useAuth(); // Access user from useAuth hook
     const [createdQuizzes, setCreatedQuizzes] = useState([]);
     const [takenQuizzes, setTakenQuizzes] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [publicQuizzes, setPublicQuizzes] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [newQuizNotification, setNewQuizNotification] = useState(null); // State for new quiz notifications
+
+    // Visibility counts for Load More functionality
+    const [visibleCreatedQuizzes, setVisibleCreatedQuizzes] = useState(3);
+    const [visiblePublicQuizzes, setVisiblePublicQuizzes] = useState(3);
+    const [visibleTakenQuizzes, setVisibleTakenQuizzes] = useState(3);
 
     useEffect(() => {
         const fetchQuizzes = async () => {
@@ -128,6 +133,16 @@ export function Quizzes() {
         }
     };
 
+    const handleLoadMore = (section) => {
+        if (section === 'created') {
+            setVisibleCreatedQuizzes((prev) => prev + 3);
+        } else if (section === 'public') {
+            setVisiblePublicQuizzes((prev) => prev + 3);
+        } else if (section === 'taken') {
+            setVisibleTakenQuizzes((prev) => prev + 3);
+        }
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -156,44 +171,46 @@ export function Quizzes() {
                 <Typography variant="h5" className="mb-4 dark:text-gray-100">
                     Created Quizzes
                 </Typography>
-                {createdQuizzes.length > 0 ? (
-                    createdQuizzes.map((quiz) => (
-                        <div key={quiz.id} className="mb-4">
-                            <Typography
-                                variant="h6"
-                                className="dark:text-gray-200"
-                            >
-                                {quiz.title}
-                            </Typography>
-                            <Typography variant="paragraph">
-                                Category: {quiz.category}
-                            </Typography>
-                            <Typography variant="paragraph">
-                                Questions: {quiz.numberOfQuestions}
-                            </Typography>
+                {createdQuizzes.slice(0, visibleCreatedQuizzes).map((quiz) => (
+                    <div key={quiz.id} className="mb-4">
+                        <Typography variant="h6" className="dark:text-gray-200">
+                            {quiz.title}
+                        </Typography>
+                        <Typography variant="paragraph">
+                            Category: {quiz.category}
+                        </Typography>
+                        <Typography variant="paragraph">
+                            Questions: {quiz.numberOfQuestions}
+                        </Typography>
 
-                            <div className="flex gap-2 mt-4">
-                                <Link to={`/quizzes/edit/${quiz.id}`}>
-                                    <Button variant="gradient" color="blue">
-                                        Edit
-                                    </Button>
-                                </Link>
-                                <Button
-                                    variant="outlined"
-                                    color="red"
-                                    onClick={() => handleDeleteQuiz(quiz.id)}
-                                >
-                                    Delete
+                        <div className="flex gap-2 mt-4">
+                            <Link to={`/quizzes/edit/${quiz.id}`}>
+                                <Button variant="gradient" color="blue">
+                                    Edit
                                 </Button>
-                            </div>
-
-                            <hr className="my-4" />
+                            </Link>
+                            <Button
+                                variant="outlined"
+                                color="red"
+                                onClick={() => handleDeleteQuiz(quiz.id)}
+                            >
+                                Delete
+                            </Button>
                         </div>
-                    ))
-                ) : (
-                    <Typography variant="paragraph">
-                        No quizzes created.
-                    </Typography>
+                        <hr className="my-4" />
+                    </div>
+                ))}
+                {visibleCreatedQuizzes < createdQuizzes.length && (
+                    <div className="flex justify-center w-full mt-4">
+                        <Button
+                            variant="gradient"
+                            color="blue"
+                            onClick={() => handleLoadMore('created')}
+                            className="py-1 px-4 text-sm" // Smaller and centered button
+                        >
+                            Load More
+                        </Button>
+                    </div>
                 )}
             </Card>
 
@@ -202,35 +219,38 @@ export function Quizzes() {
                 <Typography variant="h5" className="mb-4">
                     Public Quizzes
                 </Typography>
-                {publicQuizzes.length > 0 ? (
-                    publicQuizzes.map((quiz) => (
-                        <div key={quiz.id} className="mb-4">
-                            <Typography
-                                variant="h6"
-                                className="dark:text-gray-200"
-                            >
-                                {quiz.title}
-                            </Typography>
-                            <Typography variant="paragraph">
-                                Category: {quiz.category}
-                            </Typography>
-                            <Typography variant="paragraph">
-                                Questions: {quiz.numberOfQuestions}
-                            </Typography>
-                            <Button
-                                variant="gradient"
-                                color="green"
-                                onClick={() => handleSubscribeToQuiz(quiz.id)}
-                            >
-                                Subscribe & Download .ics
-                            </Button>
-                            <hr className="my-4 dark:border-gray-600" />
-                        </div>
-                    ))
-                ) : (
-                    <Typography variant="paragraph">
-                        No public quizzes available.
-                    </Typography>
+                {publicQuizzes.slice(0, visiblePublicQuizzes).map((quiz) => (
+                    <div key={quiz.id} className="mb-4">
+                        <Typography variant="h6" className="dark:text-gray-200">
+                            {quiz.title}
+                        </Typography>
+                        <Typography variant="paragraph">
+                            Category: {quiz.category}
+                        </Typography>
+                        <Typography variant="paragraph">
+                            Questions: {quiz.numberOfQuestions}
+                        </Typography>
+                        <Button
+                            variant="gradient"
+                            color="green"
+                            onClick={() => handleSubscribeToQuiz(quiz.id)}
+                        >
+                            Subscribe & Download .ics
+                        </Button>
+                        <hr className="my-4 dark:border-gray-600" />
+                    </div>
+                ))}
+                {visiblePublicQuizzes < publicQuizzes.length && (
+                    <div className="flex justify-center w-full mt-4">
+                        <Button
+                            variant="gradient"
+                            color="blue"
+                            onClick={() => handleLoadMore('public')}
+                            className="py-1 px-4 text-sm" // Smaller and centered button
+                        >
+                            Load More
+                        </Button>
+                    </div>
                 )}
             </Card>
 
@@ -239,25 +259,28 @@ export function Quizzes() {
                 <Typography variant="h5" className="mb-4 dark:text-gray-100">
                     Taken Quizzes
                 </Typography>
-                {takenQuizzes.length > 0 ? (
-                    takenQuizzes.map((quiz, index) => (
-                        <div key={index} className="mb-4 ">
-                            <Typography
-                                variant="h6"
-                                className="dark:text-gray-200"
-                            >
-                                {quiz.title}
-                            </Typography>
-                            <Typography variant="paragraph">
-                                Points Scored: {quiz.points}
-                            </Typography>
-                            <hr className="my-4" />
-                        </div>
-                    ))
-                ) : (
-                    <Typography variant="paragraph">
-                        No quizzes taken.
-                    </Typography>
+                {takenQuizzes.slice(0, visibleTakenQuizzes).map((quiz, index) => (
+                    <div key={index} className="mb-4 ">
+                        <Typography variant="h6" className="dark:text-gray-200">
+                            {quiz.title}
+                        </Typography>
+                        <Typography variant="paragraph">
+                            Points Scored: {quiz.points}
+                        </Typography>
+                        <hr className="my-4" />
+                    </div>
+                ))}
+                {visibleTakenQuizzes < takenQuizzes.length && (
+                    <div className="flex justify-center w-full mt-4">
+                        <Button
+                            variant="gradient"
+                            color="blue"
+                            onClick={() => handleLoadMore('taken')}
+                            className="py-1 px-4 text-sm" // Smaller and centered button
+                        >
+                            Load More
+                        </Button>
+                    </div>
                 )}
             </Card>
         </div>

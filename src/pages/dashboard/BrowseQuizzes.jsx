@@ -35,8 +35,8 @@ export function BrowseQuizzes() {
     const [filterEndDate, setFilterEndDate] = useState(null);
     const [enrolledQuizzes, setEnrolledQuizzes] = useState([]);
     const [statusFilter, setStatusFilter] = useState('Ongoing');
-    const [currentPage, setCurrentPage] = useState(1); 
-    const quizzesPerPage = 9; 
+    const [currentPage, setCurrentPage] = useState(1);
+    const quizzesPerPage = 9;
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -278,7 +278,6 @@ export function BrowseQuizzes() {
                         <Card
                             key={quiz.id}
                             className="p-4 bg-yellow-100 shadow-xl rounded-lg border-4 border-red-500 hover:shadow-2xl transform transition-all hover:scale-105 dark:bg-gray-800 dark:border-yellow-500 dark:text-gray-200"
-
                         >
                             <img
                                 src={
@@ -296,9 +295,11 @@ export function BrowseQuizzes() {
                                 {quiz.title}
                             </Typography>
                             <Typography>
-                                Status: {getQuizStatus(quiz.startDate, quiz.endDate)}
+                                Status:{' '}
+                                {getQuizStatus(quiz.startDate, quiz.endDate)}
                             </Typography>
-                            {getQuizStatus(quiz.startDate, quiz.endDate) === 'Ongoing' && (
+                            {getQuizStatus(quiz.startDate, quiz.endDate) ===
+                                'Ongoing' && (
                                 <Typography className="text-red-500">
                                     {calculateRemainingTime(quiz.endDate)}
                                 </Typography>
@@ -343,7 +344,7 @@ export function BrowseQuizzes() {
                                         ? 'Completed'
                                         : 'Start Quiz'}
                                 </Button>
-                                <Button
+                                {/* <Button
                                     variant="gradient"
                                     color={
                                         enrolledQuizzes.includes(quiz.id)
@@ -357,7 +358,7 @@ export function BrowseQuizzes() {
                                     {enrolledQuizzes.includes(quiz.id)
                                         ? 'Participating'
                                         : 'Enroll'}
-                                </Button>
+                                </Button> */}
                                 <Button
                                     variant="gradient"
                                     color="red"
